@@ -68,4 +68,5 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 # Set network to private
 Get-NetConnectionProfile
 
-Set-NetConnectionProfile -Name “Network” -NetworkCategory Private
+# Set-NetConnectionProfile -Name “Network” -NetworkCategory Private
+Set-NetConnectionProfile -NetworkCategory Private
