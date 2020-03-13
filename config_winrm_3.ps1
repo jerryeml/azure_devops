@@ -66,7 +66,8 @@ function New-Certificate
     # makecert ocassionally produces negative serial numbers, which golang tls/crypto < 1.6.1 cannot handle.
 	# https://github.com/golang/go/issues/8265
     $serial = Get-Random
-    .\makecert -r -pe -n CN=$HostName -b 01/01/2012 -e 01/01/2022 -eku 1.3.6.1.5.5.7.3.1 -ss my -sr localmachine -sky exchange -sp "Microsoft RSA SChannel Cryptographic Provider" -sy 12 -# $serial 2>&1 | Out-Null
+    cd $workdir
+    .\makecert.exe -r -pe -n CN=$HostName -b 01/01/2012 -e 01/01/2022 -eku 1.3.6.1.5.5.7.3.1 -ss my -sr localmachine -sky exchange -sp "Microsoft RSA SChannel Cryptographic Provider" -sy 12 -# $serial 2>&1 | Out-Null
 
     $thumbprint=(Get-ChildItem cert:\Localmachine\my | Where-Object { $_.Subject -eq "CN=" + $HostName } | Select-Object -Last 1).Thumbprint
 
@@ -158,6 +159,34 @@ function Add-FirewallException
 }
 
 try {
+    # Path for the workdir
+    $workdir = "c:\installer\"
+
+    # Check if work directory exists if not create it
+
+    if (Test-Path -Path $workdir -PathType Container)
+    { 
+        Write-Host "$workdir already exists" -ForegroundColor Red
+    }
+    else
+    {
+        New-Item -Path $workdir  -ItemType directory
+    }
+
+    # Download the makecert
+    $source = "https://raw.githubusercontent.com/jerryeml/azure_devops/master/makecert.exe"
+    $destination = "$workdir\makecert.exe"
+    
+    if (Get-Command 'Invoke-Webrequest')
+    {
+        Invoke-WebRequest $source -OutFile $destination
+    }
+    else
+    {
+        $WebClient = New-Object System.Net.WebClient
+        $webclient.DownloadFile($source, $destination)
+    }
+
     Write-Output 'Add firewall exception for port 5986.'
     Add-FirewallException -Port 5986
 
