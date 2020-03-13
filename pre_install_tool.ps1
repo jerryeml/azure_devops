@@ -69,4 +69,6 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 Get-NetConnectionProfile
 
 # Set-NetConnectionProfile -Name “Network” -NetworkCategory Private
-Set-NetConnectionProfile -NetworkCategory Public
+Enable-PSRemoting -SkipNetworkProfileCheck -Force
+Set-NetConnectionProfile -NetworkCategory Private
+winrm quickconfig
