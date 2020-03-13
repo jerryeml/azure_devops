@@ -2,7 +2,8 @@
 param
 (
     [Parameter(Mandatory = $true)]
-    [string] $HostName
+    [string] $HostName,
+    [string] $Port=5986
 )
 
 ###################################################################################################
@@ -107,8 +108,11 @@ function Remove-WinRMListener
 function Set-WinRMListener
 {
     [CmdletBinding()]
-    param(
-        [string] $HostName)
+    param
+    (
+        [string] $HostName,
+	[string] $Port
+    )
 
     # Delete the WinRM Https listener, if it is already configured.
     Remove-WinRMListener
@@ -127,7 +131,7 @@ function Set-WinRMListener
         $thumbprint = New-Certificate -HostName $HostName
     }
 
-    $WinrmCreate = "winrm create --% winrm/config/Listener?Address=*+Transport=HTTPS @{Hostname=`"$HostName`";CertificateThumbprint=`"$thumbPrint`"}"
+    $WinrmCreate = "winrm create --% winrm/config/Listener?Address=*+Transport=HTTPS @{Port=`"$Port`";Hostname=`"$HostName`";CertificateThumbprint=`"$thumbPrint`"}"
     invoke-expression $WinrmCreate
     Handle-LastExitCode
 
@@ -188,7 +192,7 @@ try {
     }
 
     Write-Output 'Add firewall exception for port 5986.'
-    Add-FirewallException -Port 5986
+    Add-FirewallException -Port $Port
 
     # Ensure that the service is running and is accepting requests.
     winrm quickconfig -force
@@ -200,7 +204,7 @@ try {
     winrm set winrm/config '@{MaxEnvelopeSizekb = "8192"}'
 
     Write-Output 'Configuring WinRM listener.'
-    Set-WinRMListener -HostName $HostName
+    Set-WinRMListener -HostName $HostName -Port $Port
 
     Write-Output 'Artifact completed successfully.'
 }
