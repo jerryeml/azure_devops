@@ -3,14 +3,14 @@
 #                                                                                                                               #
 #  Description : Configures the WinRM on a local machine                                                                        #
 #                                                                                                                               #
-#  Arguments   : HostName, specifies the FQDN of machine or domain                                                           #
+#  Arguments   : HostName, specifies the FQDN of machine or domain                                                              #
 #################################################################################################################################
 
 param
 (
     [Parameter(Mandatory = $true)]
     [string] $HostName,
-	[string] $winrmHttpsPort=5986
+    [string] $winrmHttpsPort=5986
 )
 
 #################################################################################################################################
