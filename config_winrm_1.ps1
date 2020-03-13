@@ -110,6 +110,8 @@ function Add-FirewallException
 
 # The default MaxEnvelopeSizekb on Windows Server is 500 Kb which is very less. It needs to be at 8192 Kb. The small envelop size if not changed
 # results in WS-Management service responding with error that the request size exceeded the configured MaxEnvelopeSize quota.
+Enable-PSRemoting -SkipNetworkProfileCheck -Force
+Set-NetConnectionProfile -NetworkCategory Private
 winrm set winrm/config '@{MaxEnvelopeSizekb = "8192"}'
 
 # Configure https listener
