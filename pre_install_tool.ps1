@@ -48,7 +48,7 @@ else
 
 
 # Downlaod and extract VSTS windows agent
-if ((Test-Path -Path "C:\VSTSwinAgent" -eq $false))
+if ((Test-Path -Path "C:\VSTSwinAgent") -eq $false)
 {
     New-Item -Path "C:\VSTSwinAgent" -ItemType "directory" -Force
 }
