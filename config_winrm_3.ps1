@@ -30,7 +30,7 @@ trap
     $message = $error[0].Exception.Message
     if ($message)
     {
-        Write-Host -Object "ERROR: $message" -ForegroundColor Red
+        Write-Output -Object "ERROR: $message" -ForegroundColor Red
     }
     
     # IMPORTANT NOTE: Throwing a terminating error (using $ErrorActionPreference = "Stop") still
@@ -45,6 +45,14 @@ trap
 # Functions used in this script.
 #
 
+function Write-Log($content, $logFilePath="C:\installer\pre_install_tool.log")
+{
+    # Write-Debug $content
+    Write-Output $content
+    $log_datetime=Get-Date
+    Add-Content $logFilePath -value "[$log_datetime] $content"
+}
+
 function Handle-LastExitCode
 {
     [CmdletBinding()]
@@ -53,6 +61,7 @@ function Handle-LastExitCode
 
     if ($LASTEXITCODE -ne 0)
     {
+        Write-Log "The artifact failed to apply."
         throw 'The artifact failed to apply.'
     }
 }
@@ -74,6 +83,7 @@ function New-Certificate
 
     if(-not $thumbprint)
     {
+        Write-Log "Failed to create the test certificate."
         throw 'Failed to create the test certificate.'
     }
 
@@ -93,7 +103,7 @@ function Remove-WinRMListener
         {
             if($conf.Contains('HTTPS'))
             {
-                Write-Output 'HTTPS is already configured. Deleting the exisiting configuration.'
+                Write-Log 'HTTPS is already configured. Deleting the exisiting configuration.'
                 winrm delete winrm/config/Listener?Address=*+Transport=HTTPS 2>&1 | Out-Null
                 break
             }
@@ -101,7 +111,7 @@ function Remove-WinRMListener
     }
     catch
     {
-        Write-Output "INFO: Exception while deleting the listener: $($_.Exception.Message)"
+        Write-Log "INFO: Exception while deleting the listener: $($_.Exception.Message)"
     }
 }
 
@@ -122,16 +132,19 @@ function Set-WinRMListener
     $thumbprint = $cert.Thumbprint
     if(-not $thumbprint)
     {
-	    $thumbprint = New-Certificate -HostName $HostName
+        $thumbprint = New-Certificate -HostName $HostName
+        Write-Log "Create certificate and get thumbprint: $($thumbprint)"
     }
     elseif (-not $cert.PrivateKey)
     {
         # The private key is missing - could have been sysprepped. Delete the certificate.
+        Write-Log "The private key is missing - could have been sysprepped. Delete the certificate"
         Remove-Item Cert:\LocalMachine\My\$thumbprint -Force | Out-Null
         $thumbprint = New-Certificate -HostName $HostName
     }
 
     $WinrmCreate = "winrm create --% winrm/config/Listener?Address=*+Transport=HTTPS @{Port=`"$Port`";Hostname=`"$HostName`";CertificateThumbprint=`"$thumbPrint`"}"
+    Write-Log "winrm create command: $($WinrmCreate)"
     invoke-expression $WinrmCreate
     Handle-LastExitCode
 
@@ -153,11 +166,13 @@ function Add-FirewallException
     if ($LastExitCode -eq 0)
     {
         # Delete the existing rule.
+        Write-Log "Delete the existing rule"
         netsh advfirewall firewall delete rule name=$ruleName dir=in protocol=TCP localport=$Port | Out-Null
         Handle-LastExitCode
     }
 
     # Add a new firewall rule.
+    Write-Log "Add a new firewall rule."
     netsh advfirewall firewall add rule name=$ruleName dir=in action=allow protocol=TCP localport=$Port | Out-Null
     Handle-LastExitCode
 }
@@ -170,7 +185,7 @@ try {
 
     if (Test-Path -Path $workdir -PathType Container)
     { 
-        Write-Host "$workdir already exists" -ForegroundColor Red
+        Write-Output "$workdir already exists" -ForegroundColor Red
     }
     else
     {
@@ -191,7 +206,7 @@ try {
         $webclient.DownloadFile($source, $destination)
     }
 
-    Write-Output 'Add firewall exception for port 5986.'
+    Write-Log 'Add firewall exception for port 5986.'
     Add-FirewallException -Port $Port
 
     # Ensure that the service is running and is accepting requests.
@@ -200,13 +215,13 @@ try {
     # The default MaxEnvelopeSizekb on Windows Server is 500 Kb which is very less. It needs to be at 8192 Kb.
     # The small envelop size, if not changed, results in the WS-Management service responding with an error that
     # the request size exceeded the configured MaxEnvelopeSize quota.
-    Write-Output 'Configuring MaxEnvelopeSize to 8192 kb.'
+    Write-Log 'Configuring MaxEnvelopeSize to 8192 kb.'
     winrm set winrm/config '@{MaxEnvelopeSizekb = "8192"}'
 
-    Write-Output 'Configuring WinRM listener.'
+    Write-Log 'Configuring WinRM listener.'
     Set-WinRMListener -HostName $HostName -Port $Port
 
-    Write-Output 'Artifact completed successfully.'
+    Write-Log 'Artifact completed successfully.'
 }
 finally {
     Pop-Location

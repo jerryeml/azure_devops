@@ -13,11 +13,12 @@ Push-Location $PSScriptRoot
 ###################################################################################################
 
 
-$logFilePath="C:\installer\log_"+$executeDateFormat+".log"
+$logFilePath="C:\installer\pre_install_tool.log"
 
 function Write-Log($content)
 {
-    Write-Debug $content
+    # Write-Debug $content
+    Write-Host $content
     $logDateTime=Get-Date
     Add-Content $logFilePath -value "[$logDateTime] $content"
 }
@@ -50,11 +51,12 @@ else
 # Downlaod and extract VSTS windows agent
 if ((Test-Path -Path "C:\VSTSwinAgent") -eq $false)
 {
+    Write-Log "Create Folder of VSTSwinAgent"
     New-Item -Path "C:\VSTSwinAgent" -ItemType "directory" -Force
 }
 
 Invoke-WebRequest https://vstsagentpackage.azureedge.net/agent/2.165.1/vsts-agent-win-x64-2.165.1.zip -OutFile C:\VSTSwinAgent\agent.zip
-#Start-Sleep -s 30
+# Start-Sleep -s 30
 Expand-Archive C:\VSTSwinAgent\agent.zip -DestinationPath C:\VSTSwinAgent -Force
 
 #Set Execution Policy
