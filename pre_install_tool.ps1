@@ -26,6 +26,12 @@ Write-Log "Hello World!!!"
 
 # Install STAF
 netsh advfirewall firewall add rule name="Allow STAF" dir=in action=allow protocol=Any program="C:\staf\bin\stafproc.exe" | Out-Null
+$is_staf_process_exist = Get-Process stafproc -ErrorAction SilentlyContinue
+if ($is_staf_process_exist) 
+{
+    Write-Log "STAF Exists!"
+}
+
 
 # Downlaod and extract VSTS windows agent
 mkdir C:\VSTSwinAgent ;
