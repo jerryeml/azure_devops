@@ -1,3 +1,29 @@
+###################################################################################################
+#
+# PowerShell configurations
+#
+
+# NOTE: Because the $ErrorActionPreference is "Stop", this script will stop on first failure.
+#       This is necessary to ensure we capture errors inside the try-catch-finally block.
+$ErrorActionPreference = "Stop"
+
+# Ensure we set the working directory to that of the script.
+Push-Location $PSScriptRoot
+
+###################################################################################################
+
+
+$logFilePath="C:\installer\log_"+$executeDateFormat+".log"
+
+function Write-Log($content)
+{
+	Write-Debug $content
+    $logDateTime=Get-Date
+	Add-Content $logFilePath -value "[$logDateTime] $content"
+}
+
+Write-Log "Hello World!!!"
+
 # Install STAF
 netsh advfirewall firewall add rule name="Allow STAF" dir=in action=allow protocol=Any program="C:\staf\bin\stafproc.exe" | Out-Null
 
