@@ -1,3 +1,6 @@
+# Install STAF
+netsh advfirewall firewall add rule name="Allow STAF" dir=in action=allow protocol=Any program="C:\staf\bin\stafproc.exe" | Out-Null
+
 # Downlaod and extract VSTS windows agent
 mkdir C:\VSTSwinAgent ;
 Invoke-WebRequest https://vstsagentpackage.azureedge.net/agent/2.165.1/vsts-agent-win-x64-2.165.1.zip -OutFile C:\VSTSwinAgent\agent.zip
