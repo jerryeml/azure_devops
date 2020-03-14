@@ -17,9 +17,9 @@ $logFilePath="C:\installer\log_"+$executeDateFormat+".log"
 
 function Write-Log($content)
 {
-	Write-Debug $content
+    Write-Debug $content
     $logDateTime=Get-Date
-	Add-Content $logFilePath -value "[$logDateTime] $content"
+    Add-Content $logFilePath -value "[$logDateTime] $content"
 }
 
 Write-Log "Hello World!!!"
