@@ -24,6 +24,16 @@ function Write-Log($content)
 
 Write-Log "Hello World!!!"
 
+
+function test_01 
+{
+    param 
+    (
+        [string] $test
+    )
+    
+}
+
 # Install STAF
 netsh advfirewall firewall add rule name="Allow STAF" dir=in action=allow protocol=Any program="C:\staf\bin\stafproc.exe" | Out-Null
 $is_staf_process_exist = Get-Process stafproc -ErrorAction SilentlyContinue
@@ -31,13 +41,21 @@ if ($is_staf_process_exist)
 {
     Write-Log "STAF Exists!"
 }
+else
+{
+    Write-Log "Need to install STAF"
+}
 
 
 # Downlaod and extract VSTS windows agent
-mkdir C:\VSTSwinAgent ;
+if ((Test-Path -Path "C:\VSTSwinAgent" -eq $false))
+{
+    New-Item -Path "C:\VSTSwinAgent" -ItemType "directory" -Force
+}
+
 Invoke-WebRequest https://vstsagentpackage.azureedge.net/agent/2.165.1/vsts-agent-win-x64-2.165.1.zip -OutFile C:\VSTSwinAgent\agent.zip
 #Start-Sleep -s 30
-Expand-Archive C:\VSTSwinAgent\agent.zip -DestinationPath C:\VSTSwinAgent
+Expand-Archive C:\VSTSwinAgent\agent.zip -DestinationPath C:\VSTSwinAgent -Force
 
 #Set Execution Policy
 Set-ExecutionPolicy Unrestricted -Force
