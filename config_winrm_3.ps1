@@ -145,7 +145,17 @@ function Set-WinRMListener
         $thumbprint = New-Certificate -HostName $HostName
     }
 
-    $WinrmCreate = "winrm create --% winrm/config/Listener?Address=*+Transport=HTTPS @{Port=`"$Port`";Hostname=`"$HostName`";CertificateThumbprint=`"$thumbPrint`"}"
+    netsh http show sslcert ipport=0.0.0.0:$Port | Out-Null
+    if ($LastExitCode -eq 1)
+    {
+        Write-Log "No SSL Certificate Binding"
+        $WinrmCreate = "winrm create --% winrm/config/Listener?Address=*+Transport=HTTPS @{Port=`"$Port`";Hostname=`"$HostName`";CertificateThumbprint=`"$thumbPrint`"}"
+    }
+    else
+    {
+        Write-Log "SSL Certificate Already Binding to Port:($Port)"
+        $WinrmCreate = "winrm create --% winrm/config/Listener?Address=*+Transport=HTTPS @{Port=`"$Port`";Hostname=`"$HostName`";CertificateThumbprint=`"`"}"
+    }
     Write-Log "winrm create command: $($WinrmCreate)"
     invoke-expression $WinrmCreate
     Handle-LastExitCode
