@@ -12,28 +12,16 @@ Push-Location $PSScriptRoot
 
 ###################################################################################################
 
-
-$logFilePath="C:\installer\pre_install_tool.log"
-
-function Write-Log($content)
+function Write-Log($content, $logFilePath="C:\installer\pre_install_tool.log")
 {
     # Write-Debug $content
     Write-Host $content
-    $logDateTime=Get-Date
+    $logDateTime = Get-Date
     Add-Content $logFilePath -value "[$logDateTime] $content"
 }
 
 Write-Log "Hello World!!!"
 
-
-function test_01 
-{
-    param 
-    (
-        [string] $test
-    )
-    
-}
 
 # Install STAF
 netsh advfirewall firewall add rule name="Allow STAF" dir=in action=allow protocol=Any program="C:\staf\bin\stafproc.exe" | Out-Null

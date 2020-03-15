@@ -47,7 +47,7 @@ trap
 # Functions used in this script.
 #
 
-function Write-Log($content, $logFilePath="C:\installer\pre_install_tool.log")
+function Write-Log($content, $logFilePath="C:\installer\config.winrm.log")
 {
     # Write-Debug $content
     Write-Output $content
