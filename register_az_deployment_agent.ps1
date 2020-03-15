@@ -8,7 +8,7 @@ function change_az_agent_to_interactive_mode()
     param 
     (
     	[parameter(Mandatory=$true)]
-    	[ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty()]
 	    [string] $AgentTagrget,
 	    [string] $UserAccount,
 	    [string] $UserPwd,
@@ -33,4 +33,5 @@ function change_az_agent_to_interactive_mode()
         throw "[change_az_agent_to_interactive_mode][$($AgentTagrget)] Exception: $($_.Exception.GetType().FullName, $_.Exception.Message)"
     }
 }
+
 change_az_agent_to_interactive_mode
