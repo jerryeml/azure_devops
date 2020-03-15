@@ -14,12 +14,12 @@ function change_az_agent_to_interactive_mode()
 		[string] $UserPwd,
         [string] $AzureToken,
         [string] $Platform,
-		[string] $DeploymentTag = $AgentTagrget.Replace("-vm", ""),
-		[string] $GroupTag = $AgentTagrget.Split("-")[-1],
-		[string] $AgentPoolConfig = $g_GBParamTable.AZURE_VSTS_AGENT_CONFIG,
-		[string] $AzureDevopsProjectUrl = $g_GBParamTable.azure_devops_project_url,
-		[string] $AzureDevopsProject =$g_GBParamTable.azure_devops_project,
-		[string] $AzureDevopsDeployGroup = $g_GBParamTable.azure_devops_deployment_group
+		[string] $AgentPoolConfig,
+		[string] $AzureDevopsProjectUrl,
+		[string] $AzureDevopsProject,
+        [string] $AzureDevopsDeployGroup,
+        [string] $DeploymentTag = $AgentTagrget.Replace("-vm", ""),
+		[string] $GroupTag = $AgentTagrget.Split("-")[-1]
 	)
 	try
 	{
