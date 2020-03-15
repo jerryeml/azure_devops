@@ -74,29 +74,9 @@ function download_azure_pipeline_agent
     Invoke-WebRequest https://vstsagentpackage.azureedge.net/agent/2.165.1/vsts-agent-win-x64-2.165.1.zip -OutFile C:\VSTSwinAgent\agent.zip
     # Start-Sleep -s 30
     Expand-Archive C:\VSTSwinAgent\agent.zip -DestinationPath C:\VSTSwinAgent -Force
+
+    Invoke-WebRequest https://raw.githubusercontent.com/jerryeml/azure_devops/master/register_az_deployment_agent.ps1 -OutFile C:\installer\register_az_deployment_agent.ps1
 }
-
-
-# function register_to_azure_deployment_group 
-# {
-#     [CmdletBinding()]
-# 	param 
-# 	(
-# 		[parameter(Mandatory=$true)]
-# 		[ValidateNotNullOrEmpty()]
-# 		[string] $AgentTagrget,
-# 		[string] $UserAccount,
-# 		[string] $UserPwd,
-# 		[string] $AzureToken,
-# 		[string] $DeploymentTag = $AgentTagrget.Replace("-vm", ""),
-# 		[string] $GroupTag = $AgentTagrget.Split("-")[-1],
-# 		[string] $AgentPoolConfig = $g_GBParamTable.AZURE_VSTS_AGENT_CONFIG,
-# 		[string] $AzureDevopsProjectUrl = $g_GBParamTable.azure_devops_project_url,
-# 		[string] $AzureDevopsProject =$g_GBParamTable.azure_devops_project,
-# 		[string] $AzureDevopsDeployGroup = $g_GBParamTable.azure_devops_deployment_group
-# 	)
-
-# }
 
 
 function install_chocolatey
