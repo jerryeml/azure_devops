@@ -2,8 +2,9 @@
 param
 (
     [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
     [string] $HostName,
-    [string] $Port=5986
+    [string] $Port="443"
 )
 
 ###################################################################################################
@@ -30,6 +31,7 @@ trap
     $message = $error[0].Exception.Message
     if ($message)
     {
+        Write-Log $message
         Write-Output -Object "ERROR: $message" -ForegroundColor Red
     }
     
@@ -121,7 +123,7 @@ function Set-WinRMListener
     param
     (
         [string] $HostName,
-	[string] $Port
+	    [string] $Port
     )
 
     # Delete the WinRM Https listener, if it is already configured.
@@ -159,7 +161,7 @@ function Add-FirewallException
         [string] $Port
     )
 
-    $ruleName = "Windows Remote Management (HTTPS-In)"
+    $ruleName = "Allow WinRm in" # Windows Remote Management (HTTPS-In)
 
     # Determine if the rule already exists.
     netsh advfirewall firewall show rule name=$ruleName | Out-Null
@@ -182,10 +184,9 @@ try {
     $workdir = "c:\installer\"
 
     # Check if work directory exists if not create it
-
     if (Test-Path -Path $workdir -PathType Container)
     { 
-        Write-Output "$workdir already exists" -ForegroundColor Red
+        Write-Log "$workdir already exists" -ForegroundColor Red
     }
     else
     {
@@ -206,7 +207,8 @@ try {
         $webclient.DownloadFile($source, $destination)
     }
 
-    Write-Log 'Add firewall exception for port 5986.'
+    Write-Log "The Host name: $($HostName) and Port: $($Port)"
+    Write-Log "Add firewall exception for port $($Port)."
     Add-FirewallException -Port $Port
 
     # Ensure that the service is running and is accepting requests.
