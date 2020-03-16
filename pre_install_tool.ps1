@@ -88,6 +88,23 @@ function install_chocolatey
 }
 
 
+function handel_firewarll_rules 
+{
+    netsh advfirewall firewall show rule name="Allow Python27" dir=in | Out-Null
+    if ($LastExitCode -eq 1 )
+    {
+        netsh advfirewall firewall add rule name="Allow Python27" dir=in action=allow program="C:\Python27\python.exe"
+    }
+    netsh advfirewall firewall show rule name="Allow Python37" dir=in | Out-Null
+    if ($LastExitCode -eq 1 )
+    {
+        netsh advfirewall firewall add rule name="Allow Python37" dir=in action=allow program="C:\Python37\python.exe"
+    }
+}
+
+
+
+
 ###################################################################################################
 #
 # Main used in this script.
