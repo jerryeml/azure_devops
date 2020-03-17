@@ -148,7 +148,7 @@ function Set-WinRMListener
     # Delete the WinRM Https listener, if it is already configured.
     Remove-WinRMListener
 
-    # Create a test certificate.
+    Write-Log "Prepare to Create a test certificate"
     $cert = (Get-ChildItem cert:\LocalMachine\My | Where-Object { $_.Subject -eq "CN=" + $HostName } | Select-Object -Last 1)
     $thumbprint = $cert.Thumbprint
     if(-not $thumbprint)
