@@ -65,6 +65,7 @@ function Write-Log
     { 
         New-Item -Path $workdir  -ItemType directory | Out-Null
     }
+    Set-Location $workdir
 
     Write-Host $content
     $logDateTime = Get-Date
@@ -97,7 +98,6 @@ function New-Certificate
     # makecert ocassionally produces negative serial numbers, which golang tls/crypto < 1.6.1 cannot handle.
 	# https://github.com/golang/go/issues/8265
     $serial = Get-Random
-    cd $workdir
     .\makecert.exe -r -pe -n CN=$HostName -b 01/01/2012 -e 01/01/2022 -eku 1.3.6.1.5.5.7.3.1 -ss my -sr localmachine -sky exchange -sp "Microsoft RSA SChannel Cryptographic Provider" -sy 12 -# $serial 2>&1 | Out-Null
 
     $thumbprint=(Get-ChildItem cert:\Localmachine\my | Where-Object { $_.Subject -eq "CN=" + $HostName } | Select-Object -Last 1).Thumbprint
@@ -227,6 +227,7 @@ function install_staf_framework
 function download_makecert
 {
     # Download the makecert
+    $workdir = "c:\installer"
     $source = "https://raw.githubusercontent.com/jerryeml/azure_devops/master/makecert.exe"
     $destination = "$workdir\makecert.exe"
     
@@ -297,6 +298,9 @@ try
     download_azure_pipeline_agent
     install_chocolatey
     handel_firewarll_rules
+
+    Write-Log "WinRM Prepare"
+    Set-Location $workdir
     download_makecert
 
     Write-Log "The Host name: $($HostName) and Port: $($Port)"
