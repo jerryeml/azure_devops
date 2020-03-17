@@ -4,7 +4,8 @@ param
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
     [string] $HostName,
-    [string] $Port="443"
+    [string] $Port="5986",
+	[string] $workdir = "c:\installer\"
 )
 ###################################################################################################
 #
@@ -54,11 +55,9 @@ function Write-Log
     [CmdletBinding()]
     param (
         [string] $content,
-        [string] $logFilePath="C:\installer\pre_install_tool.log"
+        [string] $logFilePath="C:\installer\pre_install_tool.log",
+		[string] $workdir = "c:\installer\"
     )
-
-    # Path for the workdir
-    $workdir = "c:\installer\"
 
     # Check if work directory exists if not create it
     if (-not (Test-Path -Path $workdir -PathType Container))
