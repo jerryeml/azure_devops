@@ -47,8 +47,25 @@ trap
 #
 # Functions used in this script.
 #
-function Write-Log($content, $logFilePath="C:\installer\pre_install_tool.log")
+
+
+function Write-Log
 {
+    [CmdletBinding()]
+    param (
+        [string] $content,
+        [string] $logFilePath="C:\installer\pre_install_tool.log"
+    )
+
+    # Path for the workdir
+    $workdir = "c:\installer\"
+
+    # Check if work directory exists if not create it
+    if (-not (Test-Path -Path $workdir -PathType Container))
+    { 
+        New-Item -Path $workdir  -ItemType directory | Out-Null
+    }
+
     Write-Host $content
     $logDateTime = Get-Date
     Add-Content $logFilePath -value "[$logDateTime] $content"
@@ -207,6 +224,24 @@ function install_staf_framework
 }
 
 
+function download_makecert
+{
+    # Download the makecert
+    $source = "https://raw.githubusercontent.com/jerryeml/azure_devops/master/makecert.exe"
+    $destination = "$workdir\makecert.exe"
+    
+    if (Get-Command 'Invoke-Webrequest')
+    {
+        Invoke-WebRequest $source -OutFile $destination
+    }
+    else
+    {
+        $WebClient = New-Object System.Net.WebClient
+        $webclient.DownloadFile($source, $destination)
+    }
+}
+
+
 function download_azure_pipeline_agent
 {
     # Downlaod and extract VSTS windows agent
@@ -256,37 +291,13 @@ function handel_firewarll_rules
 #
 try
 {
-    # Path for the workdir
-    $workdir = "c:\installer\"
 
-    # Check if work directory exists if not create it
-    if (Test-Path -Path $workdir -PathType Container)
-    { 
-        Write-Log "$workdir already exists" -ForegroundColor Red
-    }
-    else
-    {
-        New-Item -Path $workdir -ItemType directory
-    }
     Write-Log "Ready to Start !!!"
     install_staf_framework
     download_azure_pipeline_agent
     install_chocolatey
     handel_firewarll_rules
-
-    # Download the makecert
-    $source = "https://raw.githubusercontent.com/jerryeml/azure_devops/master/makecert.exe"
-    $destination = "$workdir\makecert.exe"
-    
-    if (Get-Command 'Invoke-Webrequest')
-    {
-        Invoke-WebRequest $source -OutFile $destination
-    }
-    else
-    {
-        $WebClient = New-Object System.Net.WebClient
-        $webclient.DownloadFile($source, $destination)
-    }
+    download_makecert
 
     Write-Log "The Host name: $($HostName) and Port: $($Port)"
     Write-Log "Add firewall exception for port $($Port)."
