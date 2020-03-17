@@ -256,12 +256,6 @@ function handel_firewarll_rules
 #
 try
 {
-    Write-Log "Ready to Start !!!"
-    install_staf_framework
-    download_azure_pipeline_agent
-    install_chocolatey
-    handel_firewarll_rules
-
     # Path for the workdir
     $workdir = "c:\installer\"
 
@@ -272,8 +266,13 @@ try
     }
     else
     {
-        New-Item -Path $workdir  -ItemType directory
+        New-Item -Path $workdir -ItemType directory
     }
+    Write-Log "Ready to Start !!!"
+    install_staf_framework
+    download_azure_pipeline_agent
+    install_chocolatey
+    handel_firewarll_rules
 
     # Download the makecert
     $source = "https://raw.githubusercontent.com/jerryeml/azure_devops/master/makecert.exe"
