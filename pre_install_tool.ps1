@@ -55,7 +55,7 @@ function Write-Log($content, $logFilePath="C:\installer\pre_install_tool.log")
 }
 
 
-function Handle-LastExitCode
+function handle_lastexitcode
 {
     [CmdletBinding()]
     param(
@@ -160,10 +160,10 @@ function Set-WinRMListener
     }
     Write-Log "winrm create command: $($WinrmCreate)"
     invoke-expression $WinrmCreate
-    Handle-LastExitCode
+    handle_lastexitcode
 
     winrm set winrm/config/service/auth '@{Basic="true"}'
-    Handle-LastExitCode
+    handle_lastexitcode
 }
 
 function Add-FirewallException
@@ -182,13 +182,13 @@ function Add-FirewallException
         # Delete the existing rule.
         Write-Log "Delete the existing rule"
         netsh advfirewall firewall delete rule name=$ruleName dir=in protocol=TCP localport=$Port | Out-Null
-        Handle-LastExitCode
+        handle_lastexitcode
     }
 
     # Add a new firewall rule.
     Write-Log "Add a new firewall rule."
     netsh advfirewall firewall add rule name=$ruleName dir=in action=allow protocol=TCP localport=$Port | Out-Null
-    Handle-LastExitCode
+    handle_lastexitcode
 }
 
 
