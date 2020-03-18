@@ -5,7 +5,7 @@ param
     [ValidateNotNullOrEmpty()]
     [string] $HostName,
     [string] $Port="5986",
-	[string] $workdir = "c:\installer\"
+    [string] $workdir = "c:\installer\"
 )
 ###################################################################################################
 #
@@ -56,7 +56,7 @@ function Write-Log
     param (
         [string] $content,
         [string] $logFilePath="C:\installer\pre_install_tool.log",
-		[string] $workdir = "c:\installer\"
+	    [string] $workdir = "c:\installer\"
     )
 
     # Check if work directory exists if not create it
@@ -141,7 +141,7 @@ function Set-WinRMListener
     param
     (
         [string] $HostName,
-	    [string] $Port
+        [string] $Port
     )
 
     # Delete the WinRM Https listener, if it is already configured.
@@ -319,6 +319,8 @@ try
     Set-WinRMListener -HostName $HostName -Port $Port
 
     Write-Log 'Artifact completed successfully.'
+
+    Start-Sleep -s 60
 }
 finally
 {
