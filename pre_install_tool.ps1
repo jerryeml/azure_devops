@@ -319,8 +319,6 @@ try
     Set-WinRMListener -HostName $HostName -Port $Port
 
     Write-Log 'Artifact completed successfully.'
-
-    Start-Sleep -s 60
 }
 finally
 {
