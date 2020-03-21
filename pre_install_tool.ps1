@@ -208,6 +208,27 @@ function Add-FirewallException
 }
 
 
+function set_network_to_private
+{
+    $current_network_category = Get-NetConnectionProfile
+    Write-Log "Before change Network Category: $($current_network_category)"
+    Set-NetConnectionProfile -NetworkCategory Private
+    $after_network_category = Get-NetConnectionProfile
+    Write-Log "After change Network Category: $($after_network_category)"
+    Get-NetConnectionProfile -NetworkCategory Private
+}
+
+
+function set_network_to_public
+{
+    $current_network_category = Get-NetConnectionProfile
+    Write-Log "Before change Network Category: $($current_network_category)"
+    Set-NetConnectionProfile -NetworkCategory Public
+    $after_network_category = Get-NetConnectionProfile
+    Write-Log "After change Network Category: $($after_network_category)"
+    Get-NetConnectionProfile -NetworkCategory Public
+}
+
 function install_staf_framework 
 {
     netsh advfirewall firewall add rule name="Allow STAF" dir=in action=allow protocol=Any program="C:\staf\bin\stafproc.exe" | Out-Null
@@ -308,6 +329,7 @@ try
     Add-FirewallException -Port $Port
 
     # Ensure that the service is running and is accepting requests.
+    set_network_to_private
     winrm quickconfig -force
 
     # The default MaxEnvelopeSizekb on Windows Server is 500 Kb which is very less. It needs to be at 8192 Kb.
@@ -319,6 +341,7 @@ try
     Write-Log 'Configuring WinRM listener.'
     Set-WinRMListener -HostName $HostName -Port $Port
 
+    set_network_to_public
     Write-Log 'Artifact completed successfully.'
 
     Start-Sleep -s 60

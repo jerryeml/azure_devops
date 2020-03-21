@@ -189,6 +189,29 @@ function Add-FirewallException
     Handle-LastExitCode
 }
 
+
+function set_network_to_private
+{
+    $current_network_category = Get-NetConnectionProfile
+    Write-Log "Before change Network Category: $($current_network_category)"
+    Set-NetConnectionProfile -NetworkCategory Private
+    $after_network_category = Get-NetConnectionProfile
+    Write-Log "After change Network Category: $($after_network_category)"
+    Get-NetConnectionProfile -NetworkCategory Private    
+}
+
+
+function set_network_to_public
+{
+    $current_network_category = Get-NetConnectionProfile
+    Write-Log "Before change Network Category: $($current_network_category)"
+    Set-NetConnectionProfile -NetworkCategory Public
+    $after_network_category = Get-NetConnectionProfile
+    Write-Log "After change Network Category: $($after_network_category)"
+    Get-NetConnectionProfile -NetworkCategory Public
+}
+
+
 try {
     # Path for the workdir
     $workdir = "c:\installer\"
@@ -221,6 +244,8 @@ try {
     Write-Log "Add firewall exception for port $($Port)."
     Add-FirewallException -Port $Port
 
+    set_network_to_private
+
     # Ensure that the service is running and is accepting requests.
     winrm quickconfig -force
 
@@ -233,6 +258,7 @@ try {
     Write-Log 'Configuring WinRM listener.'
     Set-WinRMListener -HostName $HostName -Port $Port
 
+    set_network_to_public
     Write-Log 'Artifact completed successfully.'
 }
 finally {
