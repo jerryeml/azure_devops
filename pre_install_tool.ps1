@@ -344,8 +344,8 @@ try
     set_network_to_public
     Write-Log 'Artifact completed successfully.'
 
-    Start-Sleep -s 30
-    Write-Log 'Sleep for 30 secs'
+    Start-Sleep -s 60
+    Write-Log 'Sleep for 60 secs'
 }
 finally
 {
