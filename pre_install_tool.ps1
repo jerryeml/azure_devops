@@ -320,32 +320,32 @@ try
     install_chocolatey
     handel_firewarll_rules
 
-    # Write-Log "WinRM Prepare"
-    # Set-Location $workdir
-    # download_makecert
+    Write-Log "WinRM Prepare"
+    Set-Location $workdir
+    download_makecert
 
-    # Write-Log "The Host name: $($HostName) and Port: $($Port)"
-    # Write-Log "Add firewall exception for port $($Port)."
-    # Add-FirewallException -Port $Port
+    Write-Log "The Host name: $($HostName) and Port: $($Port)"
+    Write-Log "Add firewall exception for port $($Port)."
+    Add-FirewallException -Port $Port
 
-    # # Ensure that the service is running and is accepting requests.
-    # set_network_to_private
-    # winrm quickconfig -force
+    # Ensure that the service is running and is accepting requests.
+    set_network_to_private
+    winrm quickconfig -force
 
-    # # The default MaxEnvelopeSizekb on Windows Server is 500 Kb which is very less. It needs to be at 8192 Kb.
-    # # The small envelop size, if not changed, results in the WS-Management service responding with an error that
-    # # the request size exceeded the configured MaxEnvelopeSize quota.
-    # Write-Log 'Configuring MaxEnvelopeSize to 8192 kb.'
-    # winrm set winrm/config '@{MaxEnvelopeSizekb = "8192"}'
+    # The default MaxEnvelopeSizekb on Windows Server is 500 Kb which is very less. It needs to be at 8192 Kb.
+    # The small envelop size, if not changed, results in the WS-Management service responding with an error that
+    # the request size exceeded the configured MaxEnvelopeSize quota.
+    Write-Log 'Configuring MaxEnvelopeSize to 8192 kb.'
+    winrm set winrm/config '@{MaxEnvelopeSizekb = "8192"}'
 
-    # Write-Log 'Configuring WinRM listener.'
-    # Set-WinRMListener -HostName $HostName -Port $Port
+    Write-Log 'Configuring WinRM listener.'
+    Set-WinRMListener -HostName $HostName -Port $Port
 
-    # set_network_to_public
-    # Write-Log 'Artifact completed successfully.'
+    set_network_to_public
+    Write-Log 'Artifact completed successfully.'
 
-    # Start-Sleep -s 60
-    # Write-Log 'Sleep for 60 secs'
+    Start-Sleep -s 60
+    Write-Log 'Sleep for 60 secs'
 }
 finally
 {
