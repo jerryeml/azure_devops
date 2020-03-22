@@ -346,9 +346,9 @@ function handel_firewarll_rules
 try
 {
     Write-Log "Prepare to installl packages"
+    download_azure_pipeline_agent
     set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
     install_staf_framework
-    download_azure_pipeline_agent
     install_chocolatey
     handel_firewarll_rules
     Write-Log 'Artifact completed successfully.'
