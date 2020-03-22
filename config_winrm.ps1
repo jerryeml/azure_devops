@@ -15,6 +15,7 @@ param
 # NOTE: Because the $ErrorActionPreference is "Stop", this script will stop on first failure.
 #       This is necessary to ensure we capture errors inside the try-catch-finally block.
 $ErrorActionPreference = "Stop"
+$ProgressPreference = "SilentlyContinue"
 
 # Ensure we set the working directory to that of the script.
 Push-Location $PSScriptRoot
