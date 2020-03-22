@@ -197,7 +197,7 @@ function Add-FirewallException
     {
         # Delete the existing rule.
         Write-Log "Delete the existing rule"
-        netsh advfirewall firewall delete rule name=$ruleName dir=in protocol=TCP localport=$Port | Out-Null
+        netsh advfirewall firewall delete rule name=$ruleName dir=in protocol=TCP | Out-Null
         handle_lastexitcode
     }
 
@@ -206,43 +206,6 @@ function Add-FirewallException
     netsh advfirewall firewall add rule name=$ruleName dir=in action=allow protocol=TCP localport=$Port | Out-Null
     handle_lastexitcode
 }
-
-
-function set_network_to_private
-{
-    $current_network_category = Get-NetConnectionProfile
-    Write-Log "Before change Network Category: $($current_network_category)"
-    Set-NetConnectionProfile -NetworkCategory Private
-    $after_network_category = Get-NetConnectionProfile
-    Write-Log "After change Network Category: $($after_network_category)"
-    Get-NetConnectionProfile -NetworkCategory Private
-}
-
-
-function set_network_to_public
-{
-    $current_network_category = Get-NetConnectionProfile
-    Write-Log "Before change Network Category: $($current_network_category)"
-    Set-NetConnectionProfile -NetworkCategory Public
-    $after_network_category = Get-NetConnectionProfile
-    Write-Log "After change Network Category: $($after_network_category)"
-    Get-NetConnectionProfile -NetworkCategory Public
-}
-
-function install_staf_framework 
-{
-    netsh advfirewall firewall add rule name="Allow STAF" dir=in action=allow protocol=Any program="C:\staf\bin\stafproc.exe" | Out-Null
-    $is_staf_process_exist = Get-Process stafproc -ErrorAction SilentlyContinue
-    if ($is_staf_process_exist) 
-    {
-        Write-Log "STAF Exists!"
-    }
-    else
-    {
-        Write-Log "Need to install STAF"
-    }
-}
-
 
 function download_makecert
 {
@@ -259,6 +222,75 @@ function download_makecert
     {
         $WebClient = New-Object System.Net.WebClient
         $webclient.DownloadFile($source, $destination)
+    }
+}
+
+function set_network_to_private
+{
+    $current_network_category = Get-NetConnectionProfile
+    Write-Log "Before change Network Category: $($current_network_category)"
+    Set-NetConnectionProfile -NetworkCategory Private
+    $after_network_category = Get-NetConnectionProfile
+    Write-Log "After change Network Category: $($after_network_category)"
+    Get-NetConnectionProfile -NetworkCategory Private
+}
+
+function set_network_to_public
+{
+    $current_network_category = Get-NetConnectionProfile
+    Write-Log "Before change Network Category: $($current_network_category)"
+    Set-NetConnectionProfile -NetworkCategory Public
+    $after_network_category = Get-NetConnectionProfile
+    Write-Log "After change Network Category: $($after_network_category)"
+    Get-NetConnectionProfile -NetworkCategory Public
+}
+
+function set_winrm_https_to_specify_port
+{
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $HostName,
+        [string] $Port="5986",
+        [string] $workdir = "c:\installer\"
+    )
+    Write-Log "WinRM Prepare"
+    Set-Location $workdir
+    download_makecert
+
+    Write-Log "The Host name: $($HostName) and Port: $($Port)"
+    Write-Log "Add firewall exception for port $($Port)."
+    Add-FirewallException -Port $Port
+
+    # Ensure that the service is running and is accepting requests.
+    set_network_to_private
+    winrm quickconfig -force
+
+    # The default MaxEnvelopeSizekb on Windows Server is 500 Kb which is very less. It needs to be at 8192 Kb.
+    # The small envelop size, if not changed, results in the WS-Management service responding with an error that
+    # the request size exceeded the configured MaxEnvelopeSize quota.
+    Write-Log 'Configuring MaxEnvelopeSize to 8192 kb.'
+    winrm set winrm/config '@{MaxEnvelopeSizekb = "8192"}'
+
+    Write-Log 'Configuring WinRM listener.'
+    Set-WinRMListener -HostName $HostName -Port $Port
+
+    set_network_to_public
+    Write-Log "Set winrm Successfully"
+}
+
+function install_staf_framework 
+{
+    netsh advfirewall firewall add rule name="Allow STAF" dir=in action=allow protocol=Any program="C:\staf\bin\stafproc.exe" | Out-Null
+    $is_staf_process_exist = Get-Process stafproc -ErrorAction SilentlyContinue
+    if ($is_staf_process_exist) 
+    {
+        Write-Log "STAF Exists!"
+    }
+    else
+    {
+        Write-Log "Need to install STAF"
     }
 }
 
@@ -313,39 +345,13 @@ function handel_firewarll_rules
 #
 try
 {
-
-    Write-Log "Ready to Start !!!"
+    Write-Log "Prepare to installl packages"
+    set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
     install_staf_framework
     download_azure_pipeline_agent
     install_chocolatey
     handel_firewarll_rules
-
-    Write-Log "WinRM Prepare"
-    Set-Location $workdir
-    download_makecert
-
-    Write-Log "The Host name: $($HostName) and Port: $($Port)"
-    Write-Log "Add firewall exception for port $($Port)."
-    Add-FirewallException -Port $Port
-
-    # Ensure that the service is running and is accepting requests.
-    set_network_to_private
-    winrm quickconfig -force
-
-    # The default MaxEnvelopeSizekb on Windows Server is 500 Kb which is very less. It needs to be at 8192 Kb.
-    # The small envelop size, if not changed, results in the WS-Management service responding with an error that
-    # the request size exceeded the configured MaxEnvelopeSize quota.
-    Write-Log 'Configuring MaxEnvelopeSize to 8192 kb.'
-    winrm set winrm/config '@{MaxEnvelopeSizekb = "8192"}'
-
-    Write-Log 'Configuring WinRM listener.'
-    Set-WinRMListener -HostName $HostName -Port $Port
-
-    set_network_to_public
     Write-Log 'Artifact completed successfully.'
-
-    Start-Sleep -s 60
-    Write-Log 'Sleep for 60 secs'
 }
 finally
 {
