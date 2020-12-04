@@ -3,10 +3,6 @@
 # PowerShell configurations
 #
 
-# NOTE: Because the $ErrorActionPreference is "Stop", this script will stop on first failure.
-#       This is necessary to ensure we capture errors inside the try-catch-finally block.
-$ErrorActionPreference = "Stop"
-
 # Make download speed more faster
 $ProgressPreference = "SilentlyContinue"
 
