@@ -63,12 +63,6 @@ rm -Force $workdir\firefox*
 # copy geckodriver
 Invoke-WebRequest https://github.com/Microsoft/almvm/blob/master/labs/vstsextend/selenium/armtemplate/geckodriver.exe?raw=true -OutFile "C:\Program Files\Mozilla Firefox\geckodriver.exe"
 
-# Downlaod and extract VSTS windows agent
-mkdir C:\VSTSwinAgent ;
-Invoke-WebRequest https://vstsagentpackage.azureedge.net/agent/2.142.1/vsts-agent-win-x64-2.142.1.zip -OutFile C:\VSTSwinAgent\agent.zip
-# Start-Sleep -s 30
-Expand-Archive C:\VSTSwinAgent\agent.zip -DestinationPath C:\VSTSwinAgent
-
 # Set Execution Policy
 Set-ExecutionPolicy Unrestricted -Force
 
