@@ -171,10 +171,12 @@ function download_azure_pipeline_agent
     }
 
     Invoke-WebRequest https://vstsagentpackage.azureedge.net/agent/2.165.1/vsts-agent-win-x64-2.165.1.zip -OutFile C:\VSTSwinAgent\agent.zip
-    # Start-Sleep -s 30
+
     Expand-Archive C:\VSTSwinAgent\agent.zip -DestinationPath C:\VSTSwinAgent -Force
 
     Invoke-WebRequest https://raw.githubusercontent.com/jerryeml/azure_devops/master/register_az_deployment_agent.ps1 -OutFile C:\installer\register_az_deployment_agent.ps1
+
+    Start-Sleep -s 3
 }
 
 
