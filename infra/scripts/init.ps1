@@ -246,7 +246,7 @@ try
 {
     Write-Log "Prepare to installl packages"
     download_azure_pipeline_agent
-    register_az_deployment_interactive_agent -UserAccount $UserAccount -UserPwd $UserPwd -AzureToken $AzureToken -Platform $Platform -AgentPoolConfig $AgentPoolConfig -AzureDevopsProjectUrl $AzureDevopsProjectUrl -AzureDevopsProject $AzureDevopsProject -AzureDevopsDeployGroup $AzureDevopsDeployGroup
+    register_az_deployment_interactive_agent -UserAccount $UserAccount -UserPwd $UserPwd -AzureToken $AzureToken -AgentTags $AgentTags -AgentPoolConfig $AgentPoolConfig -AzureDevopsProjectUrl $AzureDevopsProjectUrl -AzureDevopsProject $AzureDevopsProject -AzureDevopsDeployGroup $AzureDevopsDeployGroup
     install_staf_framework
     install_chocolatey
     handel_firewarll_rules
