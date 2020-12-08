@@ -214,12 +214,17 @@ function register_az_deployment_interactive_agent
 
         Write-Log "params: $settings"
         Start-Process -FilePath $AgentPoolConfig -NoNewWindow -ArgumentList "--unattended --deploymentGroup --url $AzureDevopsProjectUrl --auth pat --token $AzureToken --projectName $AzureDevopsProject --deploymentGroupName $AzureDevopsDeployGroup --agent $AgentTagrget-DG --replace --addDeploymentGroupTags --deploymentGroupTags `"$AgentTagrget, $AgentTags`" --runAsAutoLogon --windowsLogonAccount $UserAccount --windowsLogonPassword $UserPwd --noRestart"
+
         $nid = (Get-Process cmd).id
+        Write-Log "az agent install process nid: $nid"
+
         Wait-Process -Id $nid
+        Write-Log "az agent install complete"
         return $true
     }
     catch
     {
+        Write-Log "[register_az_deployment_agent][$($AgentTagrget)] Exception: $($_.Exception.GetType().FullName, $_.Exception.Message)"
         throw "[register_az_deployment_agent][$($AgentTagrget)] Exception: $($_.Exception.GetType().FullName, $_.Exception.Message)"
     }
 }
