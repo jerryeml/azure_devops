@@ -200,7 +200,19 @@ function register_az_deployment_interactive_agent
 
     try
     {
-        Write-Log "params: UserAccount: $($UserAccount), UserPwd: $($UserPwd), AgentPoolConfig: $($AgentPoolConfig)"
+        $settings = @{
+            "UserAccount"= $UserAccount;
+            "UserPwd"= $UserPwd;
+            "AzureToken"= $AzureToken;
+            "AgentTags"= $AgentTags;
+            "AgentPoolConfig"= $AgentPoolConfig;
+            "AzureDevopsProjectUrl"= $AzureDevopsProjectUrl;
+            "AzureDevopsProject"= $AzureDevopsProject;
+            "AzureDevopsDeployGroup"= $AzureDevopsDeployGroup;
+            "AgentTagrget"= $AgentTagrget;
+        }
+
+        Write-Log "params: $settings"
         Start-Process -FilePath $AgentPoolConfig -NoNewWindow -ArgumentList "--unattended --deploymentGroup --url $AzureDevopsProjectUrl --auth pat --token $AzureToken --projectName $AzureDevopsProject --deploymentGroupName $AzureDevopsDeployGroup --agent $AgentTagrget-DG --replace --addDeploymentGroupTags --deploymentGroupTags `"$AgentTagrget, $AgentTags`" --runAsAutoLogon --windowsLogonAccount $UserAccount --windowsLogonPassword $UserPwd --noRestart"
         $nid = (Get-Process cmd).id
         Wait-Process -Id $nid
