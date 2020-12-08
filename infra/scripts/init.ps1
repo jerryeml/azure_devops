@@ -217,8 +217,7 @@ function register_az_deployment_interactive_agent
 
         $nid = (Get-Process cmd).id
         Write-Log "az agent install process nid: $nid"
-
-        Wait-Process -Id $nid
+        # Wait-Process -Id $nid
         Write-Log "az agent install complete"
         return $true
     }
