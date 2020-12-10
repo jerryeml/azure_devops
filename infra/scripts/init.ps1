@@ -195,7 +195,7 @@ function register_az_deployment_interactive_agent
         [string] $AzureDevopsProjectUrl,
         [string] $AzureDevopsProject,
         [string] $AzureDevopsDeployGroup,
-        [string] $AgentTagrget = $env:computername
+        [string] $AgentTagrget = ($env:computername -split "-")[0]
     )
 
     try
@@ -217,8 +217,6 @@ function register_az_deployment_interactive_agent
 
         $nid = (Get-Process cmd).id
         Write-Log "az agent install process nid: $nid"
-        # Wait-Process -Id $nid
-        Write-Log "az agent install complete"
         return $true
     }
     catch
