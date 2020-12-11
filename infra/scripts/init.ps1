@@ -195,7 +195,7 @@ function register_az_deployment_interactive_agent
         [string] $AzureDevopsProjectUrl,
         [string] $AzureDevopsProject,
         [string] $AzureDevopsDeployGroup,
-        [string] $AgentTagrget = ($env:computername -split "-")[-1]
+        [string] $AgentTagrget = ($env:computername -split "-")[0] + ($env:computername -split "-")[-1]
     )
 
     try
