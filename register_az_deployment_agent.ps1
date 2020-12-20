@@ -7,7 +7,6 @@ param
 (
     [parameter(Mandatory=$true)]
     [ValidateNotNullOrEmpty()]
-    [string] $AgentTagrget,
     [string] $UserAccount,
     [string] $UserPwd,
     [string] $AzureToken,
@@ -16,6 +15,7 @@ param
     [string] $AzureDevopsProjectUrl,
     [string] $AzureDevopsProject,
     [string] $AzureDevopsDeployGroup,
+    [string] $AgentTagrget = $env:computername,
     [string] $DeploymentTag = $AgentTagrget.Replace("-vm", ""),
     [string] $GroupTag = $AgentTagrget.Split("-")[-1]
 )
