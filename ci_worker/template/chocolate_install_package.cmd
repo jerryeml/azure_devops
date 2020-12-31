@@ -21,4 +21,4 @@ choco install sysinternals -y
 choco install winmerge -y 
 choco install postman -y
 choco install wireshark -y
-choco install python3 --version=3.8.1 -y
+choco install python --version=3.8.5.20200721 -y
