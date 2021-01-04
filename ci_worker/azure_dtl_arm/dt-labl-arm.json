@@ -1,0 +1,212 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "internal_agent_testing_lab_name": {
+      "type": "string",
+      "defaultValue": "dtl-interal-testing"
+    },
+    "source_sa_name": {
+      "defaultValue": "autovhdwus",
+        "type": "String"
+    },
+    "source_container_name": {
+      "defaultValue": "en-157",
+      "type": "String"
+    },
+    "osce_source_vhd": {
+      "defaultValue": "osce-en-gv157-2020101511.vhd",
+      "type": "String"
+    },
+    "tmcm_source_vhd": {
+      "defaultValue": "tmcm-en-gv157-2020101511.vhd",
+      "type": "String"
+    },
+    "virtualNetworkResourceGroup": {
+      "defaultValue": "wu2-deployment",
+      "type": "String",
+      "metadata": {
+        "description": "Name of the existing VNET resource group"
+      }
+    },
+    "virtualNetworkName": {
+      "defaultValue": "wu2-trend-vnet",
+      "type": "String",
+      "metadata": {
+        "description": "Name of the existing VNET"
+      }
+    },
+    "vnetSubnetName": {
+      "defaultValue": "default",
+      "type": "String",
+      "metadata": {
+        "description": "Name of the existing SUBNET"
+      }
+    },
+    "vm_name": {
+      "type": "string",
+      "defaultValue": "test-vm"
+    },
+    "vm_size": {
+      "type": "string",
+      "defaultValue": "Standard_B2ms",
+      "metadata": {
+        "description": "The size of the new vm to be created."
+      }
+    },
+    "user": {
+      "type": "string",
+      "defaultValue": "trend",
+      "metadata": {
+        "description": "The username for the local account that will be created on the new vm."
+      }
+    },
+    "password": {
+      "type": "securestring",
+      "defaultValue": "Osce@1234$jojo",
+      "metadata": {
+        "description": "The password for the local account that will be created on the new vm."
+      }
+    },
+    "interal_testing_tags": {
+      "type": "string",
+      "defaultValue": "osce",
+      "metadata": {
+        "description": "description"
+      }
+    }
+  },
+  "variables": {
+    "lab_vnet_name": "[concat('vnet-', parameters('internal_agent_testing_lab_name'))]",
+    "lab_subnet_name": "[concat(variables('lab_vnet_name'), 'Subnet')]",
+    "lab_vnet_id": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', parameters('internal_agent_testing_lab_name'), variables('lab_vnet_name'))]",
+    "resource_vm_name": "[concat(parameters('internal_agent_testing_lab_name'), '-', parameters('vm_name'))]",
+    "OSCEvmImageName": "[concat('vmImage-', parameters('interal_testing_tags'))]",
+    "vnet_reference_id": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "subnet_reference_id": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'),  parameters('vnetSubnetName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-09-15",
+      "type": "Microsoft.DevTestLab/labs",
+      "name": "[parameters('internal_agent_testing_lab_name')]",
+      "location": "[resourceGroup().location]",
+      "resources": [
+        {
+          "apiVersion": "2018-09-15",
+          "name": "[parameters('virtualNetworkName')]",
+          "type": "virtualNetworks",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "description": "Existing Compute virtual network associated as part of the lab creation process.",
+            "externalProviderResourceId": "[variables('vnet_reference_id')]",
+            "subnetOverrides": [
+              {
+                "name": "[parameters('vnetSubnetName')]",
+                "resourceId": "[variables('subnet_reference_id')]",
+                "useInVmCreationPermission": "Allow",
+                "usePublicIpAddressPermission": "Allow"
+              }
+            ]
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_agent_testing_lab_name'))]"
+          ]
+        },
+        {
+          "type": "schedules",
+          "apiVersion": "2018-09-15",
+          "name": "LabVmsShutdown",
+          "properties": {
+            "status": "Disabled",
+            "timeZoneId": "Taipei Standard Time",
+            "taskType": "LabVmsShutdownTask",
+            "notificationSettings": {
+              "status": "Disabled",
+              "timeInMinutes": 10
+            },
+            "dailyRecurrence": {
+              "time": "1200"
+            }
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_agent_testing_lab_name'))]"
+          ]
+        },
+        {
+          "type": "schedules",
+          "apiVersion": "2018-09-15",
+          "name": "LabVmAutoStart",
+          "properties": {
+            "status": "Disabled",
+            "timeZoneId": "Taipei Standard Time",
+            "taskType": "LabVmsStartupTask",
+            "notificationSettings": {
+              "status": "Disabled",
+              "timeInMinutes": 10
+            },
+            "weeklyRecurrence": {
+              "time": "1300",
+              "weekdays": [
+                "Sunday"
+              ]
+            }
+          },
+           "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_agent_testing_lab_name'))]"
+          ]
+        }
+        // {
+        //   "type": "virtualmachines",
+        //   "apiVersion": "2018-09-15",
+        //   "name": "[variables('resource_vm_name')]",
+        //   "location": "[resourceGroup().location]",
+        //   "properties": {
+        //     "customImageId": "[resourceId('Microsoft.DevTestLab/labs/customimages', variables('OSCEvmImageName'))]",
+        //     "size": "[parameters('vm_size')]",
+        //     "isAuthenticationWithSshKey": false,
+        //     "sshKey": "",
+        //     "userName": "[parameters('user')]",
+        //     "password": "[parameters('password')]",
+        //     "labVirtualNetworkId": "[variables('lab_vnet_id')]",
+        //     "labSubnetName": "[variables('lab_subnet_name')]",
+        //     "disallowPublicIpAddress": false,
+        //     "allowClaim": false
+        //   }
+        // }
+      ],
+      "properties": {
+        "environmentPermission": "Contributor",
+        "labStorageType": "StandardSSD",
+        "mandatoryArtifactsResourceIdsLinux": [
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_agent_testing_lab_name'), 'public repo', 'linux-install-docker')]"
+        ],
+        "mandatoryArtifactsResourceIdsWindows": [
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_agent_testing_lab_name'), 'public repo', 'windows-awscli')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_agent_testing_lab_name'), 'public repo', 'windows-7zip')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_agent_testing_lab_name'), 'public repo', 'windows-chrome')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_agent_testing_lab_name'), 'public repo', 'windows-git')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_agent_testing_lab_name'), 'public repo', 'windows-iis')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_agent_testing_lab_name'), 'public repo', 'windows-notepadplusplus')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_agent_testing_lab_name'), 'public repo', 'windows-ssms')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_agent_testing_lab_name'), 'public repo', 'windows-vscode')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_agent_testing_lab_name'), 'public repo', 'windows-azurepowershell')]"
+        ]
+      }
+    }
+    // {
+    //   "apiVersion": "2018-09-15",
+    //   "name": "[variables('OSCEvmImageName')]",
+    //   "type": "Microsoft.DevTestLab/labs/customimages",
+    //   "properties": {
+    //     "vhd": {
+    //       "imageName": "[concat('https://', parameters('source_sa_name'), '.blob.core.windows.net/', parameters('source_container_name'), '/', parameters('osce_source_vhd'))]",
+    //       "sysPrep": true,
+    //       "osType": "Windows"
+    //     }
+    //   }
+    // }
+  ],
+  "outputs": {
+  }
+}
