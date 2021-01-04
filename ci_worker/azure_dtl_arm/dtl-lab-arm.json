@@ -63,7 +63,7 @@
     },
     "password": {
       "type": "securestring",
-      "defaultValue": "Osce@1234$jojo",
+      "defaultValue": "test@1234!",
       "metadata": {
         "description": "The password for the local account that will be created on the new vm."
       }

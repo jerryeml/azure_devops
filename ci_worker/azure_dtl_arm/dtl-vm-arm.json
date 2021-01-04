@@ -1,0 +1,167 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "new_vm_name": {
+      "type": "string",
+      "defaultValue": "vm-worker",
+      "metadata": {
+        "description": "The name of the new vm to be created. (if you need to create mutil-vms at one time, the name should between 1 and 12 characters)"
+      }
+    },
+    "existing_lab_name": {
+      "type": "string",
+      "defaultValue": "dtl-az-devops-service",
+      "metadata": {
+        "description": "The name of an existing lab where the new vm will be created."
+      }
+    },
+    "existing_custom_image_id": {
+      "type": "string",
+      "metadata": {
+        "description": "The id of an existing custom image which will be used to create the new vm. The specified image must exist in the lab (identified via the 'existingLabName' parameter)."
+      }
+    },
+    "lab_subnet_name": {
+        "type": "string",
+        "defaultValue": "default",
+        "metadata": {
+            "description": "lab subnet name"
+        }
+    },
+    "lab_vnet_name": {
+        "type": "string",
+        "defaultValue": "wu2-trend-vnet",
+        "metadata": {
+            "description": "lab vnet name"
+        }
+    },
+    "vm_notes": {
+      "type": "string",
+      "allowedValues": [
+        "Windows 10 Enterprise, Version 1903",
+        "Windows Server 2016 Datacenter"
+      ]
+    },
+    "vm_offer": {
+      "type": "string",
+      "allowedValues": [
+        "Windows-10",
+        "WindowsServer"
+      ]
+    },
+    "vm_publisher": {
+      "type": "string",
+      "allowedValues": [
+        "MicrosoftWindowsDesktop",
+        "MicrosoftWindowsServer"
+      ]
+    },
+    "vm_sku": {
+      "type": "string",
+      "allowedValues": [
+        "19h1-ent",
+        "2016-Datacenter"
+      ]
+    },
+    "vm_os_type": {
+      "type": "string",
+      "defaultValue": "Windows"
+    },
+    "vm_size": {
+      "type": "string",
+      "defaultValue": "Standard_B2ms",
+      "allowedValues": [
+        "Standard_B2ms",
+        "Standard_D2s_v3",
+        "Standard_D4s_v3"
+      ],
+      "metadata": {
+        "description": "The size of the new vm to be created."
+      }
+    },
+    "vm_count": {
+        "type": "int",
+        "defaultValue": 1,
+        "metadata": {
+            "description": "vm count you want to deploy"
+        }
+    },
+    "user_name": {
+      "type": "string",
+      "defaultValue": "trend",
+      "metadata": {
+        "description": "The username for the local account that will be created on the new vm."
+      }
+    },
+    "password": {
+      "type": "securestring",
+      "defaultValue": "test@1234!",
+      "metadata": {
+        "description": "The password for the local account that will be created on the new vm."
+      }
+    },
+    "Windows_Firewall_operations_firewallOperation": {
+        "type": "string",
+        "defaultValue": "Disable Firewall"
+    }
+  },
+  "variables": {
+    "lab_vnet_id": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', parameters('existing_lab_name'), parameters('lab_vnet_name'))]",
+    "vm_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', parameters('existing_lab_name'), parameters('new_vm_name'))]",
+    "vm_name": "[concat(parameters('existing_lab_name'), '/', parameters('new_vm_name'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-09-15",
+      "type": "Microsoft.DevTestLab/labs/virtualMachines",
+      "name": "[concat(variables('vm_name'), padLeft(copyIndex(), 3, '0'))]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "[parameters('new_vm_name')]",
+        "count": "[parameters('vm_count')]"
+      },
+      "properties": {
+        "size": "[parameters('vm_size')]",
+        "isAuthenticationWithSshKey": false,
+        "sshKey": "",
+        "userName": "[parameters('user_name')]",
+        "password": "[parameters('password')]",
+        "labVirtualNetworkId": "[variables('lab_vnet_id')]",
+        "labSubnetName": "[parameters('lab_subnet_name')]",
+        "disallowPublicIpAddress": false,
+        "allowClaim": false,
+        // "customImageId": "[parameters('existing_custom_image_id')]",
+        "notes": "[parameters('vm_notes')]",
+        "galleryImageReference": {
+            "offer": "[parameters('vm_offer')]",
+            "publisher": "[parameters('vm_publisher')]",
+            "sku": "[parameters('vm_sku')]",
+            "osType": "[parameters('vm_os_type')]",
+            "version": "latest"
+        },
+        "storageType": "StandardSSD",
+        "artifacts": [
+            {
+                "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-selenium')]"
+            },
+            {
+                "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-firewall')]",
+                "parameters": [
+                    {
+                        "name": "firewallOperation",
+                        "value": "[parameters('Windows_Firewall_operations_firewallOperation')]"
+                    }
+                ]
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "lab_vm_id": {
+      "type": "string",
+      "value": "[variables('vm_id')]"
+    }
+  }
+}
