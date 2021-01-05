@@ -1,0 +1,406 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "internal_testing_lab_name": {
+      "type": "string",
+      "defaultValue": "dtl-interal-testing"
+    },
+    "dev_testing_lab_name": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "stg_testing_lab_name": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "prod_testing_lab_name": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "virtualNetworkResourceGroup": {
+      "defaultValue": "wu2-deployment",
+      "type": "String",
+      "metadata": {
+        "description": "Name of the existing VNET resource group"
+      }
+    },
+    "virtualNetworkName": {
+      "defaultValue": "wu2-trend-vnet",
+      "type": "String",
+      "metadata": {
+        "description": "Name of the existing VNET"
+      }
+    },
+    "vnetSubnetName": {
+      "defaultValue": "default",
+      "type": "String",
+      "metadata": {
+        "description": "Name of the existing SUBNET"
+      }
+    },
+    "testing_env_scope": {
+      "type": "string",
+      "defaultValue": "osce",
+      "allowedValues": [
+        "internal",
+        "dev",
+        "stg",
+        "prod"
+      ]
+    }
+  },
+  "variables": {
+    "vnet_reference_id": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "subnet_reference_id": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'),  parameters('vnetSubnetName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-09-15",
+      "type": "Microsoft.DevTestLab/labs",
+      "name": "[parameters('internal_testing_lab_name')]",
+      "location": "[resourceGroup().location]",
+      "resources": [
+        {
+          "apiVersion": "2018-09-15",
+          "name": "[parameters('virtualNetworkName')]",
+          "type": "virtualNetworks",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "description": "Existing Compute virtual network associated as part of the lab creation process.",
+            "externalProviderResourceId": "[variables('vnet_reference_id')]",
+            "subnetOverrides": [
+              {
+                "name": "[parameters('vnetSubnetName')]",
+                "resourceId": "[variables('subnet_reference_id')]",
+                "useInVmCreationPermission": "Allow",
+                "usePublicIpAddressPermission": "Allow"
+              }
+            ]
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+          ]
+        },
+        {
+          "type": "schedules",
+          "apiVersion": "2018-09-15",
+          "name": "LabVmsShutdown",
+          "properties": {
+            "status": "Disabled",
+            "timeZoneId": "Taipei Standard Time",
+            "taskType": "LabVmsShutdownTask",
+            "notificationSettings": {
+              "status": "Disabled",
+              "timeInMinutes": 10
+            },
+            "dailyRecurrence": {
+              "time": "1200"
+            }
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+          ]
+        },
+        {
+          "type": "schedules",
+          "apiVersion": "2018-09-15",
+          "name": "LabVmAutoStart",
+          "properties": {
+            "status": "Disabled",
+            "timeZoneId": "Taipei Standard Time",
+            "taskType": "LabVmsStartupTask",
+            "notificationSettings": {
+              "status": "Disabled",
+              "timeInMinutes": 10
+            },
+            "weeklyRecurrence": {
+              "time": "1300",
+              "weekdays": [
+                "Sunday"
+              ]
+            }
+          },
+           "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+          ]
+        }
+      ],
+      "properties": {
+        "environmentPermission": "Contributor",
+        "labStorageType": "StandardSSD",
+        "mandatoryArtifactsResourceIdsLinux": [
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'linux-install-docker')]"
+        ],
+        "mandatoryArtifactsResourceIdsWindows": [
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-awscli')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-7zip')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-chrome')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-git')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-iis')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-notepadplusplus')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-ssms')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-vscode')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-azurepowershell')]"
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.DevTestLab/labs",
+      "apiVersion": "2018-09-15",
+      "name": "[parameters('dev_testing_lab_name')]",
+      "location": "[resourceGroup().location]",
+      "resources": [
+        {
+          "apiVersion": "2018-09-15",
+          "name": "[parameters('virtualNetworkName')]",
+          "type": "virtualNetworks",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "description": "Existing Compute virtual network associated as part of the lab creation process.",
+            "externalProviderResourceId": "[variables('vnet_reference_id')]",
+            "subnetOverrides": [
+              {
+                "name": "[parameters('vnetSubnetName')]",
+                "resourceId": "[variables('subnet_reference_id')]",
+                "useInVmCreationPermission": "Allow",
+                "usePublicIpAddressPermission": "Allow"
+              }
+            ]
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+          ]
+        },
+        {
+          "type": "schedules",
+          "apiVersion": "2018-09-15",
+          "name": "LabVmsShutdown",
+          "properties": {
+            "status": "Disabled",
+            "timeZoneId": "Taipei Standard Time",
+            "taskType": "LabVmsShutdownTask",
+            "notificationSettings": {
+              "status": "Disabled",
+              "timeInMinutes": 10
+            },
+            "dailyRecurrence": {
+              "time": "1200"
+            }
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+          ]
+        },
+        {
+          "type": "schedules",
+          "apiVersion": "2018-09-15",
+          "name": "LabVmAutoStart",
+          "properties": {
+            "status": "Disabled",
+            "timeZoneId": "Taipei Standard Time",
+            "taskType": "LabVmsStartupTask",
+            "notificationSettings": {
+              "status": "Disabled",
+              "timeInMinutes": 10
+            },
+            "weeklyRecurrence": {
+              "time": "1300",
+              "weekdays": [
+                "Sunday"
+              ]
+            }
+          },
+           "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+          ]
+        }
+      ],
+      "properties": {
+        "environmentPermission": "Contributor",
+        "labStorageType": "StandardSSD",
+        "mandatoryArtifactsResourceIdsLinux": [
+
+        ],
+        "mandatoryArtifactsResourceIdsWindows": [
+
+        ]
+      },
+      "tags": {
+        "": ""
+      }
+    },
+    {
+      "type": "Microsoft.DevTestLab/labs",
+      "apiVersion": "2018-09-15",
+      "name": "[parameters('stg_testing_lab_name')]",
+      "location": "[resourceGroup().location]",
+      "resources": [
+        {
+          "apiVersion": "2018-09-15",
+          "name": "[parameters('virtualNetworkName')]",
+          "type": "virtualNetworks",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "description": "Existing Compute virtual network associated as part of the lab creation process.",
+            "externalProviderResourceId": "[variables('vnet_reference_id')]",
+            "subnetOverrides": [
+              {
+                "name": "[parameters('vnetSubnetName')]",
+                "resourceId": "[variables('subnet_reference_id')]",
+                "useInVmCreationPermission": "Allow",
+                "usePublicIpAddressPermission": "Allow"
+              }
+            ]
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+          ]
+        },
+        {
+          "type": "schedules",
+          "apiVersion": "2018-09-15",
+          "name": "LabVmsShutdown",
+          "properties": {
+            "status": "Disabled",
+            "timeZoneId": "Taipei Standard Time",
+            "taskType": "LabVmsShutdownTask",
+            "notificationSettings": {
+              "status": "Disabled",
+              "timeInMinutes": 10
+            },
+            "dailyRecurrence": {
+              "time": "1200"
+            }
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+          ]
+        },
+        {
+          "type": "schedules",
+          "apiVersion": "2018-09-15",
+          "name": "LabVmAutoStart",
+          "properties": {
+            "status": "Disabled",
+            "timeZoneId": "Taipei Standard Time",
+            "taskType": "LabVmsStartupTask",
+            "notificationSettings": {
+              "status": "Disabled",
+              "timeInMinutes": 10
+            },
+            "weeklyRecurrence": {
+              "time": "1300",
+              "weekdays": [
+                "Sunday"
+              ]
+            }
+          },
+           "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+          ]
+        }
+      ],
+      "properties": {
+        "environmentPermission": "Contributor",
+        "labStorageType": "StandardSSD",
+        "mandatoryArtifactsResourceIdsLinux": [
+
+        ],
+        "mandatoryArtifactsResourceIdsWindows": [
+          
+        ]
+      },
+      "tags": {
+        "": ""
+      }
+    },
+    {
+      "type": "Microsoft.DevTestLab/labs",
+      "apiVersion": "2018-09-15",
+      "name": "[parameters('prod_testing_lab_name')]",
+      "location": "[resourceGroup().location]",
+      "resources": [
+        {
+          "apiVersion": "2018-09-15",
+          "name": "[parameters('virtualNetworkName')]",
+          "type": "virtualNetworks",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "description": "Existing Compute virtual network associated as part of the lab creation process.",
+            "externalProviderResourceId": "[variables('vnet_reference_id')]",
+            "subnetOverrides": [
+              {
+                "name": "[parameters('vnetSubnetName')]",
+                "resourceId": "[variables('subnet_reference_id')]",
+                "useInVmCreationPermission": "Allow",
+                "usePublicIpAddressPermission": "Allow"
+              }
+            ]
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+          ]
+        },
+        {
+          "type": "schedules",
+          "apiVersion": "2018-09-15",
+          "name": "LabVmsShutdown",
+          "properties": {
+            "status": "Disabled",
+            "timeZoneId": "Taipei Standard Time",
+            "taskType": "LabVmsShutdownTask",
+            "notificationSettings": {
+              "status": "Disabled",
+              "timeInMinutes": 10
+            },
+            "dailyRecurrence": {
+              "time": "1200"
+            }
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+          ]
+        },
+        {
+          "type": "schedules",
+          "apiVersion": "2018-09-15",
+          "name": "LabVmAutoStart",
+          "properties": {
+            "status": "Disabled",
+            "timeZoneId": "Taipei Standard Time",
+            "taskType": "LabVmsStartupTask",
+            "notificationSettings": {
+              "status": "Disabled",
+              "timeInMinutes": 10
+            },
+            "weeklyRecurrence": {
+              "time": "1300",
+              "weekdays": [
+                "Sunday"
+              ]
+            }
+          },
+           "dependsOn": [
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+          ]
+        }
+      ],
+      "properties": {
+        "environmentPermission": "Contributor",
+        "labStorageType": "StandardSSD",
+        "mandatoryArtifactsResourceIdsLinux": [
+
+        ],
+        "mandatoryArtifactsResourceIdsWindows": [
+          
+        ]
+      },
+      "tags": {
+        "": ""
+      }
+    }
+  ],
+  "outputs": {
+  }
+}
