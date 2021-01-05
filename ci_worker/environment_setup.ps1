@@ -431,7 +431,7 @@ function register_to_ci_agent
 try
 {
     # Write-Log "Prepare to installl packages"
-    install_azure_pipeline_agent -az_devops_org_url $az_devops_org_url -token $token -pool_name $pool_name -win_login_account $win_login_account -win_login_pwd $win_login_pwd,
+    install_azure_pipeline_agent -az_devops_org_url $az_devops_org_url -token $token -pool_name $pool_name -win_login_account $win_login_account -win_login_pwd $win_login_pwd
     # set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
     # install_staf_framework
     # install_chocolatey
