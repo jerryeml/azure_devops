@@ -4,19 +4,19 @@
   "parameters": {
     "internal_testing_lab_name": {
       "type": "string",
-      "defaultValue": "dtl-interal-testing"
+      "defaultValue": "dtl-interal"
     },
     "dev_testing_lab_name": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "dtl-dev"
     },
     "stg_testing_lab_name": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "dtl-stg"
     },
     "prod_testing_lab_name": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "dtl-prod"
     },
     "virtualNetworkResourceGroup": {
       "defaultValue": "wu2-deployment",
