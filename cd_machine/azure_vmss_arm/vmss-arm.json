@@ -11,7 +11,7 @@
     },
     "virtualMachineAdminPassword": {
       "type": "securestring",
-      "defaultValue": "osce@123",
+      "defaultValue": "test@1234!",
       "metadata": {
         "description": "Administrator password for the local admin account"
       }
