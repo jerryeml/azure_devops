@@ -4,7 +4,7 @@
   "parameters": {
     "internal_testing_lab_name": {
       "type": "string",
-      "defaultValue": "dtl-interal"
+      "defaultValue": "dtl-int"
     },
     "dev_testing_lab_name": {
       "type": "string",
@@ -38,16 +38,6 @@
       "metadata": {
         "description": "Name of the existing SUBNET"
       }
-    },
-    "testing_env_scope": {
-      "type": "string",
-      "defaultValue": "osce",
-      "allowedValues": [
-        "internal",
-        "dev",
-        "stg",
-        "prod"
-      ]
     }
   },
   "variables": {
@@ -169,7 +159,7 @@
             ]
           },
           "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('dev_testing_lab_name'))]"
           ]
         },
         {
@@ -189,7 +179,7 @@
             }
           },
           "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('dev_testing_lab_name'))]"
           ]
         },
         {
@@ -212,7 +202,7 @@
             }
           },
            "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('dev_testing_lab_name'))]"
           ]
         }
       ],
@@ -227,7 +217,7 @@
         ]
       },
       "tags": {
-        "": ""
+        "env": "dev"
       }
     },
     {
@@ -254,7 +244,7 @@
             ]
           },
           "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('stg_testing_lab_name'))]"
           ]
         },
         {
@@ -274,7 +264,7 @@
             }
           },
           "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('stg_testing_lab_name'))]"
           ]
         },
         {
@@ -297,7 +287,7 @@
             }
           },
            "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('stg_testing_lab_name'))]"
           ]
         }
       ],
@@ -312,7 +302,7 @@
         ]
       },
       "tags": {
-        "": ""
+        "env": "stg"
       }
     },
     {
@@ -339,7 +329,7 @@
             ]
           },
           "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('prod_testing_lab_name'))]"
           ]
         },
         {
@@ -359,7 +349,7 @@
             }
           },
           "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('prod_testing_lab_name'))]"
           ]
         },
         {
@@ -382,7 +372,7 @@
             }
           },
            "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', parameters('internal_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', parameters('prod_testing_lab_name'))]"
           ]
         }
       ],
@@ -397,7 +387,7 @@
         ]
       },
       "tags": {
-        "": ""
+        "env": "prod"
       }
     }
   ],
