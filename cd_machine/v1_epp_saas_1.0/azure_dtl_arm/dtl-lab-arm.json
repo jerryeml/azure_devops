@@ -127,12 +127,12 @@
           "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-7zip')]",
           "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-chrome')]",
           "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-git')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-iis')]",
           "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-notepadplusplus')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-ssms')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-vscode')]",
           "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-azurepowershell')]"
         ]
+      },
+      "tags": {
+        "env": "int"
       }
     },
     {
