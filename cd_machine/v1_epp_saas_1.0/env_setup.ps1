@@ -297,7 +297,7 @@ function set_winrm_listener
 
 function install_chocolatey
 {
-    Set-ExecutionPolicy Unrestricted -Force
+    # Set-ExecutionPolicy Unrestricted -Force
     Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     Write-Log "Prepare to install package by choc"
 
