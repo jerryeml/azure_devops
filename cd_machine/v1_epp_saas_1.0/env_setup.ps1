@@ -4,7 +4,7 @@ param
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
     [string] $DefaultUsername,
-    [securestring] $DefaultPassword,
+    [string] $DefaultPassword,
     [string] $HostName=$env:COMPUTERNAME,
     [string] $Port="5986",
     [string] $workdir = "c:\installer\"
@@ -197,6 +197,32 @@ function set_network_to_public
 }
 
 
+function remove_winrm_listener
+{
+    [CmdletBinding()]
+    param(
+    )
+
+    try
+    {
+        $config = Winrm enumerate winrm/config/listener
+        foreach($conf in $config)
+        {
+            if($conf.Contains('HTTPS'))
+            {
+                Write-Log 'HTTPS is already configured. Deleting the exisiting configuration.'
+                winrm delete winrm/config/Listener?Address=*+Transport=HTTPS 2>&1 | Out-Null
+                break
+            }
+        }
+    }
+    catch
+    {
+        Write-Log "INFO: Exception while deleting the listener: $($_.Exception.Message)"
+    }
+}
+
+
 function set_winrm_listener
 {
     [CmdletBinding()]
@@ -207,7 +233,7 @@ function set_winrm_listener
     )
 
     # Delete the WinRM Https listener, if it is already configured.
-    Remove-WinRMListener
+    remove_winrm_listener
 
     Write-Log "Prepare to Create a test certificate"
     $cert = (Get-ChildItem cert:\LocalMachine\My | Where-Object { $_.Subject -eq "CN=" + $HostName } | Select-Object -Last 1)
@@ -265,7 +291,7 @@ Function set_autologon
         [String[]]$DefaultUsername,
 
         [Parameter(Mandatory=$True,ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)]
-        [SecureString[]]$DefaultPassword,
+        [String[]]$DefaultPassword,
 
         [Parameter(Mandatory=$False,ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)]
         [AllowEmptyString()]
