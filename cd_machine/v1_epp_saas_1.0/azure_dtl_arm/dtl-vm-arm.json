@@ -228,7 +228,7 @@
                 },
                 {
                   "name": "scriptArguments",
-                  "value": ""
+                  "value": "[concat('-DefaultUsername ', parameters('user_name'), ' -DefaultPassword ', parameters('password'))]"
                 }
               ]
             },
