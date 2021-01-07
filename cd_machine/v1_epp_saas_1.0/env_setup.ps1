@@ -298,7 +298,7 @@ function set_winrm_listener
 function install_chocolatey
 {
     # Set-ExecutionPolicy Unrestricted -Force
-    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     Write-Log "Prepare to install package by choc"
 
     choco install python3 -y --version=3.8.5
@@ -407,7 +407,7 @@ try
     Write-Log "Start to setup environment"
     set_autologon -DefaultUsername $DefaultUsername -DefaultPassword $DefaultPassword
     set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
-    # install_chocolatey
+    install_chocolatey
     handel_firewarll_rules
     Write-Log 'Artifact completed successfully.'
 }
