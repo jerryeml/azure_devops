@@ -407,7 +407,7 @@ try
     Write-Log "Start to setup environment"
     set_autologon -DefaultUsername $DefaultUsername -DefaultPassword $DefaultPassword
     set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
-    install_chocolatey
+    # install_chocolatey
     handel_firewarll_rules
     Write-Log 'Artifact completed successfully.'
 }
