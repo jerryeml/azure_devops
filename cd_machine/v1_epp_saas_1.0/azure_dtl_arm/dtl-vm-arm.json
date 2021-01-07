@@ -11,15 +11,14 @@
     },
     "existing_lab_name": {
       "type": "string",
-      "defaultValue": "dtl-az-devops-service",
+      "allowedValues": [
+        "dtl-int",
+        "dtl-dev",
+        "dtl-stg",
+        "dtl-prod"
+      ],
       "metadata": {
         "description": "The name of an existing lab where the new vm will be created."
-      }
-    },
-    "existing_custom_image_id": {
-      "type": "string",
-      "metadata": {
-        "description": "The id of an existing custom image which will be used to create the new vm. The specified image must exist in the lab (identified via the 'existingLabName' parameter)."
       }
     },
     "lab_subnet_name": {
@@ -101,6 +100,60 @@
         "description": "The password for the local account that will be created on the new vm."
       }
     },
+    "az_devops_org_name": {
+      "type": "string",
+      "allowedValues": [
+        "https://dev.azure.com/infinite-wars/"
+      ],
+      "metadata": {
+        "description": "The URL for the Azure DevOps account, e.g. https://dev.azure.com/myorg"
+      }
+    },
+    "az_devops_project_name": {
+      "type": "string",
+      "allowedValues": [
+        "v1-epp-saas-1.0"
+      ],
+      "metadata": {
+        "description": "The Azure DevOps project name, eg MyFirstProject"
+      }
+    },
+    "az_deployment_group_name": {
+      "type": "string",
+      "allowedValues": [
+        "iProduct-INT",
+        "iProduct-DEV",
+        "iProduct-STG",
+        "iProduct-PROD",
+        "MAC-INT",
+        "MAC-DEV",
+        "MAC-STG",
+        "MAC-PROD",
+        "ONE-INT",
+        "ONE-DEV",
+        "ONE-STG",
+        "ONE-PROD"
+      ],
+      "metadata": {
+        "description": "Name of the deployment group against which the agent has to be configured."
+      }
+    },
+    "az_pat": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Personal Access Token for downloading and configuring Azure Pipelines deployment group agent."
+      }
+    },
+    "tags": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "az_agent_name": {
+      "type": "string",
+      "metadata": {
+        "description": "Optionally provide agent name. Defaults to $env:COMPUTERNAME"
+      }
+    },
     "Windows_Firewall_operations_firewallOperation": {
         "type": "string",
         "defaultValue": "Disable Firewall"
@@ -131,7 +184,6 @@
         "labSubnetName": "[parameters('lab_subnet_name')]",
         "disallowPublicIpAddress": false,
         "allowClaim": false,
-        // "customImageId": "[parameters('existing_custom_image_id')]",
         "notes": "[parameters('vm_notes')]",
         "galleryImageReference": {
             "offer": "[parameters('vm_offer')]",
@@ -143,17 +195,88 @@
         "storageType": "StandardSSD",
         "artifacts": [
             {
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-settimezone')]",
+              "parameters": [
+                {
+                  "name": "TimeZoneId",
+                  "value": "Taipei Standard Time"
+                }
+              ]
+            },
+            {
                 "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-selenium')]"
             },
             {
-                "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-firewall')]",
-                "parameters": [
-                    {
-                        "name": "firewallOperation",
-                        "value": "[parameters('Windows_Firewall_operations_firewallOperation')]"
-                    }
-                ]
-          }
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-firewall')]",
+              "parameters": [
+                {
+                  "name": "firewallOperation",
+                  "value": "[parameters('Windows_Firewall_operations_firewallOperation')]"
+                }
+              ]
+            },
+            {
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-run-powershell')]",
+              "parameters": [
+                {
+                  "name": "scriptFileUris",
+                  "value": "https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1"
+                },
+                {
+                  "name": "scriptToRun",
+                  "value": "env_setup.ps1"
+                },
+                {
+                  "name": "scriptArguments",
+                  "value": ""
+                }
+              ]
+            },
+            {
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-deploymentgroup')]",
+              "parameters": [
+                {
+                  "name": "accountUrl",
+                  "value": "[parameters('az_devops_org_name')]"
+                },
+                {
+                  "name": "projectName",
+                  "value": "[parameters('az_devops_project_name')]"
+                },
+                {
+                  "name": "deploymentGroupName",
+                  "value": "[parameters('az_deployment_group_name')]"
+                },
+                {
+                  "name": "PersonalAccessToken",
+                  "value": "[parameters('az_pat')]"
+                },
+                {
+                  "name": "deploymentAgentTags",
+                  "value": "[parameters('tags')]"
+                },
+                {
+                  "name": "agentInstallPath",
+                  "value": "C:\\deployment_agent"
+                },
+                {
+                  "name": "agentName",
+                  "value": "[parameters('az_agent_name')]"
+                },
+                {
+                  "name": "RunAsAutoLogon",
+                  "value": "true"
+                },
+                {
+                  "name": "windowsLogonAccount",
+                  "value": "[parameters('user_name')]"
+                },
+                {
+                  "name": "windowsLogonPassword",
+                  "value": "[parameters('password')]"
+                }
+              ]
+            }
         ]
       }
     }
