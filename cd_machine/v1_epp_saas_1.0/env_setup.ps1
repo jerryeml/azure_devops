@@ -197,6 +197,30 @@ function set_network_to_public
 }
 
 
+function add_new_cert
+{
+    [CmdletBinding()]
+    param(
+        [string] $HostName
+    )
+
+    # makecert ocassionally produces negative serial numbers, which golang tls/crypto < 1.6.1 cannot handle.
+	# https://github.com/golang/go/issues/8265
+    $serial = Get-Random
+    .\makecert.exe -r -pe -n CN=$HostName -b 01/01/2012 -e 01/01/2022 -eku 1.3.6.1.5.5.7.3.1 -ss my -sr localmachine -sky exchange -sp "Microsoft RSA SChannel Cryptographic Provider" -sy 12 -# $serial 2>&1 | Out-Null
+
+    $thumbprint=(Get-ChildItem cert:\Localmachine\my | Where-Object { $_.Subject -eq "CN=" + $HostName } | Select-Object -Last 1).Thumbprint
+
+    if(-not $thumbprint)
+    {
+        Write-Log "Failed to create the test certificate."
+        throw 'Failed to create the test certificate.'
+    }
+
+    return $thumbprint
+}
+
+
 function remove_winrm_listener
 {
     [CmdletBinding()]
@@ -240,7 +264,7 @@ function set_winrm_listener
     $thumbprint = $cert.Thumbprint
     if(-not $thumbprint)
     {
-        $thumbprint = New-Certificate -HostName $HostName
+        $thumbprint = add_new_cert -HostName $HostName
         Write-Log "Create certificate and get thumbprint: $($thumbprint)"
     }
     elseif (-not $cert.PrivateKey)
@@ -248,7 +272,7 @@ function set_winrm_listener
         # The private key is missing - could have been sysprepped. Delete the certificate.
         Write-Log "The private key is missing - could have been sysprepped. Delete the certificate"
         Remove-Item Cert:\LocalMachine\My\$thumbprint -Force | Out-Null
-        $thumbprint = New-Certificate -HostName $HostName
+        $thumbprint = add_new_cert -HostName $HostName
     }
 
     netsh http show sslcert ipport=0.0.0.0:$Port | Out-Null
