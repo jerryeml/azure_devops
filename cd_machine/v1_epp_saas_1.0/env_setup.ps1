@@ -3,6 +3,8 @@ param
 (
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
+    [string] $DefaultUsername,
+    [securestring] $DefaultPassword,
     [string] $HostName=$env:COMPUTERNAME,
     [string] $Port="5986",
     [string] $workdir = "c:\installer\"
@@ -254,6 +256,75 @@ function install_chocolatey
 }
 
 
+Function set_autologon
+{
+    [CmdletBinding()]
+    Param(
+        
+        [Parameter(Mandatory=$True,ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)]
+        [String[]]$DefaultUsername,
+
+        [Parameter(Mandatory=$True,ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)]
+        [SecureString[]]$DefaultPassword,
+
+        [Parameter(Mandatory=$False,ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)]
+        [AllowEmptyString()]
+        [String[]]$AutoLogonCount,
+
+        [Parameter(Mandatory=$False,ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)]
+        [AllowEmptyString()]
+        [String[]]$Script
+                
+    )
+
+    Begin
+    {
+        #Registry path declaration
+        $RegPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+        $RegROPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce"
+    
+    }
+    
+    Process
+    {
+
+        try
+        {
+            #setting registry values
+            Set-ItemProperty $RegPath "AutoAdminLogon" -Value "1" -type String  
+            Set-ItemProperty $RegPath "DefaultUsername" -Value "$DefaultUsername" -type String  
+            Set-ItemProperty $RegPath "DefaultPassword" -Value "$DefaultPassword" -type String
+            if($AutoLogonCount)
+            {
+                Set-ItemProperty $RegPath "AutoLogonCount" -Value "$AutoLogonCount" -type DWord
+            }
+            else
+            {
+                Set-ItemProperty $RegPath "AutoLogonCount" -Value "1" -type DWord
+            }
+            if($Script)
+            {
+                Set-ItemProperty $RegROPath "(Default)" -Value "$Script" -type String
+            }
+            else
+            {
+                Set-ItemProperty $RegROPath "(Default)" -Value "" -type String
+            }        
+        }
+
+        catch
+        {
+            Write-Output "An error had occured $Error"
+        }
+    }
+
+    End
+    {
+        #End
+    }
+}
+
+
 function handel_firewarll_rules
 {
     netsh advfirewall firewall show rule name="Allow Python27" dir=in | Out-Null
@@ -282,6 +353,7 @@ try
     }
 
     Write-Log "Start to setup environment"
+    set_autologon -DefaultUsername $DefaultUsername -DefaultPassword $DefaultPassword
     set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
     install_chocolatey
     handel_firewarll_rules
