@@ -97,7 +97,6 @@ function handle_lastexitcode
 }
 
 
-
 function New-Certificate
 {
     [CmdletBinding()]
@@ -120,6 +119,7 @@ function New-Certificate
 
     return $thumbprint
 }
+
 
 function Remove-WinRMListener
 {
@@ -145,6 +145,7 @@ function Remove-WinRMListener
         Write-Log "INFO: Exception while deleting the listener: $($_.Exception.Message)"
     }
 }
+
 
 function Set-WinRMListener
 {
@@ -193,6 +194,7 @@ function Set-WinRMListener
     handle_lastexitcode
 }
 
+
 function Add-FirewallException
 {
     [CmdletBinding()]
@@ -218,6 +220,7 @@ function Add-FirewallException
     handle_lastexitcode
 }
 
+
 function download_makecert
 {
     # Download the makecert
@@ -236,6 +239,7 @@ function download_makecert
     }
 }
 
+
 function set_network_to_private
 {
     $current_network_category = Get-NetConnectionProfile
@@ -246,6 +250,7 @@ function set_network_to_private
     Get-NetConnectionProfile -NetworkCategory Private
 }
 
+
 function set_network_to_public
 {
     $current_network_category = Get-NetConnectionProfile
@@ -255,6 +260,7 @@ function set_network_to_public
     Write-Log "After change Network Category: $($after_network_category)"
     Get-NetConnectionProfile -NetworkCategory Public
 }
+
 
 function set_winrm_https_to_specify_port
 {
@@ -289,20 +295,6 @@ function set_winrm_https_to_specify_port
 
     set_network_to_public
     Write-Log "Set winrm Successfully"
-}
-
-function install_staf_framework 
-{
-    netsh advfirewall firewall add rule name="Allow STAF" dir=in action=allow protocol=Any program="C:\staf\bin\stafproc.exe" | Out-Null
-    $is_staf_process_exist = Get-Process stafproc -ErrorAction SilentlyContinue
-    if ($is_staf_process_exist) 
-    {
-        Write-Log "STAF Exists!"
-    }
-    else
-    {
-        Write-Log "Need to install STAF"
-    }
 }
 
 
@@ -433,7 +425,6 @@ try
     # Write-Log "Prepare to installl packages"
     install_azure_pipeline_agent -az_devops_org_url $az_devops_org_url -token $token -pool_name $pool_name -win_login_account $win_login_account -win_login_pwd $win_login_pwd
     # set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
-    # install_staf_framework
     install_chocolatey
     # handel_firewarll_rules
     # Write-Log 'Artifact completed successfully.'
