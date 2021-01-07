@@ -331,7 +331,7 @@ Function set_autologon
 
     Begin
     {
-        #Registry path declaration
+        # Registry path declaration
         $RegPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
         $RegROPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce"
     
@@ -342,12 +342,15 @@ Function set_autologon
 
         try
         {
-            #setting registry values
+            Write-Log "Prepare to config auto-logon setting"
+
+            # Setting registry values
             Set-ItemProperty $RegPath "AutoAdminLogon" -Value "1" -type String  
             Set-ItemProperty $RegPath "DefaultUsername" -Value "$DefaultUsername" -type String  
             Set-ItemProperty $RegPath "DefaultPassword" -Value "$DefaultPassword" -type String
             if($AutoLogonCount)
             {
+                Write-Log "Prepare to config AutoLogonCount"
                 Set-ItemProperty $RegPath "AutoLogonCount" -Value "$AutoLogonCount" -type DWord
             }
             else
@@ -356,6 +359,7 @@ Function set_autologon
             }
             if($Script)
             {
+                Write-Log "Prepare to run script"
                 Set-ItemProperty $RegROPath "(Default)" -Value "$Script" -type String
             }
             else
@@ -372,6 +376,7 @@ Function set_autologon
 
     End
     {
+        Write-Log "End of set_autologon function"
         #End
     }
 }
