@@ -157,6 +157,18 @@
     "Windows_Firewall_operations_firewallOperation": {
         "type": "string",
         "defaultValue": "Disable Firewall"
+    },
+    "Run_PowerShell_scriptFileUris": {
+      "type": "string",
+      "defaultValue": "[[\"https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1\"]"
+    },
+    "Run_PowerShell_scriptToRun": {
+      "type": "string",
+      "defaultValue": "env_setup.ps1"
+    },
+    "Run_PowerShell_scriptArguments": {
+      "type": "string",
+      "defaultValue": "-DefaultUsername \"trend\" -DefaultPassword \"Osce@1234\" -action \"LANDING_ONLY\""
     }
   },
   "variables": {
@@ -221,15 +233,15 @@
               "parameters": [
                 {
                   "name": "scriptFileUris",
-                  "value": "https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1"
+                  "value": "[parameters('Run_PowerShell_scriptFileUris')]"
                 },
                 {
                   "name": "scriptToRun",
-                  "value": "env_setup.ps1"
+                  "value": "[parameters('Run_PowerShell_scriptToRun')]"
                 },
                 {
                   "name": "scriptArguments",
-                  "value": "[variables('run_ps_args')]"
+                  "value": "[parameters('Run_PowerShell_scriptArguments')]"
                 }
               ]
             },
