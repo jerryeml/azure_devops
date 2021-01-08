@@ -5,6 +5,12 @@ param
     [ValidateNotNullOrEmpty()]
     [string] $DefaultUsername,
     [string] $DefaultPassword,
+    [string] $AzureToken,
+    [string] $AgentTags,
+    [string] $AgentPoolConfig,
+    [string] $AzureDevopsProjectUrl,
+    [string] $AzureDevopsProject,
+    [string] $AzureDevopsDeployGroup,
     [string] $action="DEFAULT",
     [string] $HostName=$env:COMPUTERNAME,
     [string] $Port="5986",
@@ -398,6 +404,70 @@ function handel_firewarll_rules
 }
 
 
+function download_azure_pipeline_agent
+{
+    # Downlaod and extract VSTS windows agent
+    if ((Test-Path -Path "C:\VSTSwinAgent") -eq $false)
+    {
+        Write-Log "Create Folder of VSTSwinAgent"
+        New-Item -Path "C:\VSTSwinAgent" -ItemType "directory" -Force
+    }
+
+    Invoke-WebRequest https://vstsagentpackage.azureedge.net/agent/2.179.0/vsts-agent-win-x64-2.179.0.zip -OutFile C:\VSTSwinAgent\agent.zip
+
+    Expand-Archive C:\VSTSwinAgent\agent.zip -DestinationPath C:\VSTSwinAgent -Force
+
+    Start-Sleep -s 3
+}
+
+
+function register_az_deployment_interactive_agent
+{
+    [CmdletBinding()]
+    param
+    (
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $UserAccount,
+        [string] $UserPwd,
+        [string] $AzureToken,
+        [string] $AgentTags,
+        [string] $AgentPoolConfig,
+        [string] $AzureDevopsProjectUrl,
+        [string] $AzureDevopsProject,
+        [string] $AzureDevopsDeployGroup,
+        [string] $AgentTagrget = ($env:computername -split "-")[0] + ($env:computername -split "-")[-1]
+    )
+
+    try
+    {
+        $settings = @{
+            "UserAccount"= $UserAccount;
+            "UserPwd"= $UserPwd;
+            "AzureToken"= $AzureToken;
+            "AgentTags"= $AgentTags;
+            "AgentPoolConfig"= $AgentPoolConfig;
+            "AzureDevopsProjectUrl"= $AzureDevopsProjectUrl;
+            "AzureDevopsProject"= $AzureDevopsProject;
+            "AzureDevopsDeployGroup"= $AzureDevopsDeployGroup;
+            "AgentTagrget"= $AgentTagrget;
+        }
+
+        Write-Log "register_az_deployment_interactive_agent params: $settings"
+        Start-Process -FilePath $AgentPoolConfig -NoNewWindow -ArgumentList "--unattended --deploymentGroup --url $AzureDevopsProjectUrl --auth pat --token $AzureToken --projectName $AzureDevopsProject --deploymentGroupName $AzureDevopsDeployGroup --agent $AgentTagrget-DG --replace --addDeploymentGroupTags --deploymentGroupTags `"$AgentTagrget, $AgentTags`" --runAsAutoLogon --windowsLogonAccount $UserAccount --windowsLogonPassword $UserPwd --noRestart"
+
+        $nid = (Get-Process cmd).id
+        Write-Log "az agent install process nid: $nid"
+        return $true
+    }
+    catch
+    {
+        Write-Log "[register_az_deployment_interactive_agent][$($AgentTagrget)] Exception: $($_.Exception.GetType().FullName, $_.Exception.Message)"
+        throw "[register_az_deployment_interactive_agent][$($AgentTagrget)] Exception: $($_.Exception.GetType().FullName, $_.Exception.Message)"
+    }
+}
+
+
 ###################################################################################################
 #
 # Main used in this script.
@@ -420,6 +490,8 @@ try
     {
         Write-Log "Start to setup environment"
         set_autologon -DefaultUsername $DefaultUsername -DefaultPassword $DefaultPassword
+        download_azure_pipeline_agent
+        register_az_deployment_interactive_agent -UserAccount $DefaultUsername -UserPwd $DefaultPassword -AzureToken $AzureToken -AgentTags $AgentTags -AgentPoolConfig $AgentPoolConfig -AzureDevopsProjectUrl $AzureDevopsProjectUrl -AzureDevopsProject $AzureDevopsProject -AzureDevopsDeployGroup $AzureDevopsDeployGroup
         install_chocolatey
         handel_firewarll_rules
         Write-Log 'Artifact completed successfully.'
