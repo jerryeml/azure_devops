@@ -5,6 +5,7 @@ param
     [ValidateNotNullOrEmpty()]
     [string] $DefaultUsername,
     [string] $DefaultPassword,
+    [string] $action="DEFAULT",
     [string] $HostName=$env:COMPUTERNAME,
     [string] $Port="5986",
     [string] $workdir = "c:\installer\"
@@ -346,7 +347,7 @@ Function set_autologon
 
             # Setting registry values
             Set-ItemProperty $RegPath "AutoAdminLogon" -Value "1" -type String  
-            Set-ItemProperty $RegPath "DefaultUsername" -Value "$DefaultUsername" -type String  
+            Set-ItemProperty $RegPath "DefaultUsername" -Value "$DefaultUsername" -type String
             Set-ItemProperty $RegPath "DefaultPassword" -Value "$DefaultPassword" -type String
             if($AutoLogonCount)
             {
@@ -409,12 +410,20 @@ try
         New-Item -Path $workdir -ItemType "directory" -Force
     }
 
-    Write-Log "Start to setup environment"
-    set_autologon -DefaultUsername $DefaultUsername -DefaultPassword $DefaultPassword
-    set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
-    install_chocolatey
-    handel_firewarll_rules
-    Write-Log 'Artifact completed successfully.'
+    if ($action.ToUpper() -eq "LANDING_ONLY")
+    {
+        Write-Log "Start to landing script"
+        Invoke-WebRequest https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1 -OutFile C:\installer\env_setup.ps1
+    }
+    else
+    {
+        Write-Log "Start to setup environment"
+        set_autologon -DefaultUsername $DefaultUsername -DefaultPassword $DefaultPassword
+        set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
+        install_chocolatey
+        handel_firewarll_rules
+        Write-Log 'Artifact completed successfully.'
+    }
 }
 finally
 {
