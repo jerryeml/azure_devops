@@ -485,6 +485,9 @@ try
         Write-Log "Start to landing script"
         Invoke-WebRequest https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1 -OutFile C:\installer\env_setup.ps1
         set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
+
+        Write-Log "Disable Privacy Experience"
+        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\OOBE" /v "DisablePrivacyExperience" /t "REG_DWORD" /d 1 /f
     }
     else
     {
