@@ -414,12 +414,12 @@ try
     {
         Write-Log "Start to landing script"
         Invoke-WebRequest https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1 -OutFile C:\installer\env_setup.ps1
+        set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
     }
     else
     {
         Write-Log "Start to setup environment"
         set_autologon -DefaultUsername $DefaultUsername -DefaultPassword $DefaultPassword
-        set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
         install_chocolatey
         handel_firewarll_rules
         Write-Log 'Artifact completed successfully.'
