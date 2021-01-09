@@ -310,7 +310,7 @@ function install_chocolatey
 
     choco install python3 -y --version=3.8.5
     choco install azure-cli -y
-    choco install googlechrome -y
+    # choco install googlechrome -y
     # choco install lockhunter -y
 }
 
