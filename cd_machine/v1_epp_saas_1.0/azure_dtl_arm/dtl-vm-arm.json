@@ -168,14 +168,14 @@
     },
     "Run_PowerShell_scriptArguments": {
       "type": "string",
-      "defaultValue": "-DefaultUsername \"trend\" -DefaultPassword \"Osce@1234\" -action \"LANDING_ONLY\""
+      "defaultValue": "-DefaultUsername \"trend\" -DefaultPassword \"secret\" -action \"DEFAULT\""
     }
   },
   "variables": {
     "lab_vnet_id": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', parameters('existing_lab_name'), parameters('lab_vnet_name'))]",
     "vm_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', parameters('existing_lab_name'), parameters('new_vm_name'))]",
     "vm_name": "[concat(parameters('existing_lab_name'), '/', parameters('new_vm_name'))]",
-    "run_ps_args": "-DefaultUsername \"trend\" -DefaultPassword \"Osce@1234\""
+    "run_ps_args": "[concat('-DefaultUsername \"', parameters('user_name'), '\" -DefaultPassword \"', parameters('password'), '\"')]"
   },
   "resources": [
     {
@@ -241,7 +241,7 @@
                 },
                 {
                   "name": "scriptArguments",
-                  "value": "[parameters('Run_PowerShell_scriptArguments')]"
+                  "value": "[variables('run_ps_args')]"
                 }
               ]
             },
