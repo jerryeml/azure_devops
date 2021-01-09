@@ -211,15 +211,15 @@
         "environmentPermission": "Contributor",
         "labStorageType": "StandardSSD",
         "mandatoryArtifactsResourceIdsLinux": [
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'linux-install-docker')]"
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('dev_testing_lab_name'), 'public repo', 'linux-install-docker')]"
         ],
         "mandatoryArtifactsResourceIdsWindows": [
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-awscli')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-7zip')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-chrome')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-git')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-notepadplusplus')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-azurepowershell')]"
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('dev_testing_lab_name'), 'public repo', 'windows-awscli')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('dev_testing_lab_name'), 'public repo', 'windows-7zip')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('dev_testing_lab_name'), 'public repo', 'windows-chrome')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('dev_testing_lab_name'), 'public repo', 'windows-git')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('dev_testing_lab_name'), 'public repo', 'windows-notepadplusplus')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('dev_testing_lab_name'), 'public repo', 'windows-azurepowershell')]"
         ]
       },
       "tags": {
@@ -302,15 +302,15 @@
         "environmentPermission": "Contributor",
         "labStorageType": "StandardSSD",
         "mandatoryArtifactsResourceIdsLinux": [
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'linux-install-docker')]"
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('stg_testing_lab_name'), 'public repo', 'linux-install-docker')]"
         ],
         "mandatoryArtifactsResourceIdsWindows": [
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-awscli')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-7zip')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-chrome')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-git')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-notepadplusplus')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-azurepowershell')]"
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('stg_testing_lab_name'), 'public repo', 'windows-awscli')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('stg_testing_lab_name'), 'public repo', 'windows-7zip')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('stg_testing_lab_name'), 'public repo', 'windows-chrome')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('stg_testing_lab_name'), 'public repo', 'windows-git')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('stg_testing_lab_name'), 'public repo', 'windows-notepadplusplus')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('stg_testing_lab_name'), 'public repo', 'windows-azurepowershell')]"
         ]
       },
       "tags": {
@@ -393,15 +393,15 @@
         "environmentPermission": "Contributor",
         "labStorageType": "StandardSSD",
         "mandatoryArtifactsResourceIdsLinux": [
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'linux-install-docker')]"
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('prod_testing_lab_name'), 'public repo', 'linux-install-docker')]"
         ],
         "mandatoryArtifactsResourceIdsWindows": [
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-awscli')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-7zip')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-chrome')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-git')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-notepadplusplus')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('internal_testing_lab_name'), 'public repo', 'windows-azurepowershell')]"
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('prod_testing_lab_name'), 'public repo', 'windows-awscli')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('prod_testing_lab_name'), 'public repo', 'windows-7zip')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('prod_testing_lab_name'), 'public repo', 'windows-chrome')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('prod_testing_lab_name'), 'public repo', 'windows-git')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('prod_testing_lab_name'), 'public repo', 'windows-notepadplusplus')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('prod_testing_lab_name'), 'public repo', 'windows-azurepowershell')]"
         ]
       },
       "tags": {
