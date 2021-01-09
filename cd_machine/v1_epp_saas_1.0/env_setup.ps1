@@ -5,12 +5,12 @@ param
     [ValidateNotNullOrEmpty()]
     [string] $DefaultUsername,
     [string] $DefaultPassword,
-    [string] $AzureToken,
-    [string] $AgentTags,
-    [string] $AgentPoolConfig,
-    [string] $AzureDevopsProjectUrl,
-    [string] $AzureDevopsProject,
-    [string] $AzureDevopsDeployGroup,
+    [string] $AzureToken="optional_input",
+    [string] $AgentTags="optional_input",
+    [string] $AgentPoolConfig="optional_input",
+    [string] $AzureDevopsProjectUrl="optional_input",
+    [string] $AzureDevopsProject="optional_input",
+    [string] $AzureDevopsDeployGroup="optional_input",
     [string] $action="DEFAULT",
     [string] $HostName=$env:COMPUTERNAME,
     [string] $Port="5986",
@@ -468,6 +468,20 @@ function register_az_deployment_interactive_agent
 }
 
 
+function landing_script
+{
+    Write-Log "Start to landing script"
+    Invoke-WebRequest https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1 -OutFile C:\installer\env_setup.ps1
+}
+
+
+function disable_privacy_experience
+{
+    Write-Log "Disable Privacy Experience"
+    reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\OOBE" /v "DisablePrivacyExperience" /t "REG_DWORD" /d 1 /f
+}
+
+
 ###################################################################################################
 #
 # Main used in this script.
@@ -480,25 +494,29 @@ try
         New-Item -Path $workdir -ItemType "directory" -Force
     }
 
+    Write-Log "ACTION IS $action, start to setup environment"
+    set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
+    disable_privacy_experience
+
     if ($action.ToUpper() -eq "LANDING_ONLY")
     {
-        Write-Log "Start to landing script"
-        Invoke-WebRequest https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1 -OutFile C:\installer\env_setup.ps1
-        set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
-
-        Write-Log "Disable Privacy Experience"
-        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\OOBE" /v "DisablePrivacyExperience" /t "REG_DWORD" /d 1 /f
+        landing_script
     }
-    else
+    elseif ($action.ToUpper() -eq "INSTALL_ONLY")
     {
-        Write-Log "Start to setup environment"
         set_autologon -DefaultUsername $DefaultUsername -DefaultPassword $DefaultPassword
         download_azure_pipeline_agent
         register_az_deployment_interactive_agent -UserAccount $DefaultUsername -UserPwd $DefaultPassword -AzureToken $AzureToken -AgentTags $AgentTags -AgentPoolConfig $AgentPoolConfig -AzureDevopsProjectUrl $AzureDevopsProjectUrl -AzureDevopsProject $AzureDevopsProject -AzureDevopsDeployGroup $AzureDevopsDeployGroup
         install_chocolatey
         handel_firewarll_rules
-        Write-Log 'Artifact completed successfully.'
     }
+    else
+    {
+        install_chocolatey
+        handel_firewarll_rules
+    }
+
+    Write-Log 'Artifact completed successfully.'
 }
 finally
 {
