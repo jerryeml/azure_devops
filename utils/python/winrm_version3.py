@@ -307,11 +307,11 @@ class PowerShell(WinCmd):
 
 def for_useage():
     # Example for useage
-    win_command = 'whoami'
+    win_command = "whoami"
     # https://osce-vm.centralus.cloudapp.azure.com:5986
-    p = PowerShell(username=u'trend', password=u'Osce@1234', target=u'https://vm-test000.westus2.cloudapp.azure.com:5986', command=win_command)
-    p.execute()
-    print(p.execute())
+    p = PowerShell(username=u'trend', password=u'Osce@1234', target=u'https://test-001000.westus2.cloudapp.azure.com:5986', command=win_command)
+    output = p.execute()
+    print(output)
 
 
 if __name__ == "__main__":
