@@ -217,6 +217,8 @@
     "vm_16_name": "[concat(parameters('existing_lab_name'), '/', parameters('new_vm_16_name'))]",
     "win_desktop_publisher": "MicrosoftWindowsDesktop",
     "win_server_publisher": "MicrosoftWindowsServer",
+    "env_setup_ps_uri": "[[\"https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1\"]",
+    "env_setup_ps_name": "env_setup.ps1",
     "run_ps_args": "[concat('-DefaultUsername \"', parameters('user_name'), '\" -DefaultPassword \"', parameters('password'), '\"')]"
   },
   "resources": [
@@ -275,11 +277,11 @@
               "parameters": [
                 {
                   "name": "scriptFileUris",
-                  "value": "[parameters('Run_PowerShell_scriptFileUris')]"
+                  "value": "[variables('env_setup_ps_uri')]"
                 },
                 {
                   "name": "scriptToRun",
-                  "value": "[parameters('Run_PowerShell_scriptToRun')]"
+                  "value": "[variables('env_setup_ps_name')]"
                 },
                 {
                   "name": "scriptArguments",
@@ -390,11 +392,11 @@
               "parameters": [
                 {
                   "name": "scriptFileUris",
-                  "value": "[parameters('Run_PowerShell_scriptFileUris')]"
+                  "value": "[variables('env_setup_ps_uri')]"
                 },
                 {
                   "name": "scriptToRun",
-                  "value": "[parameters('Run_PowerShell_scriptToRun')]"
+                  "value": "[variables('env_setup_ps_name')]"
                 },
                 {
                   "name": "scriptArguments",
