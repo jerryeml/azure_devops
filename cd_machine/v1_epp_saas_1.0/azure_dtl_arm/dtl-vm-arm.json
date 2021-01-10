@@ -275,11 +275,11 @@
               "parameters": [
                 {
                   "name": "scriptFileUris",
-                  "value": "https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1"
+                  "value": "[parameters('Run_PowerShell_scriptFileUris')]"
                 },
                 {
                   "name": "scriptToRun",
-                  "value": "env_setup.ps1"
+                  "value": "[parameters('Run_PowerShell_scriptToRun')]"
                 },
                 {
                   "name": "scriptArguments",
@@ -390,11 +390,11 @@
               "parameters": [
                 {
                   "name": "scriptFileUris",
-                  "value": "https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1"
+                  "value": "[parameters('Run_PowerShell_scriptFileUris')]"
                 },
                 {
                   "name": "scriptToRun",
-                  "value": "env_setup.ps1"
+                  "value": "[parameters('Run_PowerShell_scriptToRun')]"
                 },
                 {
                   "name": "scriptArguments",
