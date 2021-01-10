@@ -195,18 +195,6 @@
     "Windows_Firewall_operations_firewallOperation": {
         "type": "string",
         "defaultValue": "Disable Firewall"
-    },
-    "Run_PowerShell_scriptFileUris": {
-      "type": "string",
-      "defaultValue": "[[\"https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1\"]"
-    },
-    "Run_PowerShell_scriptToRun": {
-      "type": "string",
-      "defaultValue": "env_setup.ps1"
-    },
-    "Run_PowerShell_scriptArguments": {
-      "type": "string",
-      "defaultValue": "-DefaultUsername \"trend\" -DefaultPassword \"secret\" -action \"DEFAULT\""
     }
   },
   "variables": {
