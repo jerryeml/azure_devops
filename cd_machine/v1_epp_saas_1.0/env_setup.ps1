@@ -468,6 +468,23 @@ function register_az_deployment_interactive_agent
 }
 
 
+function remove_az_pipeline_agent
+{
+    [CmdletBinding()]
+    param
+    (
+        [string] $AzureToken,
+        [string] $AgentPoolConfig
+    )
+
+    Write-Log "prepare to remove az pipeline agent"
+    # config.cmd remove --auth pat --token ""
+    Start-Process -FilePath $AgentPoolConfig -NoNewWindow -ArgumentList "remove --auth pat --token $AzureToken"
+    $nid = (Get-Process cmd).id
+    Write-Log "az agent remove process nid: $nid"
+}
+
+
 function landing_script
 {
     Write-Log "Start to landing script"
