@@ -28,6 +28,8 @@ from exception import OSCEWinRMTransportException
 """
 Support Python3.6
 If you want to use in py3, you have to add "return session" in winrm folder and script transport.py after line 293
+or
+pywinrm version should be 0.2.1 only
 """
 
 
