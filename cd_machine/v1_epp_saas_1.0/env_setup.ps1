@@ -7,7 +7,7 @@ param
     [string] $DefaultPassword,
     [string] $AzureToken="optional_input",
     [string] $AgentTags="optional_input",
-    [string] $AgentPoolConfig="optional_input",
+    [string] $AgentPoolConfig="C:\deployment_agent\config.cmd",
     [string] $AzureDevopsProjectUrl="optional_input",
     [string] $AzureDevopsProject="optional_input",
     [string] $AzureDevopsDeployGroup="optional_input",
@@ -454,7 +454,7 @@ function register_az_deployment_interactive_agent
         }
 
         Write-Log "register_az_deployment_interactive_agent params: $settings"
-        Start-Process -FilePath $AgentPoolConfig -NoNewWindow -ArgumentList "--unattended --deploymentGroup --url $AzureDevopsProjectUrl --auth pat --token $AzureToken --projectName $AzureDevopsProject --deploymentGroupName $AzureDevopsDeployGroup --agent $AgentTagrget-DG --replace --addDeploymentGroupTags --deploymentGroupTags `"$AgentTagrget, $AgentTags`" --runAsAutoLogon --windowsLogonAccount $UserAccount --windowsLogonPassword $UserPwd --noRestart"
+        Start-Process -FilePath $AgentPoolConfig -NoNewWindow -ArgumentList "--unattended --deploymentGroup --url $AzureDevopsProjectUrl --auth pat --token $AzureToken --projectName $AzureDevopsProject --deploymentGroupName $AzureDevopsDeployGroup --agent $AgentTagrget-DG --replace --addDeploymentGroupTags --deploymentGroupTags `"$AgentTagrget, $AgentTags`" --runAsAutoLogon --windowsLogonAccount $UserAccount --windowsLogonPassword $UserPwd"
 
         $nid = (Get-Process cmd).id
         Write-Log "az agent install process nid: $nid"
@@ -482,6 +482,7 @@ function remove_az_pipeline_agent
     Start-Process -FilePath $AgentPoolConfig -NoNewWindow -ArgumentList "remove --auth pat --token $AzureToken"
     $nid = (Get-Process cmd).id
     Write-Log "az agent remove process nid: $nid"
+    Start-Sleep -s 10
 }
 
 
@@ -532,6 +533,7 @@ try
     elseif ($action.ToUpper() -eq "REINSTALL_DEPLOYMENT_AGENT")
     {
         remove_az_pipeline_agent -AzureToken $AzureToken -AgentPoolConfig $AgentPoolConfig
+        register_az_deployment_interactive_agent -UserAccount $DefaultUsername -UserPwd $DefaultPassword -AzureToken $AzureToken -AgentTags $AgentTags -AgentPoolConfig $AgentPoolConfig -AzureDevopsProjectUrl $AzureDevopsProjectUrl -AzureDevopsProject $AzureDevopsProject -AzureDevopsDeployGroup $AzureDevopsDeployGroup
     }
     else
     {
