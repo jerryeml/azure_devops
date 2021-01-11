@@ -505,6 +505,8 @@ function disable_privacy_experience
 #
 try
 {
+    Write-Log "================================================================================="
+
     if ((Test-Path -Path $workdir) -eq $false)
     {
         Write-Log "Create Folder of installer"
@@ -527,8 +529,13 @@ try
         install_chocolatey
         handel_firewarll_rules
     }
+    elseif ($action.ToUpper() -eq "REINSTALL_DEPLOYMENT_AGENT")
+    {
+        remove_az_pipeline_agent -AzureToken $AzureToken -AgentPoolConfig $AgentPoolConfig
+    }
     else
     {
+        landing_script
         install_chocolatey
         handel_firewarll_rules
     }
