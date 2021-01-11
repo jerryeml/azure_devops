@@ -1,3 +1,4 @@
+import argparse
 import logging
 import time
 import uuid
@@ -307,15 +308,29 @@ class PowerShell(WinCmd):
         return rs
 
 
-def for_useage():
+def simple_useage():
     # Example for useage
     win_command = "whoami"
     # https://osce-vm.centralus.cloudapp.azure.com:5986
-    # p = PowerShell(username=u'trend', password=u'Osce@1234', target=u'https://test-001000.westus2.cloudapp.azure.com:5986', command=win_command)
-    # output = p.execute()
-    # print(output)
+    p = PowerShell(username=u'trend', password=u'Osce@1234', target=u'https://one-16-int000.westus2.cloudapp.azure.com:5986', command=win_command)
+    output = p.execute()
+    LOG.info(output)
+
+
+def remote_run_ps(target_fqdn, user_name, user_pwd, command):
+    p = PowerShell(username=user_name, password=user_pwd, target=target_fqdn, command=command)
+    output = p.execute()
+    LOG.info(output)
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    for_useage()
+    # simple_useage()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-fqdn", dest="target_fqdn", type=str, required=True)
+    parser.add_argument("-user", dest="user_name", type=str, required=True)
+    parser.add_argument("-pwd", dest="user_pwd", type=str, required=True)
+    parser.add_argument("-command", dest="command", type=str, required=False, default="whoami; ipconfig")
+    args = parser.parse_args()
+
+    remote_run_ps(target_fqdn=args.target_fqdn, user_name=args.user_name, user_pwd=args.user_pwd, command=args.command)
