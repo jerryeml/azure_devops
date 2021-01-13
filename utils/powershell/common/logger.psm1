@@ -120,7 +120,7 @@ function debug_log_maintenance()
 	{
 		## Get Parent path of log 
 		$Log_Parent = Split-Path -Path $LogPath -Parent 
-		create_gb_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] SaaS DebugLog Parent Path ($Log_Parent)."; FileName = log_file_name{}; LineNumber = line_number{}}
+		create_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] SaaS DebugLog Parent Path ($Log_Parent)."; FileName = log_file_name{}; LineNumber = line_number{}}
 
 		## Archieve Log
 		if ((Get-item -Path $LogPath).Length -gt $SCRIPT_LOG_SIZE)
@@ -130,9 +130,9 @@ function debug_log_maintenance()
 			$NewLogPath = Join-Path -Path $Log_Parent -ChildPath ("{0}_{1}.log" -f $Log_LeafBase, (Get-Date).tostring("yyyyMMddhhmmss"))
 			$ArchivePath = Join-Path -Path $Log_Parent -ChildPath ("{0}_{1}.zip" -f $ZipName, (Get-Date).tostring("yyyyMMddhhmmss"))
 
-			create_gb_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] SaaS DebugLog Path ($LogPath)."; FileName = log_file_name{}; LineNumber = line_number{}}
-			create_gb_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] The size of SaaS Debuglog is greater than ($SCRIPT_LOG_SIZE)."; FileName = log_file_name{}; LineNumber = line_number{}}
-			create_gb_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] Starting to archieve DebugLog. ArchieveName ($ArchivePath)."; FileName = log_file_name{}; LineNumber = line_number{}}
+			create_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] SaaS DebugLog Path ($LogPath)."; FileName = log_file_name{}; LineNumber = line_number{}}
+			create_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] The size of SaaS Debuglog is greater than ($SCRIPT_LOG_SIZE)."; FileName = log_file_name{}; LineNumber = line_number{}}
+			create_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] Starting to archieve DebugLog. ArchieveName ($ArchivePath)."; FileName = log_file_name{}; LineNumber = line_number{}}
 
 			# Rename Log for Archive 
 			$Result_Rename = Rename-Item -Path $LogPath -NewName ("{0}_{1}.log" -f $Log_LeafBase, (Get-Date).tostring("yyyyMMddhhmmss"))
@@ -146,12 +146,12 @@ function debug_log_maintenance()
 			}
 			else
 			{
-				create_gb_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] Archieve DebugLog failed. Trying to archieve the file in next time."; FileName = log_file_name{}; LineNumber = line_number{}}
+				create_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] Archieve DebugLog failed. Trying to archieve the file in next time."; FileName = log_file_name{}; LineNumber = line_number{}}
 			}
 		}
 		else
 		{
-			create_gb_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] The size of SaaS Debuglog is not greater than ($SCRIPT_LOG_SIZE). Checking the debug log size in next time."; FileName = log_file_name{}; LineNumber = line_number{}}
+			create_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] The size of SaaS Debuglog is not greater than ($SCRIPT_LOG_SIZE). Checking the debug log size in next time."; FileName = log_file_name{}; LineNumber = line_number{}}
 		}
 
 		## Purge Log Archieve
@@ -159,13 +159,13 @@ function debug_log_maintenance()
 		if ($Archives.Count -gt $SCRIPT_KEEP_ARCHIEVE_COUNT)
 		{
 			$PurgeCount = $Archives.Count - $SCRIPT_KEEP_ARCHIEVE_COUNT
-			create_gb_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] Archieve count ({0})." -f $Archives.Count; FileName =log_file_name{}; LineNumber = line_number{}}
-			create_gb_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] Need to purge ($PurgeCount)."; FileName = log_file_name{}; LineNumber = line_number{}}
+			create_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] Archieve count ({0})." -f $Archives.Count; FileName =log_file_name{}; LineNumber = line_number{}}
+			create_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] Need to purge ($PurgeCount)."; FileName = log_file_name{}; LineNumber = line_number{}}
 
 			for ($i=0; $i -lt $PurgeCount; $i++)
 			{
 				$PurgeTarget = Join-Path -Path $Log_Parent -ChildPath $Archives[$i].Name
-				create_gb_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] Purge ($PurgeTarget)."; FileName = log_file_name{}; LineNumber = line_number{}}	
+				create_debug_log @{Message = "[$SCRIPT_DEBUG_TAG] Purge ($PurgeTarget)."; FileName = log_file_name{}; LineNumber = line_number{}}	
 				$Result_Remove = Remove-Item -Path $PurgeTarget -Force -WarningAction SilentlyContinue -ErrorAction silentlyContinue
 			}
 		}
@@ -173,7 +173,7 @@ function debug_log_maintenance()
 }
 
 
-function create_gb_debug_log()
+function create_debug_log()
 {
         <#
         .Description
@@ -213,7 +213,7 @@ function create_gb_debug_log()
 		}
 		catch
 		{
-            Write-Host -ForegroundColor Red "[create_gb_debug_log] Exception: $($_.Exception.GetType().FullName, $_.Exception.Message)"
+            Write-Host -ForegroundColor Red "[create_debug_log] Exception: $($_.Exception.GetType().FullName, $_.Exception.Message)"
 			Switch -Regex ($_.exception) {
 				"used by another process" {
 					Write-Host "Oh no, Expection: $($_.exception)"
