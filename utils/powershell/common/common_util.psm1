@@ -43,16 +43,16 @@ function init()
         [string] $RootPath
 	)
 
-	create_gb_debug_log @{Message = "[init] PARAM INI RootPath : ($RootPath)."; FileName = log_file_name{}; LineNumber = line_number{}}
+	create_debug_log @{Message = "[init] PARAM INI RootPath : ($RootPath)."; FileName = log_file_name{}; LineNumber = line_number{}}
 	$Result_CreateMessageTable = create_message_table -RootPath $RootPath
 
 	if ($Result_CreateMessageTable -ne $true) 
 	{
-		create_gb_debug_log @{Message = "[init] initialization failed."; FileName = log_file_name{}; LineNumber = line_number{}}
+		create_debug_log @{Message = "[init] initialization failed."; FileName = log_file_name{}; LineNumber = line_number{}}
 		exit 1
 	}
 
-	create_gb_debug_log @{Message = "[init] initialization successfully"; FileName = log_file_name{}; LineNumber = line_number{}}
+	create_debug_log @{Message = "[init] initialization successfully"; FileName = log_file_name{}; LineNumber = line_number{}}
 	exit 0
 }
 
@@ -86,7 +86,7 @@ function create_message_table()
 	else
 	{
 		$Result_SetVariable = Set-Variable -Name $SCRIPT_GLOBAL_PARAM_TABLE -Scope Global -Value $TempParamTable -Force -Option ReadOnly -WarningAction SilentlyContinue -ErrorAction silentlyContinue
-		create_gb_debug_log @{Message = "[create_message_table] Creating Global Parameter Table success. return: $($Result_SetVariable)"; FileName = log_file_name{}; LineNumber = line_number{}}
+		create_debug_log @{Message = "[create_message_table] Creating Global Parameter Table success. return: $($Result_SetVariable)"; FileName = log_file_name{}; LineNumber = line_number{}}
 	}
 
 	return $true
@@ -113,33 +113,33 @@ function create_hash_table()
 
 	if ((Test-Path -Path $MessageFile) -eq $false)
 	{
-		create_gb_debug_log @{Message = "[create_hash_table] ($MessageFile) does not exist. <<<"; FileName = log_file_name{}; LineNumber = line_number{}}
+		create_debug_log @{Message = "[create_hash_table] ($MessageFile) does not exist. <<<"; FileName = log_file_name{}; LineNumber = line_number{}}
 		return $false
 	}
 	else
 	{
-		create_gb_debug_log @{Message = "[create_hash_table] The target message file is ($MessageFile)."; FileName = log_file_name{}; LineNumber = line_number{}}
+		create_debug_log @{Message = "[create_hash_table] The target message file is ($MessageFile)."; FileName = log_file_name{}; LineNumber = line_number{}}
 
 		try
 		{
 			## Creating Hash Table 
 			$HashTable.Value = Get-Content -Path $MessageFile | ConvertFrom-StringData
 			$ElementCount = $HashTable.Value.count
-			create_gb_debug_log @{Message = "[create_hash_table] Counts ($ElementCount)."; FileName = log_file_name{}; LineNumber = line_number{}}
+			create_debug_log @{Message = "[create_hash_table] Counts ($ElementCount)."; FileName = log_file_name{}; LineNumber = line_number{}}
 
 			if ($ElementCount -le 0)
 			{
-				create_gb_debug_log @{Message = "[ERROR] The HashTable is empty."; FileName = log_file_name{}; LineNumber = line_number{}}
+				create_debug_log @{Message = "[ERROR] The HashTable is empty."; FileName = log_file_name{}; LineNumber = line_number{}}
 				exit 1
 			}
+			return $true
 		}
 		catch
 		{
-			create_gb_debug_log @{Message = "[create_hash_table] Exception: $($_.Exception.GetType().FullName, $_.Exception.Message)"; FileName = log_file_name{}; LineNumber = line_number{}}
+			create_debug_log @{Message = "[create_hash_table] Exception: $($_.Exception.GetType().FullName, $_.Exception.Message)"; FileName = log_file_name{}; LineNumber = line_number{}}
 			exit 1
 		}
 	}
-	exit 0
 }
 
 
@@ -149,4 +149,4 @@ Import-Module -Name $debug_log_module -Force
 $SplitTempPath = $PSScriptRoot -split $SCRIPT_Common_FOLDER_NAME
 $GBRootPath = $SplitTempPath[0]
 init -RootPath $GBRootPath
-create_gb_debug_log @{Message = "[common_function] Init Function Successfully."; FileName = log_file_name{}; LineNumber = line_number{}}
+create_debug_log @{Message = "[common_function] Init Function Successfully."; FileName = log_file_name{}; LineNumber = line_number{}}
