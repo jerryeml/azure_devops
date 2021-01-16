@@ -26,8 +26,9 @@ def insert_environment_path(root_path):
     if not arg.skip_env_path:
         utility_path = [r'utility\webdriver']
         utility_path = list(map(lambda x: os.path.join(root_path, x), utility_path))
+        python_package_root_path = os.path.join(root_path, r'utils\python')
         insert_variable_path('PATH', utility_path)
-        insert_variable_path('PYTHONPATH', [root_path])
+        insert_variable_path('PYTHONPATH', [root_path, python_package_root_path])
 
 
 def insert_variable_path(path_name, added_paths):
@@ -147,12 +148,13 @@ def _download_webdriver(download_url):
 if __name__ == '__main__':
     root = os.path.dirname(os.path.abspath(__file__)).replace('/', os.sep)
     try:
+        print(f"root path:{root}")
         insert_environment_path(root)
-        do_pip_install(root)
-        for download_driver in [download_chromedriver]:
-            try:
-                download_driver()
-            except Exception as e:
-                print(f'Fail to {download_driver.__name__} due to exception: {e}')
+        # do_pip_install(root)
+        # for download_driver in [download_chromedriver]:
+        #     try:
+        #         download_driver()
+        #     except Exception as e:
+        #         print(f'Fail to {download_driver.__name__} due to exception: {e}')
     except Exception as e:
         print(e)
