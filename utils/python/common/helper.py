@@ -13,17 +13,14 @@ def deploy_command_no_return_result(command=None):
     :param command: az command, reference: https://docs.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest
     @return: 0 success; 1 fail
     """
-    try:
-        process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True, universal_newlines=True)
-        # return_code = process.communicate(input=None)[0]
-        process.wait()
-        # logging.debug("Retunr value: %s, type: %s", return_code, type(return_code))
-        if process.returncode != 0:
-            return CommonResult.Fail
 
-        return CommonResult.Success
-    except Exception as e:
-        logging.error(traceback.format_exc(e))
+    process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+    process.wait()
+    if process.returncode != 0:
+        logging.error(f"process return code: {process.returncode}")
+        raise subprocess.CalledProcessError(process.returncode, command)
+
+    return CommonResult.Success
 
 
 def deploy_command_return_result(command=None):
@@ -32,18 +29,17 @@ def deploy_command_return_result(command=None):
     :param command: az command, reference: https://docs.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest
     @return: list type of command result
     """
-    try:
-        process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True, universal_newlines=True)
-        return_code = process.communicate(input=None)[0]
-        process.wait()
-        # logging.debug("Retunr value: %s, type: %s", return_code, type(return_code))  # type str
-        if process.returncode != 0:
-            return CommonResult.Fail
 
-        transform_json = json.loads(return_code)
-        return transform_json
-    except Exception as e:
-        logging.error(traceback.format_exc(e))
+    process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True, universal_newlines=True)
+    return_code = process.communicate(input=None)[0]
+    process.wait()
+    # logging.debug("Retunr value: %s, type: %s", return_code, type(return_code))  # type str
+    if process.returncode != 0:
+        logging.error(f"process return code: {process.returncode}, return result: {return_code}")
+        raise subprocess.CalledProcessError(process.returncode, command)
+
+    transform_json = json.loads(return_code)
+    return transform_json
 
 
 def verfiy_value_from_dict(target_dict, verify_key_name, expect_value, default=2):
