@@ -2,5 +2,5 @@ class CommonResult(object):
     Success = 0
     Fail = 1
     Unknown = 999
-    Exist = True
-    No_exist = False
+    Exist = need_to_provision = True
+    No_exist = no_need_to_provision = False
