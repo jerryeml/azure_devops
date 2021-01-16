@@ -126,6 +126,10 @@
         "description": "The password for the local account that will be created on the new vm."
       }
     },
+    "is_claimable": {
+      "type": "bool",
+      "defaultValue": true
+    },
     "az_devops_org_name": {
       "type": "string",
       "allowedValues": [
@@ -228,7 +232,7 @@
         "labVirtualNetworkId": "[variables('lab_vnet_id')]",
         "labSubnetName": "[parameters('lab_subnet_name')]",
         "disallowPublicIpAddress": false,
-        "allowClaim": false,
+        "allowClaim": "[parameters('is_claimable')]",
         "notes": "[parameters('vm_10_notes')]",
         "galleryImageReference": {
             "offer": "[parameters('vm_10_offer')]",
@@ -343,7 +347,7 @@
         "labVirtualNetworkId": "[variables('lab_vnet_id')]",
         "labSubnetName": "[parameters('lab_subnet_name')]",
         "disallowPublicIpAddress": false,
-        "allowClaim": false,
+        "allowClaim": "[parameters('is_claimable')]",
         "notes": "[parameters('vm_16_notes')]",
         "galleryImageReference": {
             "offer": "[parameters('vm_16_offer')]",
