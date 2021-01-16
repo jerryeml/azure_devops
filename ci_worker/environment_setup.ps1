@@ -355,7 +355,7 @@ function install_chocolatey
     choco install sql-server-management-studio -y
     # choco install sysinternals -y
     # choco install winmerge -y 
-    # choco install postman -y
+    choco install postman -y
     choco install wireshark -y
     choco install python --version=3.8.5.20200721 -y
 
@@ -424,9 +424,9 @@ try
 {
     # Write-Log "Prepare to installl packages"
     install_azure_pipeline_agent -az_devops_org_url $az_devops_org_url -token $token -pool_name $pool_name -win_login_account $win_login_account -win_login_pwd $win_login_pwd
-    # set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
+    set_winrm_https_to_specify_port -HostName $HostName -Port $Port -workdir $workdir
     install_chocolatey
-    # handel_firewarll_rules
+    handel_firewarll_rules
     # Write-Log 'Artifact completed successfully.'
 }
 finally
