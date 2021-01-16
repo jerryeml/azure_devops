@@ -26,8 +26,9 @@ def insert_environment_path(root_path):
     if not arg.skip_env_path:
         utility_path = [r'utility\webdriver']
         utility_path = list(map(lambda x: os.path.join(root_path, x), utility_path))
-        python_package_root_path = os.path.join(root_path, r'utils\python')
+        utility_path.append(r'C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin')
         insert_variable_path('PATH', utility_path)
+        python_package_root_path = os.path.join(root_path, r'utils\python')
         insert_variable_path('PYTHONPATH', [root_path, python_package_root_path])
 
 
