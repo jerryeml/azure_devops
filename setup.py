@@ -150,11 +150,11 @@ if __name__ == '__main__':
     try:
         print(f"root path:{root}")
         insert_environment_path(root)
-        # do_pip_install(root)
-        # for download_driver in [download_chromedriver]:
-        #     try:
-        #         download_driver()
-        #     except Exception as e:
-        #         print(f'Fail to {download_driver.__name__} due to exception: {e}')
+        do_pip_install(root)
+        for download_driver in [download_chromedriver]:
+            try:
+                download_driver()
+            except Exception as e:
+                print(f'Fail to {download_driver.__name__} due to exception: {e}')
     except Exception as e:
         print(e)
