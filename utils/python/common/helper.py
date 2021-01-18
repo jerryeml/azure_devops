@@ -1,9 +1,11 @@
 import json
 import yaml
+import requests
 import logging
 import traceback
 import subprocess
 import configparser
+from requests.auth import HTTPBasicAuth
 from common.const import CommonResult
 
 
@@ -94,3 +96,54 @@ def modify_yaml_config(yaml_path, section, key, value):
 
     with open(yaml_path, 'w') as f:
         yaml.safe_dump(doc, f, default_flow_style=False)
+
+
+class AzureDevopsAPI(object):
+    def __init__(self, username, az_pat, az_org="infinite-wars", az_project="v1-epp-saas-1.0"):
+        self.username = username
+        self.az_pat = az_pat
+        self.organization = az_org
+        self.project = az_project
+
+    def _get_deployment_group_agent(self, deployment_group_id):
+        url = "https://dev.azure.com/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}/targets/?api-version=6.0-preview.1".format(organization=self.organization,
+                                                                                                                                                                    project=self.project,
+                                                                                                                                                                    deploymentGroupId=deployment_group_id)
+        response = requests.get(url, auth=HTTPBasicAuth(self.username, self.az_pat))
+        logging.info("response status_code: {}".format(response.status_code))
+        assert response.status_code == 200
+        return response.json()
+
+    def _del_deployment_group_agent(self, target_id, deployment_group_id):
+        url = "https://dev.azure.com/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}/targets/{targetId}?api-version=6.0-preview.1".format(organization=self.organization,
+                                                                                                                                                                              project=self.project,
+                                                                                                                                                                              deploymentGroupId=deployment_group_id,
+                                                                                                                                                                              targetId=target_id)
+        response = requests.delete(url, auth=HTTPBasicAuth(self.username, self.az_pat))
+        logging.info("delete agnet in deployment group status_code: {}".format(response.status_code))
+        assert response.status_code == 200 or response.status_code == 204
+        return CommonResult.Success
+
+    def _update_tags_of_deployment_group_agent(self):
+        deploymentGroupId = 53
+        organization = "infinite-wars"
+        project = "v1-epp-saas-1.0"
+        url = f"https://dev.azure.com/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}/targets?api-version=6.0-preview.1"
+        payload = [{
+            "tags": [
+                "db",
+                "web",
+                "newTag5248232320667898861"
+            ],
+            "id": 82
+        },
+            {
+            "tags": [
+                "db",
+                "newTag5248232320667898861"
+            ],
+            "id": 83
+        }
+        ]
+        response = requests.patch(url, json=payload, auth=HTTPBasicAuth(self.username, self.az_pat))
+        print(response)
