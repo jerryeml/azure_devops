@@ -13,7 +13,7 @@ def monitor_vm_resource_in_lab(username="jerry_he@trendmicro.com", az_pat="hr3p3
 
     if available_agent_count < 4:
         print(f"available agent count: {available_agent_count} is less than 4, do provision")
-        deploy_command_return_result(command=f'Write-Host "##vso[task.setvariable variable=available_agent_count]{available_agent_count}"')
+        deploy_command_return_result(command=f'echo "##vso[task.setvariable variable=available_agent_count]{available_agent_count}"')
     else:
         print(f"available agent count: {available_agent_count}, no need provision")
 
