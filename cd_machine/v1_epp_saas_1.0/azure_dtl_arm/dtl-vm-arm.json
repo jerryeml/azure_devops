@@ -128,7 +128,7 @@
     },
     "is_claimable": {
       "type": "bool",
-      "defaultValue": true
+      "defaultValue": false
     },
     "az_devops_org_name": {
       "type": "string",
@@ -176,11 +176,11 @@
     },
     "vm_10_tags": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "win10, available"
     },
     "vm_16_tags": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "win16, available"
     },
     "az_agent_10_name": {
       "type": "string",
