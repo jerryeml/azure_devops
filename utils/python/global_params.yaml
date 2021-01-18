@@ -1,0 +1,7 @@
+azure_devops:
+  org: infinite-wars
+  project: v1-epp-saas-1.0
+  one_int_deployment_group_id: 53
+  one_dev_deployment_group_id: 43
+  one_stg_deployment_group_id: 52
+  one_prod_deployment_group_id: 50
