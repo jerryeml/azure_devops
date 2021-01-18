@@ -1,3 +1,4 @@
+import os
 import json
 import yaml
 import requests
@@ -5,8 +6,19 @@ import logging
 import traceback
 import subprocess
 import configparser
+from os.path import dirname
 from requests.auth import HTTPBasicAuth
 from common.const import CommonResult
+
+
+def load_global_params_config(py_root_path=dirname(dirname(__file__))):
+    config_path = os.path.join(py_root_path,
+                               "global_params.yaml")
+    with open(config_path) as f:
+        global_params = yaml.load(f.read(), Loader=yaml.SafeLoader)
+
+    logging.info(f"loading global params config: {config_path}")
+    return global_params
 
 
 def deploy_command_no_return_result(command=None):
@@ -88,6 +100,14 @@ def load_value_from_ini(ini_path, section, key):
     return value
 
 
+def load_yaml_config(yaml_path):
+    with open(yaml_path) as f:
+        yaml_config = yaml.load(f.read(), Loader=yaml.SafeLoader)
+
+    logging.info(f"loading global params config: {yaml_config}")
+    return yaml_config
+
+
 def modify_yaml_config(yaml_path, section, key, value):
     with open(yaml_path) as f:
         doc = yaml.safe_load(f)
@@ -99,11 +119,11 @@ def modify_yaml_config(yaml_path, section, key, value):
 
 
 class AzureDevopsAPI(object):
-    def __init__(self, username, az_pat, az_org="infinite-wars", az_project="v1-epp-saas-1.0"):
+    def __init__(self, username, az_pat):
         self.username = username
         self.az_pat = az_pat
-        self.organization = az_org
-        self.project = az_project
+        self.organization = load_global_params_config()['azure_devops']['org']
+        self.project = load_global_params_config()['azure_devops']['project']
 
     def _get_deployment_group_agent(self, deployment_group_id):
         url = "https://dev.azure.com/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}/targets/?api-version=6.0-preview.1".format(organization=self.organization,
