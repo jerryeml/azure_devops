@@ -174,7 +174,13 @@ class AzureCLI(object):
         self.username = username
         self.sp_pwd = sp_pwd
         self.tenant_id = tenant_id
+        self._install_az_extension()
         self.az_login()
+
+    def _install_az_extension(self):
+        command = f'az extension add --name "azure-devops"'
+        install_result = deploy_command_no_return_result(command=command)
+        assert install_result == 0
 
     def az_login(self):
         command = f"az login --service-principal --username {self.username} --password {self.sp_pwd} --tenant {self.tenant_id}"
