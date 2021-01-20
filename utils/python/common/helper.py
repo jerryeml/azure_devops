@@ -175,6 +175,8 @@ class AzureCLI(object):
         self.az_pat = az_pat
         self.sp_pwd = sp_pwd
         self.tenant_id = tenant_id
+        self.org = os.path.join(load_global_params_config()['azure_devops']['url'], load_global_params_config()['azure_devops']['org'])
+        self.project = load_global_params_config()['azure_devops']['project']
         self._install_az_extension()
         self.az_login()
         self.az_devops_login()
@@ -191,20 +193,18 @@ class AzureCLI(object):
         logging.info("az_login successfully")
 
     def az_devops_login(self):
-        command = f'set AZURE_DEVOPS_EXT_PAT="{self.az_pat}" | az devops login'
+        command = f'set AZURE_DEVOPS_EXT_PAT="{self.az_pat}" | az devops login --org {self.org}'
         login_result = deploy_command_no_return_result(command=command)
         assert login_result == 0
         logging.info("az_devops_login successfully")
 
     def update_var_in_variable_group(self, deployment_group_id, key, value):
-        org = os.path.join(load_global_params_config()['azure_devops']['url'], load_global_params_config()['azure_devops']['org'])
-        project = load_global_params_config()['azure_devops']['project']
-        command = f"az pipelines variable-group variable update --org {org} --project {project} --id {deployment_group_id} --name {key} --value {value}"
+        command = f"az pipelines variable-group variable update --org {self.org} --project {self.project} --id {deployment_group_id} --name {key} --value {value}"
         try:
             update_result = deploy_command_no_return_result(command=command)
             assert update_result is 0
         except subprocess.CalledProcessError as e:
             logging.warning(e)
-            command = f"az pipelines variable-group variable create --org {org} --project {project} --id {deployment_group_id} --name {key} --value {value}"
+            command = f"az pipelines variable-group variable create --org {self.org} --project {self.project} --id {deployment_group_id} --name {key} --value {value}"
             create_result = deploy_command_no_return_result(command=command)
             assert create_result is 0
