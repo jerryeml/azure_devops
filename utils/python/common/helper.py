@@ -167,3 +167,29 @@ class AzureDevopsAPI(object):
         ]
         response = requests.patch(url, json=payload, auth=HTTPBasicAuth(self.username, self.az_pat))
         print(response)
+
+
+class AzureCLI(object):
+    def __init__(self, username, sp_pwd, tenant_id):
+        self.username = username
+        self.sp_pwd = sp_pwd
+        self.tenant_id = tenant_id
+        self.az_login()
+
+    def az_login(self):
+        command = f"az login --service-principal --username {self.username} --password {self.sp_pwd} --tenant {self.tenant_id}"
+        login_result = deploy_command_no_return_result(command=command)
+        assert login_result == 0
+
+    def update_var_in_variable_group(self, deployment_group_id, key, value):
+        org = os.path.join(load_global_params_config()['azure_devops']['url'], load_global_params_config()['azure_devops']['org'])
+        project = load_global_params_config()['azure_devops']['project']
+        command = f"az pipelines variable-group variable update --org {org} --project {project} --id {deployment_group_id} --name {key} --value {value}"
+        try:
+            update_result = deploy_command_no_return_result(command=command)
+            assert update_result is 0
+        except subprocess.CalledProcessError as e:
+            logging.warning(e)
+            command = f"az pipelines variable-group variable create --org {org} --project {project} --id {deployment_group_id} --name {key} --value {value}"
+            create_result = deploy_command_no_return_result(command=command)
+            assert create_result is 0
