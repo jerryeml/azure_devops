@@ -16,16 +16,16 @@
         "description": "The name of the new vm to be created. (if you need to create mutil-vms at one time, the name should between 1 and 12 characters)"
       }
     },
-    "existing_lab_name": {
+    "env_name_and_product_name": {
       "type": "string",
       "allowedValues": [
-        "dtl-int",
-        "dtl-dev",
-        "dtl-stg",
-        "dtl-prod"
+        "int-one",
+        "dev-one",
+        "stg-one",
+        "prod-one"
       ],
       "metadata": {
-        "description": "The name of an existing lab where the new vm will be created."
+        "description": "The name of an testing environment and product name"
       }
     },
     "lab_subnet_name": {
@@ -131,6 +131,7 @@
       "allowedValues": [
         "https://dev.azure.com/infinite-wars/"
       ],
+      "defaultValue": "https://dev.azure.com/infinite-wars/",
       "metadata": {
         "description": "The URL for the Azure DevOps account, e.g. https://dev.azure.com/myorg"
       }
@@ -140,28 +141,9 @@
       "allowedValues": [
         "v1-epp-saas-1.0"
       ],
+      "defaultValue": "v1-epp-saas-1.0",
       "metadata": {
         "description": "The Azure DevOps project name, eg MyFirstProject"
-      }
-    },
-    "az_deployment_group_name": {
-      "type": "string",
-      "allowedValues": [
-        "iProduct-INT",
-        "iProduct-DEV",
-        "iProduct-STG",
-        "iProduct-PROD",
-        "MAC-INT",
-        "MAC-DEV",
-        "MAC-STG",
-        "MAC-PROD",
-        "ONE-INT",
-        "ONE-DEV",
-        "ONE-STG",
-        "ONE-PROD"
-      ],
-      "metadata": {
-        "description": "Name of the deployment group against which the agent has to be configured."
       }
     },
     "az_pat": {
@@ -198,11 +180,13 @@
     }
   },
   "variables": {
-    "lab_vnet_id": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', parameters('existing_lab_name'), parameters('lab_vnet_name'))]",
-    "vm_10_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', parameters('existing_lab_name'), parameters('new_vm_10_name'))]",
-    "vm_16_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', parameters('existing_lab_name'), parameters('new_vm_16_name'))]",
-    "vm_10_name": "[concat(parameters('existing_lab_name'), '/', parameters('new_vm_10_name'))]",
-    "vm_16_name": "[concat(parameters('existing_lab_name'), '/', parameters('new_vm_16_name'))]",
+    "existing_lab_name": "[concat('dtl-', parameters('env_name_and_product_name'))]",
+    "az_deployment_group_name": "[concat('DG-',parameters('env_name_and_product_name'))]",
+    "lab_vnet_id": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', variables('existing_lab_name'), parameters('lab_vnet_name'))]",
+    "vm_10_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', variables('existing_lab_name'), parameters('new_vm_10_name'))]",
+    "vm_16_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', variables('existing_lab_name'), parameters('new_vm_16_name'))]",
+    "vm_10_name": "[concat(variables('existing_lab_name'), '/', parameters('new_vm_10_name'))]",
+    "vm_16_name": "[concat(variables('existing_lab_name'), '/', parameters('new_vm_16_name'))]",
     "win_desktop_publisher": "MicrosoftWindowsDesktop",
     "win_server_publisher": "MicrosoftWindowsServer",
     "env_setup_ps_uri": "[[\"https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1\"]",
@@ -240,7 +224,7 @@
         "storageType": "StandardSSD",
         "artifacts": [
             {
-              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-settimezone')]",
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-settimezone')]",
               "parameters": [
                 {
                   "name": "TimeZoneId",
@@ -249,10 +233,10 @@
               ]
             },
             {
-                "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-selenium')]"
+                "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-selenium')]"
             },
             {
-              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-firewall')]",
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-firewall')]",
               "parameters": [
                 {
                   "name": "firewallOperation",
@@ -261,7 +245,7 @@
               ]
             },
             {
-              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-run-powershell')]",
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-run-powershell')]",
               "parameters": [
                 {
                   "name": "scriptFileUris",
@@ -278,7 +262,7 @@
               ]
             },
             {
-              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-deploymentgroup')]",
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-deploymentgroup')]",
               "parameters": [
                 {
                   "name": "accountUrl",
@@ -290,7 +274,7 @@
                 },
                 {
                   "name": "deploymentGroupName",
-                  "value": "[parameters('az_deployment_group_name')]"
+                  "value": "[variables('az_deployment_group_name')]"
                 },
                 {
                   "name": "PersonalAccessToken",
@@ -355,7 +339,7 @@
         "storageType": "StandardSSD",
         "artifacts": [
             {
-              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-settimezone')]",
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-settimezone')]",
               "parameters": [
                 {
                   "name": "TimeZoneId",
@@ -364,10 +348,10 @@
               ]
             },
             {
-                "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-selenium')]"
+                "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-selenium')]"
             },
             {
-              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-firewall')]",
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-firewall')]",
               "parameters": [
                 {
                   "name": "firewallOperation",
@@ -376,7 +360,7 @@
               ]
             },
             {
-              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-run-powershell')]",
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-run-powershell')]",
               "parameters": [
                 {
                   "name": "scriptFileUris",
@@ -393,7 +377,7 @@
               ]
             },
             {
-              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', parameters('existing_lab_name'), 'public repo', 'windows-deploymentgroup')]",
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-deploymentgroup')]",
               "parameters": [
                 {
                   "name": "accountUrl",
@@ -405,7 +389,7 @@
                 },
                 {
                   "name": "deploymentGroupName",
-                  "value": "[parameters('az_deployment_group_name')]"
+                  "value": "[variables('az_deployment_group_name')]"
                 },
                 {
                   "name": "PersonalAccessToken",
