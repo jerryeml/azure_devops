@@ -1,4 +1,5 @@
 azure_devops:
+  url: https://dev.azure.com/
   org: infinite-wars
   project: v1-epp-saas-1.0
   one_int_deployment_group_id: 53
