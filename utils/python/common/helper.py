@@ -193,10 +193,16 @@ class AzureCLI(object):
         logging.info("az_login successfully")
 
     def az_devops_login(self):
-        command = f'set AZURE_DEVOPS_EXT_PAT="{self.az_pat}" | az devops login --organization {self.org}'
+        command = f'echo {self.az_pat} > az_pat.txt'
+        generate_pat = deploy_command_no_return_result(command=command)
+        assert generate_pat == 0
+        command = f'more az_pat.txt | az devops login --organization {self.org}'
         login_result = deploy_command_no_return_result(command=command)
         assert login_result == 0
         logging.info("az_devops_login successfully")
+        command = f'del az_pat.txt'
+        remove_pat = deploy_command_no_return_result(command=command)
+        assert remove_pat == 0
 
     def update_var_in_variable_group(self, deployment_group_id, key, value):
         command = f"az pipelines variable-group variable update --org {self.org} --project {self.project} --id {deployment_group_id} --name {key} --value {value}"
@@ -208,3 +214,7 @@ class AzureCLI(object):
             command = f"az pipelines variable-group variable create --org {self.org} --project {self.project} --id {deployment_group_id} --name {key} --value {value}"
             create_result = deploy_command_no_return_result(command=command)
             assert create_result is 0
+
+
+if __name__ == "__main__":
+    print(deploy_command_no_return_result(''))
