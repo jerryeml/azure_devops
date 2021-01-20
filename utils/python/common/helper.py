@@ -193,7 +193,7 @@ class AzureCLI(object):
         logging.info("az_login successfully")
 
     def az_devops_login(self):
-        command = f'set AZURE_DEVOPS_EXT_PAT="{self.az_pat}" | az devops login --org {self.org}'
+        command = f'set AZURE_DEVOPS_EXT_PAT="{self.az_pat}" | az devops login --organization {self.org}'
         login_result = deploy_command_no_return_result(command=command)
         assert login_result == 0
         logging.info("az_devops_login successfully")
