@@ -170,8 +170,8 @@ class AzureDevopsAPI(object):
 
 
 class AzureCLI(object):
-    def __init__(self, username, az_pat, sp_pwd, tenant_id):
-        self.username = username
+    def __init__(self, sp_client_id, az_pat, sp_pwd, tenant_id):
+        self.sp_client_id = sp_client_id
         self.az_pat = az_pat
         self.sp_pwd = sp_pwd
         self.tenant_id = tenant_id
@@ -185,7 +185,7 @@ class AzureCLI(object):
         assert install_result == 0
 
     def az_login(self):
-        command = f"az login --service-principal --username {self.username} --password {self.sp_pwd} --tenant {self.tenant_id}"
+        command = f"az login --service-principal --username {self.sp_client_id} --password {self.sp_pwd} --tenant {self.tenant_id}"
         login_result = deploy_command_no_return_result(command=command)
         assert login_result == 0
         logging.info("az_login successfully")
