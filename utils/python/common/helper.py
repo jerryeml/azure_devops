@@ -177,6 +177,7 @@ class AzureCLI(object):
         self.tenant_id = tenant_id
         self._install_az_extension()
         self.az_login()
+        self.az_devops_login()
 
     def _install_az_extension(self):
         command = f'az extension add --name "azure-devops"'
