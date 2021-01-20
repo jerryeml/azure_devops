@@ -6,3 +6,6 @@ azure_devops:
   one_dev_deployment_group_id: 43
   one_stg_deployment_group_id: 52
   one_prod_deployment_group_id: 50
+
+log:
+  path: C:\v1_epp_logs
