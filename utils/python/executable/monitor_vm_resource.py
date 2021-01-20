@@ -33,7 +33,7 @@ def monitor_vm_resource_in_lab(username, az_pat, sp_client_id, sp_pwd, tenant_id
 
     if available_agent_count < 4:
         logging.info(f"available agent count: {available_agent_count} is less than 4, do provision")
-        az_cli = AzureCLI(sp_client_id, sp_pwd, tenant_id)
+        az_cli = AzureCLI(sp_client_id, az_pat, sp_pwd, tenant_id)
         az_cli.update_var_in_variable_group(3, "available_agent_count", available_agent_count)
     else:
         logging.warning(f"available agent count: {available_agent_count}, no need provision")

@@ -170,8 +170,9 @@ class AzureDevopsAPI(object):
 
 
 class AzureCLI(object):
-    def __init__(self, username, sp_pwd, tenant_id):
+    def __init__(self, username, az_pat, sp_pwd, tenant_id):
         self.username = username
+        self.az_pat = az_pat
         self.sp_pwd = sp_pwd
         self.tenant_id = tenant_id
         self._install_az_extension()
@@ -184,6 +185,11 @@ class AzureCLI(object):
 
     def az_login(self):
         command = f"az login --service-principal --username {self.username} --password {self.sp_pwd} --tenant {self.tenant_id}"
+        login_result = deploy_command_no_return_result(command=command)
+        assert login_result == 0
+
+    def az_devops_login(self):
+        command = f'set AZURE_DEVOPS_EXT_PAT="{self.az_pat}"; az devops login'
         login_result = deploy_command_no_return_result(command=command)
         assert login_result == 0
 
