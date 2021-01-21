@@ -189,8 +189,8 @@ function update_params_to_variable_group
 
 	# Config environment
 	az extension add --name azure-devops
-	$env:AZURE_DEVOPS_EXT_PAT=$azure_devops_pat
-	az devops login
+	Write-Output $azure_devops_pat > az_pat.txt
+	Get-Content az_pat.txt | az devops login
 	try
 	{
 		az pipelines variable-group variable update --org $global_params.azure_devops_org_url --project $global_params.azure_devops_project_name --id $vg_id --name $key --value $value
