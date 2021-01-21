@@ -181,7 +181,7 @@ function update_params_to_variable_group
 	(
 		[parameter(Mandatory=$true)]
 		[ValidateNotNullOrEmpty()]
-		# [string] $azure_devops_pat,
+		[string] $azure_devops_pat,
 		[string] $vg_id,
 		[string] $key,
 		[string] $value
@@ -189,7 +189,8 @@ function update_params_to_variable_group
 
 	# Config environment
 	az extension add --name azure-devops
-	# $env:AZURE_DEVOPS_EXT_PAT=$azure_devops_pat
+	$env:AZURE_DEVOPS_EXT_PAT=$azure_devops_pat
+	az devops login
 	try
 	{
 		az pipelines variable-group variable update --org $global_params.azure_devops_org_url --project $global_params.azure_devops_project_name --id $vg_id --name $key --value $value

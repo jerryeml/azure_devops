@@ -2,6 +2,7 @@ param
 (
 	########################################################
     ## Parameter
+    [string] $azure_devops_pat,
     [string] $key,
     [string] $value,
     [string] $SCRIPT_LOG_ZIP_NAME = ("{0}_GoodBuildDebug" -f $env:computername),
@@ -17,7 +18,7 @@ debug_log_title
 
 # execution function
 create_debug_log @{Message = "Loading update_params_to_variable_group"; FileName = log_file_name{}; LineNumber = line_number{}}
-$result = update_params_to_variable_group -vg_id $global_params.azure_vg_one_id -key $key -value $value
+$result = update_params_to_variable_group -azure_devops_pat $azure_devops_pat -vg_id $global_params.azure_vg_one_id -key $key -value $value
 
 
 # maintenance of logging
