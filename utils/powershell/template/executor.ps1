@@ -3,11 +3,11 @@ param
 	########################################################
     ## Parameter
     [string] $SCRIPT_LOG_ZIP_NAME = ("{0}_GoodBuildDebug" -f $env:computername),
-	[string] $current_folder_name = "template"
+	[string] $sub_folder_path = "template"
 )
 
 # Import Apex One Family params as $global_params
-$SplitTempPath = $PSScriptRoot -split $current_folder_name
+$SplitTempPath = $PSScriptRoot -split $sub_folder_path
 $gb_common_function_script = Join-Path -Path $SplitTempPath[0] -ChildPath "common\\common_util.psm1"
 Import-Module -Name $gb_common_function_script -Force -Verbose
 
