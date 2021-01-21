@@ -25,6 +25,12 @@ $ProgressPreference = "SilentlyContinue"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 
+###################################################################################################
+#
+# PowerShell init function section
+#
+
+
 function init()
 {
 	<#
@@ -143,7 +149,88 @@ function create_hash_table()
 }
 
 
-# init logger module
+###################################################################################################
+#
+# PowerShell common function section
+#
+
+
+function trigger_az_release
+{
+	param
+	(
+		[string] $rg,
+		[string] $lab_name
+	)
+
+	<#
+    .Description
+        Using az-cli to get info of vms
+	#>
+
+}
+
+
+function update_params_to_variable_group
+{
+	<#
+		.Description
+			update or add new variable to azure variable group
+	#>
+	param
+	(
+		[parameter(Mandatory=$true)]
+		[ValidateNotNullOrEmpty()]
+		# [string] $azure_devops_pat,
+		[string] $vg_id,
+		[string] $key,
+		[string] $value
+	)
+
+	# Config environment
+	# $env:AZURE_DEVOPS_EXT_PAT=$azure_devops_pat
+	try
+	{
+		az pipelines variable-group variable update --org $global_params.azure_devops_org_url --project $global_params.azure_devops_project_name --id $vg_id --name $key --value $value
+		$result = does_command_exitcode_success
+		if ($result -eq $false)
+		{
+			create_debug_log @{Message = "Update failed, use create command again"; FileName = log_file_name{}; LineNumber = line_number{}}
+			az pipelines variable-group variable create --org $global_params.azure_devops_org_url --project $global_params.azure_devops_project_name --id $vg_id --name $key --value $value
+			does_command_exitcode_success -fail_with_throw $true
+		}
+	}
+	catch
+	{
+		Write-Verbose "An exception was caught: $($_.Exception.Message)"
+		$_.Exception.Response
+		create_debug_log @{Message = "Update and Create failed, $($_.Exception.Response)"; FileName = log_file_name{}; LineNumber = line_number{}}
+		return $false
+	}
+	return $true
+}
+
+
+function generate_random_vm_prefix_name
+{
+	<#
+	.DESCRIPTION
+	Generating random vm name in DTL
+	#>
+
+	$random_string = -join ((48..57) + (97..122) | Get-Random -Count 5 | ForEach-Object {[char]$_})
+	$vm_prefix_name = "-" + $random_string + "-"
+	return $vm_prefix_name
+	
+}
+
+
+###################################################################################################
+#
+# PowerShell main init section
+#
+
+
 Import-Module -Name $debug_log_module -Force
 
 $SplitTempPath = $PSScriptRoot -split $SCRIPT_Common_FOLDER_NAME
