@@ -188,6 +188,7 @@ function update_params_to_variable_group
 	)
 
 	# Config environment
+	az extension add --name azure-devops
 	# $env:AZURE_DEVOPS_EXT_PAT=$azure_devops_pat
 	try
 	{
