@@ -149,6 +149,30 @@ function create_hash_table()
 }
 
 
+function does_command_exitcode_success()
+{
+	param
+	(
+		[bool] $fail_with_throw = $false
+	)
+
+	if ($LASTEXITCODE -ne 0 -And $fail_with_throw -eq $true)
+	{
+		Write-Host "exit code actual: $($LASTEXITCODE) not 0, throw \n"
+		throw
+	}
+	elseif ($LASTEXITCODE -ne 0)
+	{
+		Write-Host "exit code actual: $($LASTEXITCODE) not 0, return false \n"
+		return $false
+	}
+	else
+	{
+		return $true
+	}
+}
+
+
 ###################################################################################################
 #
 # PowerShell common function section
@@ -191,6 +215,7 @@ function update_params_to_variable_group
 	az extension add --name azure-devops
 	Write-Output $azure_devops_pat > az_pat.txt
 	Get-Content az_pat.txt | az devops login
+	Remove-Item az_pat.txt
 	try
 	{
 		az pipelines variable-group variable update --org $global_params.azure_devops_org_url --project $global_params.azure_devops_project_name --id $vg_id --name $key --value $value
@@ -207,7 +232,7 @@ function update_params_to_variable_group
 		Write-Verbose "An exception was caught: $($_.Exception.Message)"
 		$_.Exception.Response
 		create_debug_log @{Message = "Update and Create failed, $($_.Exception.Response)"; FileName = log_file_name{}; LineNumber = line_number{}}
-		return $false
+		throw
 	}
 	return $true
 }
@@ -220,8 +245,8 @@ function generate_random_vm_prefix_name
 	Generating random vm name in DTL
 	#>
 
-	$random_string = -join ((48..57) + (97..122) | Get-Random -Count 5 | ForEach-Object {[char]$_})
-	$vm_prefix_name = "-" + $random_string + "-"
+	$random_string = -join ((48..57) + (97..122) | Get-Random -Count 3 | ForEach-Object {[char]$_})
+	$vm_prefix_name = "-" + $random_string
 	return $vm_prefix_name
 	
 }
