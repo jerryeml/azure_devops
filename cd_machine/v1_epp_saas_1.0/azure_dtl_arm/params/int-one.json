@@ -1,0 +1,72 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+	"contentVersion": "14.0.0.1",
+	"parameters": {
+		"new_vm_10_name": {
+			"value": "$(int-one_vm10_prefix)"
+		},
+		"new_vm_16_name": {
+			"value": "$(int-one_vm16_prefix)"
+		},
+		"env_name_and_product_name": {
+			"value": "value"
+		},
+		"lab_subnet_name": {
+			"value": "default"
+        },
+        "lab_vnet_name": {
+			"value": "wu2-trend-vnet"
+		},
+		"vm_10_notes": {
+			"value": "Windows 10 Enterprise, Version 2004"
+		},
+		"vm_10_offer": {
+			"value": "Windows-10"
+		},
+		"vm_10_sku": {
+			"value": "20h1-ent"
+        },
+        "vm_16_notes": {
+			"value": "Windows Server 2016 Datacenter"
+		},
+		"vm_16_offer": {
+			"value": "WindowsServer"
+		},
+		"vm_16_sku": {
+			"value": "2016-Datacenter"
+		},
+		"vm_os_type": {
+			"value": "Windows"
+        },
+        "vm_size": {
+            "value": "Standard_B2ms"
+        },
+        "vm_count": {
+            "value": "value"
+        },
+        "user_name": {
+            "value": "trend"
+        },
+        "password": {
+            "value": "value"
+        },
+        "az_devops_org_name": {
+            "value": "https://dev.azure.com/infinite-wars/"
+        },
+        "az_devops_project_name": {
+            "value": "v1-epp-saas-1.0"
+        },
+        "az_pat": {
+            "value": "value"
+        },
+        "vm_10_tags": {
+            "value": "win10, available"
+        },
+        "vm_16_tags": {
+            "value": "win16, available"
+        },
+        "Windows_Firewall_operations_firewallOperation": {
+            "value": "Disable Firewall"
+        }
+	}
+}
