@@ -9,4 +9,4 @@ azure_devops:
   dg_id_prod_one: 50
 
 log:
-  path: C:\v1_epp_logs
+  path: C:\cicd_logs
