@@ -19,6 +19,10 @@ class MonitorResource(object):
         self.tenant_id = tenant_id
         self.env = env
         self.product = product
+        self.vg_id, self.dg_id = self.get_params()
+        self.prefix = generate_random_prefix()
+        self.vm10_prefix = f'{self.product}-10{self.prefix}'
+        self.vm16_prefix = f'{self.product}-16{self.prefix}'
 
     def set_logger(self):
         logFile = os.path.join(os.path.dirname(__file__), r'{}.log'.format(__file__))
@@ -57,22 +61,18 @@ class MonitorResource(object):
 
     def monitor_resource_in_lab(self):
         az_api = AzureDevopsAPI(self.username, self.az_pat)
-        vg_id, dg_id = self.get_params()
-        result = az_api._get_deployment_group_agent(dg_id)
+        result = az_api._get_deployment_group_agent(self.dg_id)
         # print(f"result: {result}")
         available_agent_count = jmespath.search("length(value[?contains(tags, 'available') == `true`].id)", result)
 
         if available_agent_count < 4:
             logging.info(f"available agent count: {available_agent_count} is less than 4, do provision")
             az_cli = AzureCLI(self.sp_client_id, self.az_pat, self.sp_pwd, self.tenant_id)
-            az_cli.update_var_in_variable_group(vg_id, f"{self.env}_available_agent", available_agent_count)
+            az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}_available_agent", available_agent_count)
 
-            prefix = generate_random_prefix()
-            vm10_prefix = f'{self.product}-10{prefix}'
-            vm16_prefix = f'{self.product}-16{prefix}'
-            logging.info(f"generate machine prefix: {vm10_prefix}, {vm16_prefix}")
-            az_cli.update_var_in_variable_group(vg_id, "vm10_prefix", vm10_prefix)
-            az_cli.update_var_in_variable_group(vg_id, "vm16_prefix", vm16_prefix)
+            logging.info(f"generate machine prefix: {self.vm10_prefix}, {self.vm16_prefix}")
+            az_cli.update_var_in_variable_group(self.vg_id, "vm10_prefix", self.vm10_prefix)
+            az_cli.update_var_in_variable_group(self.vg_id, "vm16_prefix", self.vm16_prefix)
         else:
             logging.warning(f"available agent count: {available_agent_count}, no need provision")
 
