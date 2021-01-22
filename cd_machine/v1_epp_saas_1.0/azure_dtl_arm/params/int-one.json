@@ -3,10 +3,10 @@
 	"contentVersion": "14.0.0.1",
 	"parameters": {
 		"new_vm_10_name": {
-			"value": "$(int-one_vm10_prefix)"
+			"value": "value"
 		},
 		"new_vm_16_name": {
-			"value": "$(int-one_vm16_prefix)"
+			"value": "value"
 		},
 		"env_name_and_product_name": {
 			"value": "value"
@@ -60,10 +60,10 @@
             "value": "value"
         },
         "vm_10_tags": {
-            "value": "win10, available, $(env_type_and_product)"
+            "value": "win10, available"
         },
         "vm_16_tags": {
-            "value": "win16, available, $(env_type_and_product)"
+            "value": "win16, available"
         },
         "Windows_Firewall_operations_firewallOperation": {
             "value": "Disable Firewall"
