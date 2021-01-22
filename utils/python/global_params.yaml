@@ -2,10 +2,11 @@ azure_devops:
   url: https://dev.azure.com/
   org: infinite-wars
   project: v1-epp-saas-1.0
-  one_int_deployment_group_id: 53
-  one_dev_deployment_group_id: 43
-  one_stg_deployment_group_id: 52
-  one_prod_deployment_group_id: 50
+  vg_id_one: 3
+  dg_id_int_one: 53
+  dg_id_dev_one: 43
+  dg_id_stg_one: 52
+  dg_id_prod_one: 50
 
 log:
   path: C:\v1_epp_logs
