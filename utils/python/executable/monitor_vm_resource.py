@@ -71,8 +71,8 @@ class MonitorResource(object):
             az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}_available_agent", available_agent_count)
 
             logging.info(f"generate machine prefix: {self.vm10_prefix}, {self.vm16_prefix}")
-            az_cli.update_var_in_variable_group(self.vg_id, "vm10_prefix", self.vm10_prefix)
-            az_cli.update_var_in_variable_group(self.vg_id, "vm16_prefix", self.vm16_prefix)
+            az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}_vm10_prefix", self.vm10_prefix)
+            az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}_vm16_prefix", self.vm16_prefix)
         else:
             logging.warning(f"available agent count: {available_agent_count}, no need provision")
 
