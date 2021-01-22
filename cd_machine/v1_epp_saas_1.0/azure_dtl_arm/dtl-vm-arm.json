@@ -18,12 +18,7 @@
     },
     "env_name_and_product_name": {
       "type": "string",
-      "allowedValues": [
-        "int-one",
-        "dev-one",
-        "stg-one",
-        "prod-one"
-      ],
+      "defaultValue": "int-one",
       "metadata": {
         "description": "The name of an testing environment and product name"
       }
