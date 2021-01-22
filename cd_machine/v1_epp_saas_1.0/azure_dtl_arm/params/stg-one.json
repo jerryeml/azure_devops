@@ -3,10 +3,10 @@
 	"contentVersion": "14.0.0.1",
 	"parameters": {
 		"new_vm_10_name": {
-			"value": "$(int-one_vm10_prefix)"
+			"value": "$(stg-one_vm10_prefix)"
 		},
 		"new_vm_16_name": {
-			"value": "$(int-one_vm16_prefix)"
+			"value": "$(stg-one_vm16_prefix)"
 		},
 		"env_name_and_product_name": {
 			"value": "value"
