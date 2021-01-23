@@ -122,7 +122,7 @@ def modify_yaml_config(yaml_path, section, key, value):
 
 def generate_random_prefix(length=3):
     prefix = ''.join(random.choice(string.ascii_letters + string.digits) for x in range(length))
-    return '-' + prefix
+    return prefix
 
 
 class AzureDevopsAPI(object):
@@ -212,14 +212,14 @@ class AzureCLI(object):
         assert remove_pat == 0
 
     def update_var_in_variable_group(self, deployment_group_id, key, value):
-        command = f'az pipelines variable-group variable update --org {self.org} --project {self.project} --id {deployment_group_id} --name {key} --value "{value}"'
+        command = f'az pipelines variable-group variable update --org {self.org} --project {self.project} --id {deployment_group_id} --name {key} --value {value}'
         try:
             logging.info(f'updating vg_id: {deployment_group_id}, key: {key}, value: {value}')
             update_result = deploy_command_no_return_result(command=command)
             assert update_result is 0
         except subprocess.CalledProcessError as e:
             logging.warning(e)
-            command = f'az pipelines variable-group variable create --org {self.org} --project {self.project} --id {deployment_group_id} --name {key} --value "{value}"'
+            command = f'az pipelines variable-group variable create --org {self.org} --project {self.project} --id {deployment_group_id} --name {key} --value {value}'
             create_result = deploy_command_no_return_result(command=command)
             assert create_result is 0
 

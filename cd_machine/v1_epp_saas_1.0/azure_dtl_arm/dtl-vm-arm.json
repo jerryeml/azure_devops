@@ -179,8 +179,8 @@
     }
   },
   "variables": {
-    "new_vm_10_name": "[concat('win10', parameters('vm_prefix'))]",
-    "new_vm_16_name": "[concat('win16', parameters('vm_prefix'))]",
+    "new_vm_10_name": "[concat('win10-', parameters('vm_prefix'))]",
+    "new_vm_16_name": "[concat('win16-', parameters('vm_prefix'))]",
     "existing_lab_name": "[concat('dtl-', parameters('env_name_and_product_name'))]",
     "az_deployment_group_name": "[concat('DG-',parameters('env_name_and_product_name'))]",
     "lab_vnet_id": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', variables('existing_lab_name'), parameters('lab_vnet_name'))]",
