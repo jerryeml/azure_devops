@@ -3,10 +3,10 @@ azure_devops:
   org: infinite-wars
   project: v1-epp-saas-1.0
   vg_id_one: 3
-  dg_id_int_one: 53
-  dg_id_dev_one: 43
-  dg_id_stg_one: 52
-  dg_id_prod_one: 50
+  dg_id_int_one: 66
+  dg_id_dev_one: 67
+  dg_id_stg_one: 68
+  dg_id_prod_one: 69
 
 log:
   path: C:\cicd_logs
