@@ -225,4 +225,4 @@ class AzureCLI(object):
 
 
 if __name__ == "__main__":
-    print(deploy_command_no_return_result(''))
+    pass

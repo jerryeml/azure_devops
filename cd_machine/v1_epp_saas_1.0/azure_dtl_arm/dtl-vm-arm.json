@@ -2,6 +2,10 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "vm_prefix": {
+      "type": "string",
+      "defaultValue": "random"
+    },
     "new_vm_10_name": {
       "type": "string",
       "defaultValue": "vm-worker",
@@ -175,13 +179,15 @@
     }
   },
   "variables": {
+    "new_vm_10_name": "[concat('win10', parameters('vm_prefix'))]",
+    "new_vm_16_name": "[concat('win16', parameters('vm_prefix'))]",
     "existing_lab_name": "[concat('dtl-', parameters('env_name_and_product_name'))]",
     "az_deployment_group_name": "[concat('DG-',parameters('env_name_and_product_name'))]",
     "lab_vnet_id": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', variables('existing_lab_name'), parameters('lab_vnet_name'))]",
-    "vm_10_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', variables('existing_lab_name'), parameters('new_vm_10_name'))]",
-    "vm_16_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', variables('existing_lab_name'), parameters('new_vm_16_name'))]",
-    "vm_10_name": "[concat(variables('existing_lab_name'), '/', parameters('new_vm_10_name'))]",
-    "vm_16_name": "[concat(variables('existing_lab_name'), '/', parameters('new_vm_16_name'))]",
+    "vm_10_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', variables('existing_lab_name'), variables('new_vm_10_name'))]",
+    "vm_16_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', variables('existing_lab_name'), variables('new_vm_16_name'))]",
+    "vm_10_name": "[concat(variables('existing_lab_name'), '/', variables('new_vm_10_name'))]",
+    "vm_16_name": "[concat(variables('existing_lab_name'), '/', variables('new_vm_16_name'))]",
     "win_desktop_publisher": "MicrosoftWindowsDesktop",
     "win_server_publisher": "MicrosoftWindowsServer",
     "env_setup_ps_uri": "[[\"https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1\"]",
@@ -195,7 +201,7 @@
       "name": "[concat(variables('vm_10_name'), padLeft(copyIndex(), 3, '0'))]",
       "location": "[resourceGroup().location]",
       "copy": {
-        "name": "[parameters('new_vm_10_name')]",
+        "name": "[variables('new_vm_10_name')]",
         "count": "[parameters('vm_count')]"
       },
       "properties": {
@@ -310,7 +316,7 @@
       "name": "[concat(variables('vm_16_name'), padLeft(copyIndex(), 3, '0'))]",
       "location": "[resourceGroup().location]",
       "copy": {
-        "name": "[parameters('new_vm_16_name')]",
+        "name": "[variables('new_vm_16_name')]",
         "count": "[parameters('vm_count')]"
       },
       "properties": {

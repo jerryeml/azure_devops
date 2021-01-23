@@ -21,8 +21,6 @@ class MonitorResource(object):
         self.product = product
         self.vg_id, self.dg_id = self.get_params()
         self.prefix = generate_random_prefix()
-        self.vm10_prefix = f'{self.product}-10{self.prefix}'
-        self.vm16_prefix = f'{self.product}-16{self.prefix}'
 
     def set_logger(self):
         logFile = os.path.join(os.path.dirname(__file__), r'{}.log'.format(__file__))
@@ -70,9 +68,8 @@ class MonitorResource(object):
             az_cli = AzureCLI(self.sp_client_id, self.az_pat, self.sp_pwd, self.tenant_id)
             az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}_available_agent", available_agent_count)
 
-            logging.info(f"generate machine prefix: {self.vm10_prefix}, {self.vm16_prefix}")
-            az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}_vm10_prefix", self.vm10_prefix)
-            az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}_vm16_prefix", self.vm16_prefix)
+            logging.info(f"generate machine prefix: {self.prefix}")
+            az_cli.update_var_in_variable_group(self.vg_id, f"vm_prefix", self.prefix)
         else:
             logging.warning(f"available agent count: {available_agent_count}, no need provision")
 
