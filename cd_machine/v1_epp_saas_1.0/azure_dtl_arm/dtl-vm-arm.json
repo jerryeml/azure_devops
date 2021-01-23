@@ -153,11 +153,11 @@
     },
     "vm_10_tags": {
       "type": "string",
-      "defaultValue": "win10, available"
+      "defaultValue": "[concat('win10', ' ', 'available', ' ', parameters('env_name_and_product_name'))]"
     },
     "vm_16_tags": {
       "type": "string",
-      "defaultValue": "win16, available"
+      "defaultValue": "[concat('win16', ' ', 'available', ' ', parameters('env_name_and_product_name'))]"
     },
     "az_agent_10_name": {
       "type": "string",
