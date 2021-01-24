@@ -11,7 +11,7 @@ from common.const import CommonResult
 
 class MonitorResourceUtil(object):
     def __init__(self, username, az_pat, sp_client_id, sp_pwd, tenant_id, env_and_product):
-        # self.set_logger()
+        self.set_logger()
         self.username = username
         self.az_pat = az_pat
         self.sp_client_id = sp_client_id
