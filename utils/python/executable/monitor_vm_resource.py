@@ -9,9 +9,9 @@ from common.helper import AzureDevopsAPI, AzureCLI, load_global_params_config, g
 from common.const import CommonResult
 
 
-class MonitorResource(object):
+class MonitorResourceUtil(object):
     def __init__(self, username, az_pat, sp_client_id, sp_pwd, tenant_id, env, product):
-        self.set_logger()
+        # self.set_logger()
         self.username = username
         self.az_pat = az_pat
         self.sp_client_id = sp_client_id
@@ -59,20 +59,32 @@ class MonitorResource(object):
 
     def monitor_resource_in_lab(self):
         az_api = AzureDevopsAPI(self.username, self.az_pat)
+        az_cli = AzureCLI(self.sp_client_id, self.az_pat, self.sp_pwd, self.tenant_id)
+
         result = az_api._get_deployment_group_agent(self.dg_id)
         # print(f"result: {result}")
         available_agent_count = jmespath.search("length(value[?contains(tags, 'available') == `true`].id)", result)
-        az_cli = AzureCLI(self.sp_client_id, self.az_pat, self.sp_pwd, self.tenant_id)
 
         if available_agent_count < 4:
             logging.info(f"available agent count: {available_agent_count} is less than 4, do provision")
-            az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}_available_agent", available_agent_count)
+            az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}-{self.product}_available_agent", available_agent_count)
 
             logging.info(f"generate machine prefix: {self.prefix}")
             az_cli.update_var_in_variable_group(self.vg_id, f"vm_prefix", self.prefix)
         else:
             logging.warning(f"available agent count: {available_agent_count}, no need provision")
             az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}_available_agent", available_agent_count)
+
+    def list_resource_in_lab(self):
+        pass
+
+    def del_resource_in_lab(self):
+        az_cli = AzureCLI(self.sp_client_id, self.az_pat, self.sp_pwd, self.tenant_id)
+        lab_name = f'dtl-{self.env}-{self.product}'
+        lab_rg_name = load_global_params_config()['azure_devops']['lab_rg_name']
+        get_vms_name = az_cli.list_vm_in_dtl(lab_name, lab_rg_name, "[].name")
+        logging.info(f'vm name: {get_vms_name}')
+        # az_cli.del_vm_in_dtl()
 
 
 if __name__ == "__main__":
@@ -87,10 +99,10 @@ if __name__ == "__main__":
     parser.add_argument("-product", dest="product", type=str, required=True)
     args = parser.parse_args()
 
-    MonitorResource(username=args.username,
-                    az_pat=args.az_pat,
-                    sp_client_id=args.sp_client_id,
-                    sp_pwd=args.sp_pwd,
-                    tenant_id=args.tenant_id,
-                    env=args.env_name,
-                    product=args.product).monitor_resource_in_lab()
+    MonitorResourceUtil(username=args.username,
+                        az_pat=args.az_pat,
+                        sp_client_id=args.sp_client_id,
+                        sp_pwd=args.sp_pwd,
+                        tenant_id=args.tenant_id,
+                        env=args.env_name,
+                        product=args.product).monitor_resource_in_lab()
