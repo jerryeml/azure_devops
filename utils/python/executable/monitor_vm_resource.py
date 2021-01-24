@@ -10,15 +10,16 @@ from common.const import CommonResult
 
 
 class MonitorResourceUtil(object):
-    def __init__(self, username, az_pat, sp_client_id, sp_pwd, tenant_id, env, product):
+    def __init__(self, username, az_pat, sp_client_id, sp_pwd, tenant_id, env_and_product):
         # self.set_logger()
         self.username = username
         self.az_pat = az_pat
         self.sp_client_id = sp_client_id
         self.sp_pwd = sp_pwd
         self.tenant_id = tenant_id
-        self.env = env
-        self.product = product
+        self.env_and_product = env_and_product
+        self.env = self.env_and_product.split('-')[0]
+        self.product = self.env_and_product.split('-')[1]
         self.vg_id, self.dg_id = self.get_params()
         self.prefix = generate_random_prefix()
 
@@ -67,13 +68,13 @@ class MonitorResourceUtil(object):
 
         if available_agent_count < 4:
             logging.info(f"available agent count: {available_agent_count} is less than 4, do provision")
-            az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}_available_agent", available_agent_count)
+            az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}_available_agent", available_agent_count)
 
             logging.info(f"generate machine prefix: {self.prefix}")
             az_cli.update_var_in_variable_group(self.vg_id, f"vm_prefix", self.prefix)
         else:
             logging.warning(f"available agent count: {available_agent_count}, no need provision")
-            az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}_available_agent", available_agent_count)
+            az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}_available_agent", available_agent_count)
 
     def list_resource_in_lab(self):
         pass
@@ -95,8 +96,7 @@ if __name__ == "__main__":
     parser.add_argument("-sp-client-id", dest="sp_client_id", type=str, required=True)
     parser.add_argument("-sp-pwd", dest="sp_pwd", type=str, required=True)
     parser.add_argument("-tenant-id", dest="tenant_id", type=str, required=True)
-    parser.add_argument("-env", dest="env_name", type=str, required=True)
-    parser.add_argument("-product", dest="product", type=str, required=True)
+    parser.add_argument("-env-product", dest="env_and_product", type=str, required=True)
     args = parser.parse_args()
 
     MonitorResourceUtil(username=args.username,
@@ -104,5 +104,4 @@ if __name__ == "__main__":
                         sp_client_id=args.sp_client_id,
                         sp_pwd=args.sp_pwd,
                         tenant_id=args.tenant_id,
-                        env=args.env_name,
-                        product=args.product).monitor_resource_in_lab()
+                        env_and_product=args.env_and_product).monitor_resource_in_lab()
