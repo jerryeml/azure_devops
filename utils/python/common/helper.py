@@ -216,12 +216,25 @@ class AzureCLI(object):
         try:
             logging.info(f'updating vg_id: {deployment_group_id}, key: {key}, value: {value}')
             update_result = deploy_command_no_return_result(command=command)
-            assert update_result is 0
+            assert update_result == 0
         except subprocess.CalledProcessError as e:
             logging.warning(e)
             command = f'az pipelines variable-group variable create --org {self.org} --project {self.project} --id {deployment_group_id} --name {key} --value {value}'
             create_result = deploy_command_no_return_result(command=command)
-            assert create_result is 0
+            assert create_result == 0
+
+    def list_vm_in_dtl(self, lab_name, rg_name, query_jmespath="[]"):
+        command = f'az lab vm list --lab-name {lab_name} --resource-group {rg_name} --all --query "{query_jmespath}"'
+        list_result = deploy_command_return_result(command=command)
+        return list_result
+
+    def del_vm_in_dtl(self, lab_name, rg_name, vm_list):
+        if not isinstance(vm_list, list):
+            raise TypeError(f"vm_list:{type(vm_list)} should be list type")
+        for vm in vm_list:
+            command = f'az lab vm delete --lab-name {lab_name} --resource-group {rg_name} --name {vm} --verbose'
+            del_result = deploy_command_no_return_result(command=command)
+            assert del_result == 0
 
 
 if __name__ == "__main__":
