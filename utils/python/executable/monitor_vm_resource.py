@@ -67,7 +67,7 @@ class MonitorResourceUtil(object):
 
         if available_agent_count < 4:
             logging.info(f"available agent count: {available_agent_count} is less than 4, do provision")
-            az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}-{self.product}_available_agent", available_agent_count)
+            az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}_available_agent", available_agent_count)
 
             logging.info(f"generate machine prefix: {self.prefix}")
             az_cli.update_var_in_variable_group(self.vg_id, f"vm_prefix", self.prefix)

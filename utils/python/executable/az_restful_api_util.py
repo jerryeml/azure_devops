@@ -5,7 +5,7 @@ from common.const import CommonResult
 
 
 def test():
-    az_obj = AzureDevopsAPI("jerry_he@trendmicro.com", "hr3p34bhv3bsmjah6gjrr63gqbcrtznq7fzqvedo2r7k6z457eja")
+    az_obj = AzureDevopsAPI()
     result = az_obj._get_deployment_group_agent(53)
     print(f"result: {result}")
     # length(value[?tags.status=='online'].id)
