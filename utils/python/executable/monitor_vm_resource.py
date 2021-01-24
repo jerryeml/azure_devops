@@ -62,16 +62,17 @@ class MonitorResource(object):
         result = az_api._get_deployment_group_agent(self.dg_id)
         # print(f"result: {result}")
         available_agent_count = jmespath.search("length(value[?contains(tags, 'available') == `true`].id)", result)
+        az_cli = AzureCLI(self.sp_client_id, self.az_pat, self.sp_pwd, self.tenant_id)
 
         if available_agent_count < 4:
             logging.info(f"available agent count: {available_agent_count} is less than 4, do provision")
-            az_cli = AzureCLI(self.sp_client_id, self.az_pat, self.sp_pwd, self.tenant_id)
             az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}_available_agent", available_agent_count)
 
             logging.info(f"generate machine prefix: {self.prefix}")
             az_cli.update_var_in_variable_group(self.vg_id, f"vm_prefix", self.prefix)
         else:
             logging.warning(f"available agent count: {available_agent_count}, no need provision")
+            az_cli.update_var_in_variable_group(self.vg_id, f"{self.env}_available_agent", available_agent_count)
 
 
 if __name__ == "__main__":
