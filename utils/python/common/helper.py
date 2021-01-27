@@ -209,8 +209,9 @@ class AzureCLI(object):
         command = f'az pipelines variable-group variable update --org {self.org} --project {self.project} --id {deployment_group_id} --name {key} --value {value}'
         try:
             logging.info(f'updating vg_id: {deployment_group_id}, key: {key}, value: {value}')
-            update_result = deploy_command_no_return_result(command=command)
-            assert update_result == 0
+            update_result = deploy_command_return_result(command=command)
+            logging.info(f"update result:{update_result}")
+            assert type(update_result) == dict
         except subprocess.CalledProcessError as e:
             logging.warning(e)
             command = f'az pipelines variable-group variable create --org {self.org} --project {self.project} --id {deployment_group_id} --name {key} --value {value}'
