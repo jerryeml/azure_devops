@@ -246,7 +246,7 @@ function generate_random_vm_prefix_name
 	#>
 
 	$random_string = -join ((48..57) + (97..122) | Get-Random -Count 3 | ForEach-Object {[char]$_})
-	$vm_prefix_name = "-" + $random_string
+	$vm_prefix_name = $random_string
 	return $vm_prefix_name
 	
 }
