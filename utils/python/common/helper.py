@@ -147,33 +147,27 @@ class AzureDevopsAPI(object):
                                                                                                                                                                               deploymentGroupId=deployment_group_id,
                                                                                                                                                                               targetId=target_id)
         response = requests.delete(url, auth=HTTPBasicAuth(self.username, self.az_pat))
-        logging.info("delete agnet in deployment group status_code: {}".format(response.status_code))
+        logging.info("delete agent in deployment group status_code: {}".format(response.status_code))
         assert response.status_code == 200 or response.status_code == 204
         return CommonResult.Success
 
-    def _update_tags_of_deployment_group_agent(self):
-        deploymentGroupId = 53
-        organization = "infinite-wars"
-        project = "v1-epp-saas-1.0"
-        url = f"https://dev.azure.com/{organization}/{project}/_apis/distributedtask/deploymentgroups/{deploymentGroupId}/targets?api-version=6.0-preview.1"
-        payload = [{
-            "tags": [
-                "db",
-                "web",
-                "newTag5248232320667898861"
-            ],
-            "id": 82
-        },
-            {
-            "tags": [
-                "db",
-                "newTag5248232320667898861"
-            ],
-            "id": 83
-        }
-        ]
+    def _update_tags_of_deployment_group_agent(self, deployment_group_id, payload):
+        """
+        payload = [{"tags": ["db",
+                             "web",
+                             "newTag5248232320667898861"],
+                    "id": 82},
+                   {"tags": ["db",
+                             "newTag5248232320667898861"],
+                    "id": 83}]
+        """
+        url = f"https://dev.azure.com/{self.organization}/{self.project}/_apis/distributedtask/deploymentgroups/{deployment_group_id}/targets?api-version=6.0-preview.1"
+        if not isinstance(payload, list):
+            raise TypeError(f"payload type expect list but actual: {type(payload)}")
         response = requests.patch(url, json=payload, auth=HTTPBasicAuth(self.username, self.az_pat))
-        print(response)
+        logging.info("update agent tags in deployment group status_code: {}".format(response.status_code))
+        assert response.status_code == 200
+        return CommonResult.Success
 
 
 class AzureCLI(object):
