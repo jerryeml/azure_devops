@@ -7,7 +7,7 @@ param
     [string] $env = $env_type_and_product.split('-')[0],
     [string] $product = $env_type_and_product.split('-')[1],
     [string] $SCRIPT_LOG_ZIP_NAME = ("{0}_GoodBuildDebug" -f $env:computername),
-	[string] $sub_folder_path = "executable\\one"
+	[string] $sub_folder_path = "executable"
 )
 
 # Import Apex One Family params as $global_params
@@ -31,8 +31,3 @@ Write-Host "##vso[task.setvariable variable=vm_prefix]$vm_prefix_name"
 # maintenance of logging
 create_debug_log @{Message = "Good Build DebugLog Maintenance."; FileName = log_file_name{}; LineNumber = line_number{}}
 debug_log_maintenance -ZipName $SCRIPT_LOG_ZIP_NAME
-
-if ($result -ne $true)
-{
-    exit 1
-}
