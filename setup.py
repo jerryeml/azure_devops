@@ -1,8 +1,9 @@
-import argparse
 import os
-import subprocess
 import sys
 import time
+import random
+import argparse
+import subprocess
 import urllib.request
 import zipfile
 import winreg
@@ -150,6 +151,7 @@ if __name__ == '__main__':
     root = os.path.dirname(os.path.abspath(__file__)).replace('/', os.sep)
     try:
         print(f"root path:{root}")
+        time.sleep(random.randint(1, 5))
         insert_environment_path(root)
         do_pip_install(root)
         for download_driver in [download_chromedriver]:
