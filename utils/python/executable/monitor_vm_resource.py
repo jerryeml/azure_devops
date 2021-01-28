@@ -70,7 +70,7 @@ class MonitorResourceUtil(object):
             is_provision = True
         else:
             logging.warning(f"available agent count: {available_agent_count}, no need provision")
-            is_provision = False
+            is_provision = True
 
         self.az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}-provision", is_provision)
 
