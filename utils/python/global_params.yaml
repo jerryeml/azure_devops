@@ -4,6 +4,7 @@ azure_devops:
   project: v1-epp-saas-1.0
   lab_rg_name: rg-testing-env-lab
   monitor_pipeline_id: 3
+  provision_release_id: 3
   vg_id_one: 3
   dg_id_int_one: 66
   dg_id_dev_one: 67
