@@ -21,7 +21,7 @@ class MonitorResourceUtil(object):
         self.env_and_product = env_and_product
         self.env = self.env_and_product.split('-')[0]
         self.product = self.env_and_product.split('-')[1]
-        self.vg_id, self.dg_id, self.release_id = self.get_params()
+        self.vg_id, self.dg_id, self.provision_release_id = self.get_params()
         self.prefix = generate_random_prefix()
         self.az_api = AzureDevopsAPI(self.username, self.az_pat)
         self.az_cli = AzureCLI(self.sp_client_id, self.az_pat, self.sp_pwd, self.tenant_id)
@@ -42,7 +42,7 @@ class MonitorResourceUtil(object):
         log.addHandler(fh)
 
     def get_params(self):
-        monitor_pipe_id = load_global_params_config()["azure_devops"]['provision_release_id']
+        provision_release_id = load_global_params_config()["azure_devops"]['provision_release_id']
         if "int" in self.env:
             dg_id_int = f"dg_id_int_{self.product}"
             dg_id = load_global_params_config()["azure_devops"][dg_id_int]
@@ -60,7 +60,7 @@ class MonitorResourceUtil(object):
 
         vg_id_product = f"vg_id_{self.product}"
         vg_id = load_global_params_config()["azure_devops"][vg_id_product]
-        return vg_id, dg_id, monitor_pipe_id
+        return vg_id, dg_id, provision_release_id
 
     def monitor_resource_in_lab(self):
         result = self.az_api._get_deployment_group_agent(self.dg_id)
@@ -70,7 +70,7 @@ class MonitorResourceUtil(object):
             is_provision = True
             self.az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}-provision", is_provision)
             logging.info(f"available agent count: {available_agent_count} is less than 4, do provision")
-            self.az_cli.run_release(self.release_id)
+            self.az_cli.run_release(self.provision_release_id)
         else:
             is_provision = False
             self.az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}-provision", is_provision)
