@@ -73,8 +73,7 @@ class MonitorResourceUtil(object):
             logging.warning(f"available agent count: {available_agent_count}, no need provision")
             is_provision = False
 
-        # self.az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}-provision", is_provision)
-        self.az_cli.update_var_in_pipelines(self.monitor_pipe_id, f"{self.env_and_product}-provision", is_provision)
+        self.az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}-provision", is_provision)
 
     def update_tags_of_dg_agent(self):
         """
