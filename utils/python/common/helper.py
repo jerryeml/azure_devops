@@ -218,6 +218,19 @@ class AzureCLI(object):
             create_result = deploy_command_no_return_result(command=command)
             assert create_result == 0
 
+    def update_var_in_pipelines(self, pipeline_id, key, value):
+        command = f'az pipelines variable update --org {self.org} --project {self.project} --pipeline-id {pipeline_id} --secret false --name {key} --value {value} --allow-override true'
+        try:
+            logging.info(f'updating pipeline_id: {pipeline_id}, key: {key}, value: {value}')
+            update_result = deploy_command_return_result(command=command)
+            logging.info(f"update result:{update_result}")
+            assert type(update_result) == dict
+        except subprocess.CalledProcessError as e:
+            logging.warning(e)
+            command = f'az pipelines variable create --org {self.org} --project {self.project} --pipeline-id {pipeline_id} --secret false --name {key} --value {value} --allow-override true'
+            create_result = deploy_command_no_return_result(command=command)
+            assert create_result == 0
+
     def list_vm_in_dtl(self, lab_name, rg_name, query_jmespath="[]"):
         command = f'az lab vm list --lab-name {lab_name} --resource-group {rg_name} --all --query "{query_jmespath}"'
         list_result = deploy_command_return_result(command=command)
