@@ -65,14 +65,14 @@ class MonitorResourceUtil(object):
         result = self.az_api._get_deployment_group_agent(self.dg_id)
         # print(f"result: {result}")
         available_agent_count = jmespath.search("length(value[?contains(tags, 'available') == `true`].agent[?status == 'online'].id)", result)
-        self.az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}_available_agent", available_agent_count)
         if available_agent_count < 4:
             logging.info(f"available agent count: {available_agent_count} is less than 4, do provision")
-
-            # logging.info(f"generate machine prefix: {self.prefix}")
-            # self.az_cli.update_var_in_variable_group(self.vg_id, f"vm_prefix", self.prefix)
+            is_provision = True
         else:
             logging.warning(f"available agent count: {available_agent_count}, no need provision")
+            is_provision = False
+
+        self.az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}-provision", is_provision)
 
     def update_tags_of_dg_agent(self):
         """
