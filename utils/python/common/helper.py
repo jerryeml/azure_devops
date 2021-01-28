@@ -231,6 +231,14 @@ class AzureCLI(object):
             create_result = deploy_command_no_return_result(command=command)
             assert create_result == 0
 
+    def run_release(self, release_id):
+        command = f'az pipelines release create --org {self.org} --project {self.project} --definition-id {release_id} --verbose'
+
+        logging.info(f'run release_id: {release_id}')
+        run_result = deploy_command_return_result(command=command)
+        logging.info(f"run result:{run_result}")
+        assert type(run_result) == dict
+
     def list_vm_in_dtl(self, lab_name, rg_name, query_jmespath="[]"):
         command = f'az lab vm list --lab-name {lab_name} --resource-group {rg_name} --all --query "{query_jmespath}"'
         list_result = deploy_command_return_result(command=command)

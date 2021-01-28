@@ -21,7 +21,7 @@ class MonitorResourceUtil(object):
         self.env_and_product = env_and_product
         self.env = self.env_and_product.split('-')[0]
         self.product = self.env_and_product.split('-')[1]
-        self.vg_id, self.dg_id, self.monitor_pipe_id = self.get_params()
+        self.vg_id, self.dg_id, self.release_id = self.get_params()
         self.prefix = generate_random_prefix()
         self.az_api = AzureDevopsAPI(self.username, self.az_pat)
         self.az_cli = AzureCLI(self.sp_client_id, self.az_pat, self.sp_pwd, self.tenant_id)
@@ -42,7 +42,7 @@ class MonitorResourceUtil(object):
         log.addHandler(fh)
 
     def get_params(self):
-        monitor_pipe_id = load_global_params_config()["azure_devops"]['monitor_pipeline_id']
+        monitor_pipe_id = load_global_params_config()["azure_devops"]['provision_release_id']
         if "int" in self.env:
             dg_id_int = f"dg_id_int_{self.product}"
             dg_id = load_global_params_config()["azure_devops"][dg_id_int]
@@ -67,14 +67,14 @@ class MonitorResourceUtil(object):
         # print(f"result: {result}")
         available_agent_count = jmespath.search("length(value[?contains(tags, 'available') == `true`].agent[?status == 'online'].id)", result)
         if available_agent_count < 4:
-            logging.info(f"available agent count: {available_agent_count} is less than 4, do provision")
             is_provision = True
+            self.az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}-provision", is_provision)
+            logging.info(f"available agent count: {available_agent_count} is less than 4, do provision")
+            self.az_cli.run_release(self.release_id)
         else:
-            logging.warning(f"available agent count: {available_agent_count}, no need provision")
             is_provision = False
-
-        # self.az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}-provision", is_provision)
-        self.az_cli.update_var_in_pipelines(self.monitor_pipe_id, f"{self.env_and_product}-provision", is_provision)
+            self.az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}-provision", is_provision)
+            logging.warning(f"available agent count: {available_agent_count}, no need provision")
 
     def update_tags_of_dg_agent(self):
         """
