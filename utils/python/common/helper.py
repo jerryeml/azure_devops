@@ -189,8 +189,9 @@ class AzureCLI(object):
 
     def az_login(self):
         command = f"az login --service-principal --username {self.sp_client_id} --password {self.sp_pwd} --tenant {self.tenant_id}"
-        login_result = deploy_command_no_return_result(command=command)
-        assert login_result == 0
+        login_result = deploy_command_return_result(command=command)
+        logging.info(f"login_result: {login_result}")
+        assert type(login_result) == list
         logging.info("az_login successfully")
 
     def az_devops_login(self):
