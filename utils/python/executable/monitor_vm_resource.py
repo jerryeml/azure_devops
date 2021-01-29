@@ -42,7 +42,7 @@ class MonitorResourceUtil(object):
         log.addHandler(fh)
 
     def get_params(self):
-        provision_release_id = load_global_params_config()["azure_devops"]['provision_release_id']
+        provision_release_id = load_global_params_config()["azure_devops"]["provision_release_id"]
         if "int" in self.env:
             dg_id_int = f"dg_id_int_{self.product}"
             dg_id = load_global_params_config()["azure_devops"][dg_id_int]
@@ -70,7 +70,7 @@ class MonitorResourceUtil(object):
             is_provision = True
             self.az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}-provision", is_provision)
             logging.info(f"available agent count: {available_agent_count} is less than 4, do provision")
-            self.az_cli.run_release(self.provision_release_id)
+            # self.az_cli.run_release(self.provision_release_id)
         else:
             is_provision = False
             self.az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}-provision", is_provision)
