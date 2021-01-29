@@ -70,7 +70,7 @@ class MonitorResourceUtil(object):
             is_provision = True
             self.az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}-provision", is_provision)
             logging.info(f"available agent count: {available_agent_count} is less than 4, do provision")
-            # self.az_cli.run_release(self.provision_release_id)
+            self.az_cli.run_release(self.provision_release_id)
         else:
             is_provision = False
             self.az_cli.update_var_in_variable_group(self.vg_id, f"{self.env_and_product}-provision", is_provision)
