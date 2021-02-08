@@ -13,9 +13,8 @@ from requests.auth import HTTPBasicAuth
 from common.const import CommonResult
 
 
-def load_global_params_config(py_root_path=dirname(dirname(__file__))):
-    config_path = os.path.join(py_root_path,
-                               "global_params.yaml")
+def load_global_params_config(py_root_path=dirname(dirname(__file__)), yaml_name="global_params.yaml"):
+    config_path = os.path.join(py_root_path, yaml_name)
     with open(config_path) as f:
         global_params = yaml.load(f.read(), Loader=yaml.SafeLoader)
 
