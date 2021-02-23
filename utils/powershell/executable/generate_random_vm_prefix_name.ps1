@@ -2,10 +2,10 @@ param
 (
 	########################################################
     ## Parameter
-    [string] $azure_devops_pat,
-    [string] $env_type_and_product,
-    [string] $env = $env_type_and_product.split('-')[0],
-    [string] $product = $env_type_and_product.split('-')[1],
+    # [string] $azure_devops_pat,
+    # [string] $env_type_and_product,
+    # [string] $env = $env_type_and_product.split('-')[0],
+    # [string] $product = $env_type_and_product.split('-')[1],
     [string] $SCRIPT_LOG_ZIP_NAME = ("{0}_GoodBuildDebug" -f $env:computername),
 	[string] $sub_folder_path = "executable"
 )
