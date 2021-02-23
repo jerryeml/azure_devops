@@ -14,4 +14,4 @@ steps:
   inputs:
     targetType: filePath
     filePath: 'utils/powershell/executable/generate_random_vm_prefix_name.ps1'
-    arguments: '-azure_devops_pat $(az-devops-pat-user) -env_type_and_product $(env_type_and_product)'
+    arguments: ''
