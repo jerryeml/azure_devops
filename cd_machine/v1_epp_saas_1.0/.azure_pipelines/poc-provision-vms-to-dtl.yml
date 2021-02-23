@@ -5,8 +5,9 @@ pr: none
 trigger: none
 
 variables:
-  app_name: testing
-  vm_count: 2
+  - group: vg-common-secret
+  - name: app_name
+  - name: vm_count
 
 pool:
   vmImage: vs2017-win2016
