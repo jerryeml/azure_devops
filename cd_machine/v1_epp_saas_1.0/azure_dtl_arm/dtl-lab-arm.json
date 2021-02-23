@@ -32,8 +32,8 @@
     }
   },
   "variables": {
-    "internal_testing_lab_name": "[concat('dtl-', parameters('product_name'), '-int')]",
-    "dev_testing_lab_name": "[concat('dtl-', parameters('product_name'), '-dev')]",
+    "test_testing_lab_name": "[concat('dtl-', parameters('product_name'), '-test')]",
+    "int_testing_lab_name": "[concat('dtl-', parameters('product_name'), '-int')]",
     "stg_testing_lab_name": "[concat('dtl-', parameters('product_name'), '-stg')]",
     "prod_testing_lab_name": "[concat('dtl-', parameters('product_name'), '-prod')]",
     "vnet_reference_id": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
@@ -43,7 +43,7 @@
     {
       "apiVersion": "2018-09-15",
       "type": "Microsoft.DevTestLab/labs",
-      "name": "[variables('internal_testing_lab_name')]",
+      "name": "[variables('test_testing_lab_name')]",
       "location": "[resourceGroup().location]",
       "resources": [
         {
@@ -64,7 +64,7 @@
             ]
           },
           "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', variables('internal_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', variables('test_testing_lab_name'))]"
           ]
         },
         {
@@ -84,7 +84,7 @@
             }
           },
           "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', variables('internal_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', variables('test_testing_lab_name'))]"
           ]
         },
         {
@@ -107,7 +107,7 @@
             }
           },
            "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', variables('internal_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', variables('test_testing_lab_name'))]"
           ]
         }
       ],
@@ -115,19 +115,19 @@
         "environmentPermission": "Contributor",
         "labStorageType": "StandardSSD",
         "mandatoryArtifactsResourceIdsLinux": [
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('internal_testing_lab_name'), 'public repo', 'linux-install-docker')]"
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('test_testing_lab_name'), 'public repo', 'linux-install-docker')]"
         ],
         "mandatoryArtifactsResourceIdsWindows": [
           //"[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('internal_testing_lab_name'), 'public repo', 'windows-awscli')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('internal_testing_lab_name'), 'public repo', 'windows-7zip')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('internal_testing_lab_name'), 'public repo', 'windows-chrome')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('test_testing_lab_name'), 'public repo', 'windows-7zip')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('test_testing_lab_name'), 'public repo', 'windows-chrome')]",
           //"[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('internal_testing_lab_name'), 'public repo', 'windows-git')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('internal_testing_lab_name'), 'public repo', 'windows-notepadplusplus')]"
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('test_testing_lab_name'), 'public repo', 'windows-notepadplusplus')]"
           //"[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('internal_testing_lab_name'), 'public repo', 'windows-azurepowershell')]"
         ]
       },
       "tags": {
-        "env": "int",
+        "env": "test",
         "team": "[parameters('product_name')]",
         "version": "offical"
       }
@@ -135,7 +135,7 @@
     {
       "type": "Microsoft.DevTestLab/labs",
       "apiVersion": "2018-09-15",
-      "name": "[variables('dev_testing_lab_name')]",
+      "name": "[variables('int_testing_lab_name')]",
       "location": "[resourceGroup().location]",
       "resources": [
         {
@@ -156,7 +156,7 @@
             ]
           },
           "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', variables('dev_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', variables('int_testing_lab_name'))]"
           ]
         },
         {
@@ -176,7 +176,7 @@
             }
           },
           "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', variables('dev_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', variables('int_testing_lab_name'))]"
           ]
         },
         {
@@ -199,7 +199,7 @@
             }
           },
            "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', variables('dev_testing_lab_name'))]"
+            "[resourceId('Microsoft.DevTestLab/labs', variables('int_testing_lab_name'))]"
           ]
         }
       ],
@@ -207,19 +207,19 @@
         "environmentPermission": "Contributor",
         "labStorageType": "StandardSSD",
         "mandatoryArtifactsResourceIdsLinux": [
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('dev_testing_lab_name'), 'public repo', 'linux-install-docker')]"
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('int_testing_lab_name'), 'public repo', 'linux-install-docker')]"
         ],
         "mandatoryArtifactsResourceIdsWindows": [
           //"[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('dev_testing_lab_name'), 'public repo', 'windows-awscli')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('dev_testing_lab_name'), 'public repo', 'windows-7zip')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('dev_testing_lab_name'), 'public repo', 'windows-chrome')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('int_testing_lab_name'), 'public repo', 'windows-7zip')]",
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('int_testing_lab_name'), 'public repo', 'windows-chrome')]",
           //"[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('dev_testing_lab_name'), 'public repo', 'windows-git')]",
-          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('dev_testing_lab_name'), 'public repo', 'windows-notepadplusplus')]"
+          "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('int_testing_lab_name'), 'public repo', 'windows-notepadplusplus')]"
           //"[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('dev_testing_lab_name'), 'public repo', 'windows-azurepowershell')]"
         ]
       },
       "tags": {
-        "env": "dev",
+        "env": "int",
         "team": "[parameters('product_name')]",
         "version": "offical"
       }

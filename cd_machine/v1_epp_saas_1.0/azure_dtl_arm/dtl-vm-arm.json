@@ -199,6 +199,9 @@
       "apiVersion": "2018-09-15",
       "type": "Microsoft.DevTestLab/labs/virtualMachines",
       "name": "[concat(variables('vm_10_name'), padLeft(copyIndex(), 3, '0'))]",
+      "tags": {
+        "status": "available"
+      },
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "[variables('new_vm_10_name')]",
@@ -314,6 +317,9 @@
       "apiVersion": "2018-09-15",
       "type": "Microsoft.DevTestLab/labs/virtualMachines",
       "name": "[concat(variables('vm_16_name'), padLeft(copyIndex(), 3, '0'))]",
+      "tags": {
+        "status": "available"
+      },
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "[variables('new_vm_16_name')]",
