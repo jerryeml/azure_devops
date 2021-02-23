@@ -8,6 +8,8 @@ variables:
   - group: vg-common-secret
   - name: app_name
     readonly: false
+  - name: vm_count
+    readonly: false
 
 pool:
   vmImage: vs2017-win2016
