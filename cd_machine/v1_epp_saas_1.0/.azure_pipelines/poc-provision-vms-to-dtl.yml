@@ -46,6 +46,8 @@ stages:
 
           echo $(circle_var)
 
+          echo $(app_team_vars)
+
     # - task: AzureResourceManagerTemplateDeployment@3
     #   inputs:
     #     deploymentScope: 'Resource Group'
