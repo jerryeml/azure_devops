@@ -1,0 +1,22 @@
+pr: none
+
+trigger: none
+
+variables:
+  app_name: aladdin
+  rg_name: rg-dev-test-lab
+
+pool:
+  vmImage: vs2017-win2016
+
+steps:
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'provision-labs-to-app-team'
+  inputs:
+    azureResourceManagerConnection: 'epp-cloud-infra (df518fea-1410-40b9-8d30-51d2c9eab0d7)'
+    subscriptionId: 'df518fea-1410-40b9-8d30-51d2c9eab0d7'
+    resourceGroupName: $(rg_name)
+    location: 'West US 2'
+    csmFile: 'testvm//azure_dtl_arm/dtl-lab-arm.json'
+    overrideParameters: '-product_name $(app_name)'
+    deploymentMode: 'Incremental'
