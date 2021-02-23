@@ -1,2 +1,2 @@
 variables:
-  app_name: aladdin
+  app_name: "aladdin"
