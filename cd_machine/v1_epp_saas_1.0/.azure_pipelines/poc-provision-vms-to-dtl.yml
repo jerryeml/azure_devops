@@ -5,7 +5,10 @@ pr: none
 trigger: none
 
 variables:
-- template: vars.yml
+- name: app_name
+  value: user-defined
+- name: vm_count
+  value: 2
 - group: vg-common-secret
 
 pool:
@@ -44,7 +47,7 @@ stages:
 
           echo $(app_name)
 
-          echo $(circle_var)
+          echo $(vm_count)
 
     # - task: AzureResourceManagerTemplateDeployment@3
     #   inputs:
