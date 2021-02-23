@@ -6,10 +6,10 @@ trigger: none
 
 variables:
 - name: app-name
-  value: user-defined
+  # value: user-defined
   readonly: false
 - name: vm-count
-  value: 2
+  # value: 2
   readonly: false
 - group: vg-common-secret
 
