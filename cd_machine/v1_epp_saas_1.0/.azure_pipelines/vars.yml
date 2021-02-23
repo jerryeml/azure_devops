@@ -1,10 +1,41 @@
+# For creating azure pipeline variables
 variables:
   app_name: aladdin
   vm_count: 2
 
+
+# For creating azure function variables
 parameters:
-  - name: myObject
+  - name: common_vars
     type: object
     default:
-    - one
-    - two
+      url: https://dev.azure.com/infinite-wars/
+      org: infinite-wars
+
+  - name: app_team_vars
+    type: object
+    default:
+      app-01-name:
+        user_name: jerry_he@trendmicro.com
+        org: infinite-wars
+        project: v1-epp-saas-1.0
+        provision_release_id: 4
+        rg_dtl_name: rg-testing-env-lab
+        stage_list:
+        - TEST
+        - INT
+        - STG
+        - PROD
+        minimun_available_count: 4
+      app-02-name:
+        user_name: jerry_he@trendmicro.com
+        org: infinite-wars
+        project: v1-epp-saas-1.0
+        provision_release_id: 4
+        rg_dtl_name: rg-testing-env-lab
+        stage_list:
+        - TEST
+        - INT
+        - STG
+        - PROD
+        minimun_available_count: 4
