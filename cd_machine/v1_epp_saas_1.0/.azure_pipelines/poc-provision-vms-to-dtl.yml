@@ -12,6 +12,7 @@ stages:
   jobs:
   - job: ProvisionVMToDTL
     strategy:
+      maxParallel: 4
       matrix:
         TEST: 
           ENV: TEST
