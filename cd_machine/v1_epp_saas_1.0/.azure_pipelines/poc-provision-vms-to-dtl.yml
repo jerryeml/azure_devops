@@ -7,8 +7,10 @@ trigger: none
 variables:
   - group: vg-common-secret
   - name: app_name
+    value: yoyo
     readonly: false
   - name: vm_count
+    value: 2
     readonly: false
 
 pool:
