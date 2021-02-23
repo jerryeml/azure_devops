@@ -3,6 +3,6 @@ variables:
   vm_count: 2
   circle_var:
     - aladdin:
-    test: 1
+      test: 1
     - elpis:
-    test: 2
+      test: 2
