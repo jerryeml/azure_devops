@@ -5,10 +5,12 @@ pr: none
 trigger: none
 
 variables:
-- name: app_name
+- name: app-name
   value: user-defined
-- name: vm_count
+  readonly: false
+- name: vm-count
   value: 2
+  readonly: false
 - group: vg-common-secret
 
 pool:
@@ -45,9 +47,9 @@ stages:
           
           echo $(ENV)
 
-          echo $(app_name)
+          echo $(app-name)
 
-          echo $(vm_count)
+          echo $(vm-count)
 
     # - task: AzureResourceManagerTemplateDeployment@3
     #   inputs:
