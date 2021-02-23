@@ -29,3 +29,12 @@ stages:
         targetType: filePath
         filePath: 'utils/powershell/executable/generate_random_vm_prefix_name.ps1'
         arguments: ''
+
+    - task: CmdLine@2
+      inputs:
+        script: |
+          echo Write your commands here
+          
+          echo Hello world
+          
+          $(ENV)
