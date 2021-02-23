@@ -42,9 +42,9 @@ stages:
           
           echo $(ENV)
 
-          echo $(app-name)
+          echo $(app_name)
 
-          echo $(vm-count)
+          echo $(vm_count)
 
     # - task: AzureResourceManagerTemplateDeployment@3
     #   inputs:
