@@ -4,3 +4,7 @@
 __pycache__
 .venv
 .terraform.*
+.idea
+Pipfile
+Pipfile.lock
+env

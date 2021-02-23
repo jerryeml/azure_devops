@@ -62,5 +62,6 @@ if __name__ == '__main__':
     variables.set("l2_case_repo", "data-l2-testing-case")
     variables.set("cd_region", "westus2")
     variables.set("cd_region_code", "westus2")
-    RunReleasePipeline().run_release_pipeline('Run L2 Test Case', variables)
-    print("Run Release Pipeline for Run L2 Test Case")
+    for i in range(4):
+        RunReleasePipeline().run_release_pipeline('run-l2-test-case', variables)
+        print("Run Release Pipeline for Run L2 Test Case")
