@@ -44,15 +44,17 @@ stages:
 
           echo $(app_name)
 
-    - task: AzureResourceManagerTemplateDeployment@3
-      inputs:
-        deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: 'epp-cloud-infra (df518fea-1410-40b9-8d30-51d2c9eab0d7)'
-        subscriptionId: 'df518fea-1410-40b9-8d30-51d2c9eab0d7'
-        action: 'Create Or Update Resource Group'
-        resourceGroupName: 'rg-testing-env-lab'
-        location: 'West US 2'
-        templateLocation: 'Linked artifact'
-        csmFile: 'cd_machine\v1_epp_saas_1.0\azure_dtl_arm\dtl-vm-arm.json'
-        deploymentMode: 'Incremental'
-        overrideParameters: '-vm_prefix $(vm_prefix) -env_name $(ENV) -app_name $(app_name) -vm_10_notes "Windows 10 Enterprise, Version 2004" -vm_10_offer "Windows-10" -vm_10_sku "20h1-ent" -vm_16_notes "Windows Server 2016 Datacenter" -vm_16_offer "WindowsServer" -vm_16_sku "2016-Datacenter" -vm_os_type "Windows" -vm_size "Standard_B2ms" -vm_count $(vm_count) -user_name "trend" -password $(vm-pwd)'
+          echo $(circle_var)
+
+    # - task: AzureResourceManagerTemplateDeployment@3
+    #   inputs:
+    #     deploymentScope: 'Resource Group'
+    #     azureResourceManagerConnection: 'epp-cloud-infra (df518fea-1410-40b9-8d30-51d2c9eab0d7)'
+    #     subscriptionId: 'df518fea-1410-40b9-8d30-51d2c9eab0d7'
+    #     action: 'Create Or Update Resource Group'
+    #     resourceGroupName: 'rg-testing-env-lab'
+    #     location: 'West US 2'
+    #     templateLocation: 'Linked artifact'
+    #     csmFile: 'cd_machine\v1_epp_saas_1.0\azure_dtl_arm\dtl-vm-arm.json'
+    #     deploymentMode: 'Incremental'
+    #     overrideParameters: '-vm_prefix $(vm_prefix) -env_name $(ENV) -app_name $(app_name) -vm_10_notes "Windows 10 Enterprise, Version 2004" -vm_10_offer "Windows-10" -vm_10_sku "20h1-ent" -vm_16_notes "Windows Server 2016 Datacenter" -vm_16_offer "WindowsServer" -vm_16_sku "2016-Datacenter" -vm_os_type "Windows" -vm_size "Standard_B2ms" -vm_count $(vm_count) -user_name "trend" -password $(vm-pwd)'
