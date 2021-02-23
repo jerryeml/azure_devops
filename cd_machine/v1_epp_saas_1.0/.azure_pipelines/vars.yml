@@ -2,5 +2,9 @@ variables:
   app_name: aladdin
   vm_count: 2
 
-circle_var:
-  elpis: test
+parameters:
+  - name: myObject
+    type: object
+    default:
+    - one
+    - two
