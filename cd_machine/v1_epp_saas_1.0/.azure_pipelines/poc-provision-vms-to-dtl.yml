@@ -6,6 +6,8 @@ trigger: none
 
 variables:
   - group: vg-common-secret
+  - name: app_name
+    readonly: false
 
 pool:
   vmImage: vs2017-win2016
