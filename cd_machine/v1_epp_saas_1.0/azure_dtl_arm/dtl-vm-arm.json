@@ -4,28 +4,18 @@
   "parameters": {
     "vm_prefix": {
       "type": "string",
-      "defaultValue": "random"
-    },
-    "new_vm_10_name": {
-      "type": "string",
-      "defaultValue": "vm-worker",
+      "defaultValue": "random",
       "metadata": {
-        "description": "The name of the new vm to be created. (if you need to create mutil-vms at one time, the name should between 1 and 12 characters)"
+        "description": "The total name of the new vm should between 1 and 12 characters, if you need to create mutil-vms at one time (ex win10-abc)"
       }
     },
-    "new_vm_16_name": {
+    "env_name": {
       "type": "string",
-      "defaultValue": "vm-worker",
-      "metadata": {
-        "description": "The name of the new vm to be created. (if you need to create mutil-vms at one time, the name should between 1 and 12 characters)"
-      }
+      "defaultValue": "test"
     },
-    "env_name_and_product_name": {
+    "app_name": {
       "type": "string",
-      "defaultValue": "int-one",
-      "metadata": {
-        "description": "The name of an testing environment and product name"
-      }
+      "defaultValue": "aladdin"
     },
     "lab_subnet_name": {
         "type": "string",
@@ -125,54 +115,54 @@
         "description": "The password for the local account that will be created on the new vm."
       }
     },
-    "az_devops_org_name": {
-      "type": "string",
-      "allowedValues": [
-        "https://dev.azure.com/infinite-wars/"
-      ],
-      "defaultValue": "https://dev.azure.com/infinite-wars/",
-      "metadata": {
-        "description": "The URL for the Azure DevOps account, e.g. https://dev.azure.com/myorg"
-      }
-    },
-    "az_devops_project_name": {
-      "type": "string",
-      "allowedValues": [
-        "v1-epp-saas-1.0"
-      ],
-      "defaultValue": "v1-epp-saas-1.0",
-      "metadata": {
-        "description": "The Azure DevOps project name, eg MyFirstProject"
-      }
-    },
-    "az_pat": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Personal Access Token for downloading and configuring Azure Pipelines deployment group agent."
-      }
-    },
-    "vm_10_tags": {
-      "type": "string",
-      "defaultValue": "[concat('win10', ' ', 'available', ' ', parameters('env_name_and_product_name'))]"
-    },
-    "vm_16_tags": {
-      "type": "string",
-      "defaultValue": "[concat('win16', ' ', 'available', ' ', parameters('env_name_and_product_name'))]"
-    },
-    "az_agent_10_name": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optionally provide agent name. Defaults to $env:COMPUTERNAME"
-      }
-    },
-    "az_agent_16_name": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optionally provide agent name. Defaults to $env:COMPUTERNAME"
-      }
-    },
+    // "az_devops_org_name": {
+    //   "type": "string",
+    //   "allowedValues": [
+    //     "https://dev.azure.com/infinite-wars/"
+    //   ],
+    //   "defaultValue": "https://dev.azure.com/infinite-wars/",
+    //   "metadata": {
+    //     "description": "The URL for the Azure DevOps account, e.g. https://dev.azure.com/myorg"
+    //   }
+    // },
+    // "az_devops_project_name": {
+    //   "type": "string",
+    //   "allowedValues": [
+    //     "v1-epp-saas-1.0"
+    //   ],
+    //   "defaultValue": "v1-epp-saas-1.0",
+    //   "metadata": {
+    //     "description": "The Azure DevOps project name, eg MyFirstProject"
+    //   }
+    // },
+    // "az_pat": {
+    //   "type": "securestring",
+    //   "metadata": {
+    //     "description": "Personal Access Token for downloading and configuring Azure Pipelines deployment group agent."
+    //   }
+    // },
+    // "vm_10_tags": {
+    //   "type": "string",
+    //   "defaultValue": "[concat('win10', ' ', 'available', ' ', parameters('app_name'), parameters('env_name'))]"
+    // },
+    // "vm_16_tags": {
+    //   "type": "string",
+    //   "defaultValue": "[concat('win16', ' ', 'available', ' ', parameters('app_name'), parameters('env_name'))]"
+    // },
+    // "az_agent_10_name": {
+    //   "type": "string",
+    //   "defaultValue": "",
+    //   "metadata": {
+    //     "description": "Optionally provide agent name. Defaults to $env:COMPUTERNAME"
+    //   }
+    // },
+    // "az_agent_16_name": {
+    //   "type": "string",
+    //   "defaultValue": "",
+    //   "metadata": {
+    //     "description": "Optionally provide agent name. Defaults to $env:COMPUTERNAME"
+    //   }
+    // },
     "Windows_Firewall_operations_firewallOperation": {
         "type": "string",
         "defaultValue": "Disable Firewall"
@@ -181,8 +171,9 @@
   "variables": {
     "new_vm_10_name": "[concat('win10-', parameters('vm_prefix'))]",
     "new_vm_16_name": "[concat('win16-', parameters('vm_prefix'))]",
-    "existing_lab_name": "[concat('dtl-', parameters('env_name_and_product_name'))]",
-    "az_deployment_group_name": "[concat('DG-',parameters('env_name_and_product_name'))]",
+    "app_and_env_name": "[concat(parameters('app_name'), '-', parameters('env_name'))]",
+    "existing_lab_name": "[concat('dtl-', variables('app_and_env_name'))]",
+    "az_deployment_group_name": "[concat('DG-', variables('app_and_env_name'))]",
     "lab_vnet_id": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', variables('existing_lab_name'), parameters('lab_vnet_name'))]",
     "vm_10_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', variables('existing_lab_name'), variables('new_vm_10_name'))]",
     "vm_16_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', variables('existing_lab_name'), variables('new_vm_16_name'))]",
@@ -264,52 +255,52 @@
                   "value": "[variables('run_ps_args')]"
                 }
               ]
-            },
-            {
-              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-deploymentgroup')]",
-              "parameters": [
-                {
-                  "name": "accountUrl",
-                  "value": "[parameters('az_devops_org_name')]"
-                },
-                {
-                  "name": "projectName",
-                  "value": "[parameters('az_devops_project_name')]"
-                },
-                {
-                  "name": "deploymentGroupName",
-                  "value": "[variables('az_deployment_group_name')]"
-                },
-                {
-                  "name": "PersonalAccessToken",
-                  "value": "[parameters('az_pat')]"
-                },
-                {
-                  "name": "deploymentAgentTags",
-                  "value": "[parameters('vm_10_tags')]"
-                },
-                {
-                  "name": "agentInstallPath",
-                  "value": "C:\\deployment_agent"
-                },
-                {
-                  "name": "agentName",
-                  "value": "[parameters('az_agent_10_name')]"
-                },
-                {
-                  "name": "RunAsAutoLogon",
-                  "value": "true"
-                },
-                {
-                  "name": "windowsLogonAccount",
-                  "value": "[parameters('user_name')]"
-                },
-                {
-                  "name": "windowsLogonPassword",
-                  "value": "[parameters('password')]"
-                }
-              ]
             }
+            // {
+            //   "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-deploymentgroup')]",
+            //   "parameters": [
+            //     {
+            //       "name": "accountUrl",
+            //       "value": "[parameters('az_devops_org_name')]"
+            //     },
+            //     {
+            //       "name": "projectName",
+            //       "value": "[parameters('az_devops_project_name')]"
+            //     },
+            //     {
+            //       "name": "deploymentGroupName",
+            //       "value": "[variables('az_deployment_group_name')]"
+            //     },
+            //     {
+            //       "name": "PersonalAccessToken",
+            //       "value": "[parameters('az_pat')]"
+            //     },
+            //     {
+            //       "name": "deploymentAgentTags",
+            //       "value": "[parameters('vm_10_tags')]"
+            //     },
+            //     {
+            //       "name": "agentInstallPath",
+            //       "value": "C:\\deployment_agent"
+            //     },
+            //     {
+            //       "name": "agentName",
+            //       "value": "[parameters('az_agent_10_name')]"
+            //     },
+            //     {
+            //       "name": "RunAsAutoLogon",
+            //       "value": "true"
+            //     },
+            //     {
+            //       "name": "windowsLogonAccount",
+            //       "value": "[parameters('user_name')]"
+            //     },
+            //     {
+            //       "name": "windowsLogonPassword",
+            //       "value": "[parameters('password')]"
+            //     }
+            //   ]
+            // }
         ]
       }
     },
@@ -382,52 +373,52 @@
                   "value": "[variables('run_ps_args')]"
                 }
               ]
-            },
-            {
-              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-deploymentgroup')]",
-              "parameters": [
-                {
-                  "name": "accountUrl",
-                  "value": "[parameters('az_devops_org_name')]"
-                },
-                {
-                  "name": "projectName",
-                  "value": "[parameters('az_devops_project_name')]"
-                },
-                {
-                  "name": "deploymentGroupName",
-                  "value": "[variables('az_deployment_group_name')]"
-                },
-                {
-                  "name": "PersonalAccessToken",
-                  "value": "[parameters('az_pat')]"
-                },
-                {
-                  "name": "deploymentAgentTags",
-                  "value": "[parameters('vm_16_tags')]"
-                },
-                {
-                  "name": "agentInstallPath",
-                  "value": "C:\\deployment_agent"
-                },
-                {
-                  "name": "agentName",
-                  "value": "[parameters('az_agent_16_name')]"
-                },
-                {
-                  "name": "RunAsAutoLogon",
-                  "value": "true"
-                },
-                {
-                  "name": "windowsLogonAccount",
-                  "value": "[parameters('user_name')]"
-                },
-                {
-                  "name": "windowsLogonPassword",
-                  "value": "[parameters('password')]"
-                }
-              ]
             }
+            // {
+            //   "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-deploymentgroup')]",
+            //   "parameters": [
+            //     {
+            //       "name": "accountUrl",
+            //       "value": "[parameters('az_devops_org_name')]"
+            //     },
+            //     {
+            //       "name": "projectName",
+            //       "value": "[parameters('az_devops_project_name')]"
+            //     },
+            //     {
+            //       "name": "deploymentGroupName",
+            //       "value": "[variables('az_deployment_group_name')]"
+            //     },
+            //     {
+            //       "name": "PersonalAccessToken",
+            //       "value": "[parameters('az_pat')]"
+            //     },
+            //     {
+            //       "name": "deploymentAgentTags",
+            //       "value": "[parameters('vm_16_tags')]"
+            //     },
+            //     {
+            //       "name": "agentInstallPath",
+            //       "value": "C:\\deployment_agent"
+            //     },
+            //     {
+            //       "name": "agentName",
+            //       "value": "[parameters('az_agent_16_name')]"
+            //     },
+            //     {
+            //       "name": "RunAsAutoLogon",
+            //       "value": "true"
+            //     },
+            //     {
+            //       "name": "windowsLogonAccount",
+            //       "value": "[parameters('user_name')]"
+            //     },
+            //     {
+            //       "name": "windowsLogonPassword",
+            //       "value": "[parameters('password')]"
+            //     }
+            //   ]
+            // }
         ]
       }
     }
