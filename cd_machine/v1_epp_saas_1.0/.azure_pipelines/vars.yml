@@ -3,4 +3,4 @@ variables:
   vm_count: 2
 
 circle_var:
-  elpis: yes
+  elpis: test
