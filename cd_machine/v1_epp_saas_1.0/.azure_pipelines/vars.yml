@@ -1,2 +1,3 @@
 variables:
   app_name: "aladdin"
+  vm_count: 2
