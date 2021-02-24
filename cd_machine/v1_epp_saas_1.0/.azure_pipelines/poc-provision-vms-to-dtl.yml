@@ -5,7 +5,7 @@ pr: none
 trigger: none
 
 variables:
-  - group: vg-common-secret
+  app_name: $(app_name)
 
 pool:
   vmImage: vs2017-win2016
