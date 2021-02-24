@@ -4,6 +4,9 @@ pr: none
 
 trigger: none
 
+parameters:
+  - name: app_name
+
 variables:
   - group: vg-common-secret
 
