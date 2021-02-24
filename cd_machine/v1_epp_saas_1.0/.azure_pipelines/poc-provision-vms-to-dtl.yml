@@ -44,7 +44,7 @@ stages:
           
           echo $(ENV)
 
-          echo $(app_name)
+          echo $[parameters.app_name]
 
           echo $(vm_count)
 
