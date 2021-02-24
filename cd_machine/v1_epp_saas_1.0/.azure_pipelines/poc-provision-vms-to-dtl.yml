@@ -4,11 +4,10 @@ pr: none
 
 trigger: none
 
-parameters:
-  - name: app_name
-
 variables:
   - group: vg-common-secret
+  - name: app_name
+  - name: vm_count
 
 pool:
   vmImage: vs2017-win2016
@@ -44,7 +43,7 @@ stages:
           
           echo $(ENV)
 
-          echo $[parameters.app_name]
+          echo $(app_name)
 
           echo $(vm_count)
 
