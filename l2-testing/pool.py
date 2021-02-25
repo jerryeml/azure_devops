@@ -27,7 +27,7 @@ class AgentBasePool:
         self._project = root_project
         self.client = connection.clients_v6_0.get_task_agent_client()
 
-    def _get_groups(self, group_name):
+    def _get_deployment_groups_by_name(self, group_name):
         try:
             groups = self.client.get_deployment_groups(project)
             for group in groups:
@@ -37,21 +37,7 @@ class AgentBasePool:
         except TestRunnerPoolNotFound:
             print(f"Unable to find pool: {group_name}")
 
-
-class TestRunnerPool(AgentBasePool):
-    def __init__(self, root_project):
-        super().__init__(root_project)
-
-    def test_runners(self, pool_name):
-        group = self._get_groups(pool_name)
-        return self.client.get_deployment_targets(self._project, group.id)
-
-
-class TestMachinePool(AgentBasePool):
-    def __init__(self, root_project):
-        super().__init__(root_project)
-
-    def _find_pool_id_by_name(self, name):
+    def _get_pool_id_by_name(self, name):
         try:
             pools = self.client.get_agent_pools(name)
             for pool in pools:
@@ -61,8 +47,22 @@ class TestMachinePool(AgentBasePool):
         except TestMachinePoolNotFound:
             print(f"Unable to find pool: {name}")
 
+
+class TestRunnerPool(AgentBasePool):
+    def __init__(self, root_project):
+        super().__init__(root_project)
+
+    def test_runners(self, pool_name):
+        group = self._get_deployment_groups_by_name(pool_name)
+        return self.client.get_deployment_targets(self._project, group.id)
+
+
+class TestMachinePool(AgentBasePool):
+    def __init__(self, root_project):
+        super().__init__(root_project)
+
     def test_machines(self, pool_name):
-        pool_id = self._find_pool_id_by_name(pool_name)
+        pool_id = self._get_pool_id_by_name(pool_name)
         return self.client.get_agents(pool_id)
 
 
