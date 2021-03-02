@@ -13,17 +13,6 @@ stages:
 - stage: Provision
   jobs:
   - job: ProvisionVMToDTL
-    strategy:
-      maxParallel: 4
-      matrix:
-        TEST: 
-          ENV: TEST
-        INT:
-          ENV: INT
-        STG:
-          ENV: STG
-        PROD:
-          ENV: PROD
     steps:
     - task: PowerShell@2
       displayName: 'generate_random_vm_prefix_name'
@@ -39,7 +28,7 @@ stages:
           
           echo Hello world
           
-          echo $(ENV)
+          echo $(env)
 
           echo $(app_name)
 
