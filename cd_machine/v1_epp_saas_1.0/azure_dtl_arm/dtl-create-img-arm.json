@@ -127,6 +127,18 @@
         "description": "The password for the local account that will be created on the new vm."
       }
     },
+    "windowsOsState": {
+      "type": "string",
+      "allowedValues": [
+        "NonSysprepped",
+        "SysprepRequested",
+        "SysprepApplied"
+        ],
+      "defaultValue": "SysprepRequested",
+      "metadata": {
+        "description": "State of Windows on the machine. It can be one of three values NonSysprepped, SysprepRequested, and SysprepApplied"
+      }
+    },
     // "az_devops_org_name": {
     //   "type": "string",
     //   "allowedValues": [
