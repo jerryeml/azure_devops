@@ -1,0 +1,436 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vm_prefix": {
+      "type": "string",
+      "defaultValue": "random",
+      "metadata": {
+        "description": "The total name of the new vm should between 1 and 12 characters, if you need to create mutil-vms at one time (ex win10-abc)"
+      }
+    },
+    "env_name": {
+      "type": "string",
+      "defaultValue": "test"
+    },
+    "app_name": {
+      "type": "string",
+      "defaultValue": "aladdin"
+    },
+    "lab_subnet_name": {
+        "type": "string",
+        "defaultValue": "default",
+        "metadata": {
+            "description": "lab subnet name"
+        }
+    },
+    "lab_vnet_name": {
+        "type": "string",
+        "defaultValue": "wu2-trend-vnet",
+        "metadata": {
+            "description": "lab vnet name"
+        }
+    },
+    "vm_10_notes": {
+      "type": "string",
+      "allowedValues": [
+        "Windows 10 Enterprise, Version 1903",
+        "Windows 10 Enterprise, Version 1909",
+        "Windows 10 Enterprise, Version 2004",
+        "Windows 10 Enterprise, Version 20H2"
+      ]
+    },
+    "vm_10_offer": {
+      "type": "string",
+      "defaultValue": "Windows-10",
+      "allowedValues": [
+        "Windows-10"
+      ]
+    },
+    "vm_10_sku": {
+      "type": "string",
+      "allowedValues": [
+        "19h1-ent",
+        "19h2-ent",
+        "20h1-ent",
+        "20h2-ent",
+        "2016-Datacenter"
+      ]
+    },
+    "vm_16_notes": {
+      "type": "string",
+      "allowedValues": [
+        "Windows Server 2016 Datacenter",
+        "Windows Server 2016 Datacenter (Gen2)"
+      ]
+    },
+    "vm_16_offer": {
+      "type": "string",
+      "defaultValue": "WindowsServer",
+      "allowedValues": [
+        "WindowsServer"
+      ]
+    },
+    "vm_16_sku": {
+      "type": "string",
+      "allowedValues": [
+        "2016-Datacenter",
+        "2016-datacenter-gen2"
+      ]
+    },
+    "vm_os_type": {
+      "type": "string",
+      "defaultValue": "Windows"
+    },
+    "vm_size": {
+      "type": "string",
+      "defaultValue": "Standard_B2ms",
+      "allowedValues": [
+        "Standard_B2ms",
+        "Standard_D2s_v3",
+        "Standard_D4s_v3"
+      ],
+      "metadata": {
+        "description": "The size of the new vm to be created."
+      }
+    },
+    "vm_count": {
+        "type": "int",
+        "defaultValue": 1,
+        "metadata": {
+            "description": "vm count you want to deploy"
+        }
+    },
+    "user_name": {
+      "type": "string",
+      "defaultValue": "trend",
+      "metadata": {
+        "description": "The username for the local account that will be created on the new vm."
+      }
+    },
+    "password": {
+      "type": "securestring",
+      "defaultValue": "test@1234!",
+      "metadata": {
+        "description": "The password for the local account that will be created on the new vm."
+      }
+    },
+    // "az_devops_org_name": {
+    //   "type": "string",
+    //   "allowedValues": [
+    //     "https://dev.azure.com/infinite-wars/"
+    //   ],
+    //   "defaultValue": "https://dev.azure.com/infinite-wars/",
+    //   "metadata": {
+    //     "description": "The URL for the Azure DevOps account, e.g. https://dev.azure.com/myorg"
+    //   }
+    // },
+    // "az_devops_project_name": {
+    //   "type": "string",
+    //   "allowedValues": [
+    //     "v1-epp-saas-1.0"
+    //   ],
+    //   "defaultValue": "v1-epp-saas-1.0",
+    //   "metadata": {
+    //     "description": "The Azure DevOps project name, eg MyFirstProject"
+    //   }
+    // },
+    // "az_pat": {
+    //   "type": "securestring",
+    //   "metadata": {
+    //     "description": "Personal Access Token for downloading and configuring Azure Pipelines deployment group agent."
+    //   }
+    // },
+    // "vm_10_tags": {
+    //   "type": "string",
+    //   "defaultValue": "[concat('win10', ' ', 'available', ' ', parameters('app_name'), parameters('env_name'))]"
+    // },
+    // "vm_16_tags": {
+    //   "type": "string",
+    //   "defaultValue": "[concat('win16', ' ', 'available', ' ', parameters('app_name'), parameters('env_name'))]"
+    // },
+    // "az_agent_10_name": {
+    //   "type": "string",
+    //   "defaultValue": "",
+    //   "metadata": {
+    //     "description": "Optionally provide agent name. Defaults to $env:COMPUTERNAME"
+    //   }
+    // },
+    // "az_agent_16_name": {
+    //   "type": "string",
+    //   "defaultValue": "",
+    //   "metadata": {
+    //     "description": "Optionally provide agent name. Defaults to $env:COMPUTERNAME"
+    //   }
+    // },
+    "Windows_Firewall_operations_firewallOperation": {
+        "type": "string",
+        "defaultValue": "Disable Firewall"
+    }
+  },
+  "variables": {
+    "new_vm_10_name": "[concat('win10-', parameters('vm_prefix'))]",
+    "new_vm_16_name": "[concat('win16-', parameters('vm_prefix'))]",
+    "app_and_env_name": "[concat(parameters('app_name'), '-', parameters('env_name'))]",
+    "existing_lab_name": "[concat('dtl-', variables('app_and_env_name'))]",
+    "az_deployment_group_name": "[concat('DG-', variables('app_and_env_name'))]",
+    "lab_vnet_id": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', variables('existing_lab_name'), parameters('lab_vnet_name'))]",
+    "vm_10_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', variables('existing_lab_name'), variables('new_vm_10_name'))]",
+    "vm_16_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', variables('existing_lab_name'), variables('new_vm_16_name'))]",
+    "vm_10_name": "[concat(variables('existing_lab_name'), '/', variables('new_vm_10_name'))]",
+    "vm_16_name": "[concat(variables('existing_lab_name'), '/', variables('new_vm_16_name'))]",
+    "win_desktop_publisher": "MicrosoftWindowsDesktop",
+    "win_server_publisher": "MicrosoftWindowsServer",
+    "env_setup_ps_uri": "[[\"https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1\"]",
+    "env_setup_ps_name": "env_setup.ps1",
+    "run_ps_args": "[concat('-DefaultUsername \"', parameters('user_name'), '\" -DefaultPassword \"', parameters('password'), '\"')]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-09-15",
+      "type": "Microsoft.DevTestLab/labs/virtualMachines",
+      "name": "[concat(variables('vm_10_name'), padLeft(copyIndex(), 3, '0'))]",
+      "tags": {
+        "status": "available"
+      },
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "[variables('new_vm_10_name')]",
+        "count": "[parameters('vm_count')]"
+      },
+      "properties": {
+        "size": "[parameters('vm_size')]",
+        "isAuthenticationWithSshKey": false,
+        "sshKey": "",
+        "userName": "[parameters('user_name')]",
+        "password": "[parameters('password')]",
+        "labVirtualNetworkId": "[variables('lab_vnet_id')]",
+        "labSubnetName": "[parameters('lab_subnet_name')]",
+        "disallowPublicIpAddress": false,
+        "allowClaim": false,
+        "notes": "[parameters('vm_10_notes')]",
+        "galleryImageReference": {
+            "offer": "[parameters('vm_10_offer')]",
+            "publisher": "[variables('win_desktop_publisher')]",
+            "sku": "[parameters('vm_10_sku')]",
+            "osType": "[parameters('vm_os_type')]",
+            "version": "latest"
+        },
+        "storageType": "StandardSSD",
+        "artifacts": [
+            {
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-settimezone')]",
+              "parameters": [
+                {
+                  "name": "TimeZoneId",
+                  "value": "Taipei Standard Time"
+                }
+              ]
+            },
+            {
+                "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-selenium')]"
+            },
+            {
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-firewall')]",
+              "parameters": [
+                {
+                  "name": "firewallOperation",
+                  "value": "[parameters('Windows_Firewall_operations_firewallOperation')]"
+                }
+              ]
+            },
+            {
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-run-powershell')]",
+              "parameters": [
+                {
+                  "name": "scriptFileUris",
+                  "value": "[variables('env_setup_ps_uri')]"
+                },
+                {
+                  "name": "scriptToRun",
+                  "value": "[variables('env_setup_ps_name')]"
+                },
+                {
+                  "name": "scriptArguments",
+                  "value": "[variables('run_ps_args')]"
+                }
+              ]
+            }
+            // {
+            //   "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-deploymentgroup')]",
+            //   "parameters": [
+            //     {
+            //       "name": "accountUrl",
+            //       "value": "[parameters('az_devops_org_name')]"
+            //     },
+            //     {
+            //       "name": "projectName",
+            //       "value": "[parameters('az_devops_project_name')]"
+            //     },
+            //     {
+            //       "name": "deploymentGroupName",
+            //       "value": "[variables('az_deployment_group_name')]"
+            //     },
+            //     {
+            //       "name": "PersonalAccessToken",
+            //       "value": "[parameters('az_pat')]"
+            //     },
+            //     {
+            //       "name": "deploymentAgentTags",
+            //       "value": "[parameters('vm_10_tags')]"
+            //     },
+            //     {
+            //       "name": "agentInstallPath",
+            //       "value": "C:\\deployment_agent"
+            //     },
+            //     {
+            //       "name": "agentName",
+            //       "value": "[parameters('az_agent_10_name')]"
+            //     },
+            //     {
+            //       "name": "RunAsAutoLogon",
+            //       "value": "true"
+            //     },
+            //     {
+            //       "name": "windowsLogonAccount",
+            //       "value": "[parameters('user_name')]"
+            //     },
+            //     {
+            //       "name": "windowsLogonPassword",
+            //       "value": "[parameters('password')]"
+            //     }
+            //   ]
+            // }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-09-15",
+      "type": "Microsoft.DevTestLab/labs/virtualMachines",
+      "name": "[concat(variables('vm_16_name'), padLeft(copyIndex(), 3, '0'))]",
+      "tags": {
+        "status": "available"
+      },
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "[variables('new_vm_16_name')]",
+        "count": "[parameters('vm_count')]"
+      },
+      "properties": {
+        "size": "[parameters('vm_size')]",
+        "isAuthenticationWithSshKey": false,
+        "sshKey": "",
+        "userName": "[parameters('user_name')]",
+        "password": "[parameters('password')]",
+        "labVirtualNetworkId": "[variables('lab_vnet_id')]",
+        "labSubnetName": "[parameters('lab_subnet_name')]",
+        "disallowPublicIpAddress": false,
+        "allowClaim": false,
+        "notes": "[parameters('vm_16_notes')]",
+        "galleryImageReference": {
+            "offer": "[parameters('vm_16_offer')]",
+            "publisher": "[variables('win_server_publisher')]",
+            "sku": "[parameters('vm_16_sku')]",
+            "osType": "[parameters('vm_os_type')]",
+            "version": "latest"
+        },
+        "storageType": "StandardSSD",
+        "artifacts": [
+            {
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-settimezone')]",
+              "parameters": [
+                {
+                  "name": "TimeZoneId",
+                  "value": "Taipei Standard Time"
+                }
+              ]
+            },
+            {
+                "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-selenium')]"
+            },
+            {
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-firewall')]",
+              "parameters": [
+                {
+                  "name": "firewallOperation",
+                  "value": "[parameters('Windows_Firewall_operations_firewallOperation')]"
+                }
+              ]
+            },
+            {
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-run-powershell')]",
+              "parameters": [
+                {
+                  "name": "scriptFileUris",
+                  "value": "[variables('env_setup_ps_uri')]"
+                },
+                {
+                  "name": "scriptToRun",
+                  "value": "[variables('env_setup_ps_name')]"
+                },
+                {
+                  "name": "scriptArguments",
+                  "value": "[variables('run_ps_args')]"
+                }
+              ]
+            }
+            // {
+            //   "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-deploymentgroup')]",
+            //   "parameters": [
+            //     {
+            //       "name": "accountUrl",
+            //       "value": "[parameters('az_devops_org_name')]"
+            //     },
+            //     {
+            //       "name": "projectName",
+            //       "value": "[parameters('az_devops_project_name')]"
+            //     },
+            //     {
+            //       "name": "deploymentGroupName",
+            //       "value": "[variables('az_deployment_group_name')]"
+            //     },
+            //     {
+            //       "name": "PersonalAccessToken",
+            //       "value": "[parameters('az_pat')]"
+            //     },
+            //     {
+            //       "name": "deploymentAgentTags",
+            //       "value": "[parameters('vm_16_tags')]"
+            //     },
+            //     {
+            //       "name": "agentInstallPath",
+            //       "value": "C:\\deployment_agent"
+            //     },
+            //     {
+            //       "name": "agentName",
+            //       "value": "[parameters('az_agent_16_name')]"
+            //     },
+            //     {
+            //       "name": "RunAsAutoLogon",
+            //       "value": "true"
+            //     },
+            //     {
+            //       "name": "windowsLogonAccount",
+            //       "value": "[parameters('user_name')]"
+            //     },
+            //     {
+            //       "name": "windowsLogonPassword",
+            //       "value": "[parameters('password')]"
+            //     }
+            //   ]
+            // }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "lab_vm_10_id": {
+      "type": "string",
+      "value": "[variables('vm_10_id')]"
+    },
+    "lab_vm_16_id": {
+      "type": "string",
+      "value": "[variables('vm_16_id')]"
+    }
+  }
+}
