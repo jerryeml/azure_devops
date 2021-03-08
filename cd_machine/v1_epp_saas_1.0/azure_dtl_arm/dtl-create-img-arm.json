@@ -1,0 +1,262 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vm_prefix": {
+      "type": "string",
+      "defaultValue": "random",
+      "metadata": {
+        "description": "The total name of the new vm should between 1 and 12 characters, if you need to create mutil-vms at one time (ex win10-abc)"
+      }
+    },
+    "subscription_id": {
+      "type": "string",
+      "defaultValue": "df518fea-1410-40b9-8d30-51d2c9eab0d7"
+    },
+    "rg_name": {
+      "type": "string",
+      "defaultValue": "rg-dev-test-lab"
+    },
+    "env_name": {
+      "type": "string",
+      "defaultValue": "test"
+    },
+    "app_name": {
+      "type": "string",
+      "defaultValue": "aladdin"
+    },
+    "lab_subnet_name": {
+        "type": "string",
+        "defaultValue": "default",
+        "metadata": {
+            "description": "lab subnet name"
+        }
+    },
+    "lab_vnet_name": {
+        "type": "string",
+        "defaultValue": "wu2-trend-vnet",
+        "metadata": {
+            "description": "lab vnet name"
+        }
+    },
+    "vm_10_notes": {
+      "type": "string",
+      "allowedValues": [
+        "Windows 10 Enterprise, Version 1903",
+        "Windows 10 Enterprise, Version 1909",
+        "Windows 10 Enterprise, Version 2004",
+        "Windows 10 Enterprise, Version 20H2"
+      ]
+    },
+    "vm_10_offer": {
+      "type": "string",
+      "defaultValue": "Windows-10",
+      "allowedValues": [
+        "Windows-10"
+      ]
+    },
+    "vm_10_sku": {
+      "type": "string",
+      "allowedValues": [
+        "19h1-ent",
+        "19h2-ent",
+        "20h1-ent",
+        "20h2-ent",
+        "2016-Datacenter"
+      ]
+    },
+    "vm_16_notes": {
+      "type": "string",
+      "allowedValues": [
+        "Windows Server 2016 Datacenter",
+        "Windows Server 2016 Datacenter (Gen2)"
+      ]
+    },
+    "vm_16_offer": {
+      "type": "string",
+      "defaultValue": "WindowsServer",
+      "allowedValues": [
+        "WindowsServer"
+      ]
+    },
+    "vm_16_sku": {
+      "type": "string",
+      "allowedValues": [
+        "2016-Datacenter",
+        "2016-datacenter-gen2"
+      ]
+    },
+    "vm_os_type": {
+      "type": "string",
+      "defaultValue": "Windows"
+    },
+    "vm_size": {
+      "type": "string",
+      "defaultValue": "Standard_B2ms",
+      "allowedValues": [
+        "Standard_B2ms",
+        "Standard_D2s_v3",
+        "Standard_D4s_v3"
+      ],
+      "metadata": {
+        "description": "The size of the new vm to be created."
+      }
+    },
+    "user_name": {
+      "type": "string",
+      "defaultValue": "trend",
+      "metadata": {
+        "description": "The username for the local account that will be created on the new vm."
+      }
+    },
+    "password": {
+      "type": "securestring",
+      "defaultValue": "test@1234!",
+      "metadata": {
+        "description": "The password for the local account that will be created on the new vm."
+      }
+    },
+    "Windows_Firewall_operations_firewallOperation": {
+        "type": "string",
+        "defaultValue": "Disable Firewall"
+    },
+    "windowsOsState": {
+      "type": "string",
+      "allowedValues": [
+        "NonSysprepped",
+        "SysprepRequested",
+        "SysprepApplied"
+        ],
+      "defaultValue": "SysprepRequested",
+      "metadata": {
+        "description": "State of Windows on the machine. It can be one of three values NonSysprepped, SysprepRequested, and SysprepApplied"
+      }
+  }
+  },
+  "variables": {
+    "vm_path": "[concat('/subscriptions/', parameters('subscription_id'), '/resourcegroups/', parameters('rg_name'), '/providers/microsoft.devtestlab/labs/', variables('existing_lab_name'), '/virtualmachines/')]",
+    "new_vm_10_name": "[concat('win10-', parameters('vm_prefix'))]",
+    "new_vm_16_name": "[concat('win16-', parameters('vm_prefix'))]",
+    "new_vm_10_img": "[concat('win10-', parameters('vm_prefix'), '-img')]",
+    "new_vm_16_img": "[concat('win16-', parameters('vm_prefix'), '-img')]",
+    "app_and_env_name": "[concat(parameters('app_name'), '-', parameters('env_name'))]",
+    "existing_lab_name": "[concat('dtl-', variables('app_and_env_name'))]",
+    "az_deployment_group_name": "[concat('DG-', variables('app_and_env_name'))]",
+    "lab_vnet_id": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', variables('existing_lab_name'), parameters('lab_vnet_name'))]",
+    "vm_10_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', variables('existing_lab_name'), variables('new_vm_10_name'))]",
+    "vm_16_id": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', variables('existing_lab_name'), variables('new_vm_16_name'))]",
+    "vm_10_name": "[concat(variables('existing_lab_name'), '/', variables('new_vm_10_name'))]",
+    "vm_16_name": "[concat(variables('existing_lab_name'), '/', variables('new_vm_16_name'))]",
+    "vm_10_img": "[concat(variables('existing_lab_name'), '/', variables('new_vm_10_img'))]",
+    "vm_16_img": "[concat(variables('existing_lab_name'), '/', variables('new_vm_16_img'))]",
+    "win_desktop_publisher": "MicrosoftWindowsDesktop",
+    "win_server_publisher": "MicrosoftWindowsServer",
+    "env_setup_ps_uri": "[[\"https://raw.githubusercontent.com/jerryeml/azure_devops/master/cd_machine/v1_epp_saas_1.0/env_setup.ps1\"]",
+    "env_setup_ps_name": "env_setup.ps1",
+    "run_ps_args": "[concat('-DefaultUsername \"', parameters('user_name'), '\" -DefaultPassword \"', parameters('password'), '\"')]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-09-15",
+      "type": "Microsoft.DevTestLab/labs/virtualMachines",
+      "name": "[variables('vm_10_name')]",
+      "tags": {
+        "status": "available"
+      },
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "size": "[parameters('vm_size')]",
+        "isAuthenticationWithSshKey": false,
+        "sshKey": "",
+        "userName": "[parameters('user_name')]",
+        "password": "[parameters('password')]",
+        "labVirtualNetworkId": "[variables('lab_vnet_id')]",
+        "labSubnetName": "[parameters('lab_subnet_name')]",
+        "disallowPublicIpAddress": false,
+        "allowClaim": false,
+        "notes": "[parameters('vm_10_notes')]",
+        "galleryImageReference": {
+            "offer": "[parameters('vm_10_offer')]",
+            "publisher": "[variables('win_desktop_publisher')]",
+            "sku": "[parameters('vm_10_sku')]",
+            "osType": "[parameters('vm_os_type')]",
+            "version": "latest"
+        },
+        "storageType": "StandardSSD"
+      }
+    },
+    {
+      "apiVersion": "2018-09-15",
+      "type": "Microsoft.DevTestLab/labs/virtualMachines",
+      "name": "[variables('vm_16_name')]",
+      "tags": {
+        "status": "available"
+      },
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "size": "[parameters('vm_size')]",
+        "isAuthenticationWithSshKey": false,
+        "sshKey": "",
+        "userName": "[parameters('user_name')]",
+        "password": "[parameters('password')]",
+        "labVirtualNetworkId": "[variables('lab_vnet_id')]",
+        "labSubnetName": "[parameters('lab_subnet_name')]",
+        "disallowPublicIpAddress": false,
+        "allowClaim": false,
+        "notes": "[parameters('vm_16_notes')]",
+        "galleryImageReference": {
+            "offer": "[parameters('vm_16_offer')]",
+            "publisher": "[variables('win_server_publisher')]",
+            "sku": "[parameters('vm_16_sku')]",
+            "osType": "[parameters('vm_os_type')]",
+            "version": "latest"
+        },
+        "storageType": "StandardSSD"
+      }
+    },
+    {
+      "apiVersion": "2016-05-15",
+      "name": "[variables('vm_10_img')]",
+      "type": "Microsoft.DevTestLab/labs/customimages",
+      "dependsOn": [
+        "[concat(variables('vm_path'), variables('new_vm_10_name'))]"
+      ],
+      "properties": {
+        "description": "win10-img",
+        "vm": {
+          "sourceVmId": "[variables('vm_10_id')]",
+          "windowsOsInfo": {
+            "windowsOsState": "[parameters('windowsOsState')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2016-05-15",
+      "name": "[variables('vm_16_img')]",
+      "type": "Microsoft.DevTestLab/labs/customimages",
+      "dependsOn": [
+        "[concat(variables('vm_path'), variables('new_vm_16_name'))]"
+      ],
+      "properties": {
+        "description": "win16-img",
+        "vm": {
+          "sourceVmId": "[variables('vm_16_id')]",
+          "windowsOsInfo": {
+            "windowsOsState": "[parameters('windowsOsState')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "lab_vm_10_id": {
+      "type": "string",
+      "value": "[variables('vm_10_id')]"
+    },
+    "lab_vm_16_id": {
+      "type": "string",
+      "value": "[variables('vm_16_id')]"
+    }
+  }
+}
