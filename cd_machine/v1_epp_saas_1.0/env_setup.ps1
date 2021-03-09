@@ -536,7 +536,7 @@ try
     }
     else
     {
-        install_chocolatey
+        # install_chocolatey
         handel_firewarll_rules
     }
 
