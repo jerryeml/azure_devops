@@ -220,6 +220,23 @@
         "storageType": "StandardSSD",
         "artifacts": [
             {
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-run-powershell')]",
+              "parameters": [
+                {
+                  "name": "scriptFileUris",
+                  "value": "[variables('env_setup_ps_uri')]"
+                },
+                {
+                  "name": "scriptToRun",
+                  "value": "[variables('env_setup_ps_name')]"
+                },
+                {
+                  "name": "scriptArguments",
+                  "value": "[variables('run_ps_args')]"
+                }
+              ]
+            },
+            {
               "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-settimezone')]",
               "parameters": [
                 {
@@ -237,23 +254,6 @@
                 {
                   "name": "firewallOperation",
                   "value": "[parameters('Windows_Firewall_operations_firewallOperation')]"
-                }
-              ]
-            },
-            {
-              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-run-powershell')]",
-              "parameters": [
-                {
-                  "name": "scriptFileUris",
-                  "value": "[variables('env_setup_ps_uri')]"
-                },
-                {
-                  "name": "scriptToRun",
-                  "value": "[variables('env_setup_ps_name')]"
-                },
-                {
-                  "name": "scriptArguments",
-                  "value": "[variables('run_ps_args')]"
                 }
               ]
             },
@@ -342,6 +342,23 @@
         "storageType": "StandardSSD",
         "artifacts": [
             {
+              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-run-powershell')]",
+              "parameters": [
+                {
+                  "name": "scriptFileUris",
+                  "value": "[variables('env_setup_ps_uri')]"
+                },
+                {
+                  "name": "scriptToRun",
+                  "value": "[variables('env_setup_ps_name')]"
+                },
+                {
+                  "name": "scriptArguments",
+                  "value": "[variables('run_ps_args')]"
+                }
+              ]
+            },
+            {
               "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-settimezone')]",
               "parameters": [
                 {
@@ -359,23 +376,6 @@
                 {
                   "name": "firewallOperation",
                   "value": "[parameters('Windows_Firewall_operations_firewallOperation')]"
-                }
-              ]
-            },
-            {
-              "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-run-powershell')]",
-              "parameters": [
-                {
-                  "name": "scriptFileUris",
-                  "value": "[variables('env_setup_ps_uri')]"
-                },
-                {
-                  "name": "scriptToRun",
-                  "value": "[variables('env_setup_ps_name')]"
-                },
-                {
-                  "name": "scriptArguments",
-                  "value": "[variables('run_ps_args')]"
                 }
               ]
             },
