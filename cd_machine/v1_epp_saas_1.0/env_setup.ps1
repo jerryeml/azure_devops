@@ -308,9 +308,8 @@ function install_chocolatey
     Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     Write-Log "Prepare to install package by choco"
 
-    choco install python3 -y --version=3.8.5
-    choco install azure-cli -y
-    # choco install googlechrome -y
+    choco install python --version=3.8.5.20200721 -y
+    # choco install azure-cli -y
     # choco install lockhunter -y
 }
 
@@ -537,7 +536,6 @@ try
     }
     else
     {
-        # landing_script
         install_chocolatey
         handel_firewarll_rules
     }
