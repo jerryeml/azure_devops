@@ -17,6 +17,6 @@ steps:
     subscriptionId: 'df518fea-1410-40b9-8d30-51d2c9eab0d7'
     resourceGroupName: $(rg_name)
     location: 'West US 2'
-    csmFile: 'testvm//azure_dtl_arm/dtl-lab-arm.json'
+    csmFile: 'cd_machine\v1_epp_saas_1.0\azure_dtl_arm\dtl-lab-arm.json'
     overrideParameters: '-product_name $(app_name)'
     deploymentMode: 'Incremental'
