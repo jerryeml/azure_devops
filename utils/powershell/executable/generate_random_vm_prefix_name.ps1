@@ -23,10 +23,10 @@ $vm_prefix_name = generate_random_vm_prefix_name
 create_debug_log @{Message = "vm_prefix_name: $($vm_prefix_name)"; FileName = log_file_name{}; LineNumber = line_number{}}
 Write-Host "##vso[task.setvariable variable=vm_prefix]$vm_prefix_name"
 
-# create_debug_log @{Message = "Loading update_params_to_variable_group"; FileName = log_file_name{}; LineNumber = line_number{}}
-# $result = update_params_to_variable_group -azure_devops_pat $azure_devops_pat -vg_id $global_params.azure_vg_one_id -key "vm10_prefix" -value $vm10_prefix
-# $result = update_params_to_variable_group -azure_devops_pat $azure_devops_pat -vg_id $global_params.azure_vg_one_id -key "vm16_prefix" -value $vm16_prefix
-
+create_debug_log @{Message = "Loading generate_expiration_date"; FileName = log_file_name{}; LineNumber = line_number{}}
+$expiration_date = generate_expiration_date
+create_debug_log @{Message = "expiration_date: $($expiration_date)"; FileName = log_file_name{}; LineNumber = line_number{}}
+Write-Host "##vso[task.setvariable variable=expiration_date]$expiration_date"
 
 # maintenance of logging
 create_debug_log @{Message = "Good Build DebugLog Maintenance."; FileName = log_file_name{}; LineNumber = line_number{}}

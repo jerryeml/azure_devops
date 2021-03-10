@@ -252,6 +252,20 @@ function generate_random_vm_prefix_name
 }
 
 
+function generate_expiration_date
+{
+	<#
+	.DESCRIPTION
+	Generating expiration date
+	timestamp is iso8601
+	#>
+
+	$expiration_date = (Get-Date) + (New-TimeSpan -Hours 2)
+	return $expiration_date.ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
+	
+}
+
+
 ###################################################################################################
 #
 # PowerShell main init section
