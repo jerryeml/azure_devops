@@ -6,12 +6,6 @@ trigger: none
 
 variables:
   - group: vg-common-secret
-  - name: app_name
-    value: aladdin
-  - name: vm_count
-    value: 1
-  - name: env
-    value: stage
 
 pool:
   vmImage: vs2017-win2016
