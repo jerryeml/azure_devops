@@ -115,6 +115,12 @@
         "description": "The password for the local account that will be created on the new vm."
       }
     },
+    "expiration_date": {
+      "type": "string",
+      "metadata": {
+        "description": "expiration date of vm"
+      }
+    },
     "az_devops_org_name": {
       "type": "string",
       "allowedValues": [
@@ -218,6 +224,7 @@
             "version": "latest"
         },
         "storageType": "StandardSSD",
+        "expirationDate": "[parameters('expiration_date')]",
         "artifacts": [
             {
               "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-run-powershell')]",
@@ -340,6 +347,7 @@
             "version": "latest"
         },
         "storageType": "StandardSSD",
+        "expirationDate": "[parameters('expiration_date')]",
         "artifacts": [
             {
               "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-run-powershell')]",
