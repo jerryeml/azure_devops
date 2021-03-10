@@ -118,11 +118,11 @@
     "az_devops_org_name": {
       "type": "string",
       "allowedValues": [
-        "https://dev.azure.com/infinite-wars/"
+        "infinite-wars"
       ],
-      "defaultValue": "https://dev.azure.com/infinite-wars/",
+      "defaultValue": "infinite-wars",
       "metadata": {
-        "description": "The URL for the Azure DevOps account, e.g. https://dev.azure.com/myorg"
+        "description": "The Azure DevOps account, e.g. https://dev.azure.com/myorg, only myorg is needed"
       }
     },
     // "az_devops_project_name": {
