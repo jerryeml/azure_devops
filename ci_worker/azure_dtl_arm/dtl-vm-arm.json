@@ -22,19 +22,18 @@
         "description": "The id of an existing custom image which will be used to create the new vm. The specified image must exist in the lab (identified via the 'existingLabName' parameter)."
       }
     },
-    "lab_subnet_name": {
+	  "lab_subnet_name": {
         "type": "string",
-        "defaultValue": "subnet-l2-test-machine-dev",
+        "defaultValue": "default",
         "metadata": {
             "description": "lab subnet name"
         }
     },
     "lab_vnet_name": {
         "type": "string",
-        "defaultValue": "vnet-l2-service-dev",
+        "defaultValue": "wu2-trend-vnet",
         "metadata": {
-            "description": "lab vnet name"
-        }
+        "description": "lab vnet name"
     },
     "vm_notes": {
       "type": "string",
