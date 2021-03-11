@@ -260,7 +260,7 @@ function generate_expiration_date
 	timestamp is iso8601
 	#>
 
-	$expiration_date = (Get-Date) + (New-TimeSpan -Hours 2)
+	$expiration_date = (Get-Date) + (New-TimeSpan -Days 2)
 	return $expiration_date.ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
 	
 }
