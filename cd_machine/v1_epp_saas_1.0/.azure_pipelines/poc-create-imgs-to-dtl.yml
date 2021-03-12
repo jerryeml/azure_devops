@@ -39,7 +39,7 @@ stages:
 
           echo $(rg_name)
           
-          echo $(env)
+          echo $(ENV)
 
           echo $(app_name)
           
