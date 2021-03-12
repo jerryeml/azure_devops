@@ -34,8 +34,6 @@ stages:
 
           echo $(vm_count)
 
-          # echo $(az-devops-pat-user)
-
           echo $(rg_dtl_name)
 
           echo $(expiration_date)
@@ -43,6 +41,7 @@ stages:
           echo $(win10_custom_image_id)
 
           echo $(win16_custom_image_id)
+
 
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:
