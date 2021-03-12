@@ -16,9 +16,14 @@ stages:
     strategy:
       maxParallel: 4
       matrix:
+        INT:
+          ENV: int
+        PROD:
+          ENV: prod
+        STG:
+          ENV: stg
         TEST:
           ENV: test
-        
 
     steps:
 
