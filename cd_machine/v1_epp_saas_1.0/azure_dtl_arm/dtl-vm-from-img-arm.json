@@ -43,23 +43,23 @@
         "Windows 10 Enterprise, Version 20H2"
       ]
     },
-    "vm_10_offer": {
-      "type": "string",
-      "defaultValue": "Windows-10",
-      "allowedValues": [
-        "Windows-10"
-      ]
-    },
-    "vm_10_sku": {
-      "type": "string",
-      "allowedValues": [
-        "19h1-ent",
-        "19h2-ent",
-        "20h1-ent",
-        "20h2-ent",
-        "2016-Datacenter"
-      ]
-    },
+    // "vm_10_offer": {
+    //   "type": "string",
+    //   "defaultValue": "Windows-10",
+    //   "allowedValues": [
+    //     "Windows-10"
+    //   ]
+    // },
+    // "vm_10_sku": {
+    //   "type": "string",
+    //   "allowedValues": [
+    //     "19h1-ent",
+    //     "19h2-ent",
+    //     "20h1-ent",
+    //     "20h2-ent",
+    //     "2016-Datacenter"
+    //   ]
+    // },
     "win16_custom_image_id": {
       "type": "string"
     },
@@ -70,24 +70,24 @@
         "Windows Server 2016 Datacenter (Gen2)"
       ]
     },
-    "vm_16_offer": {
-      "type": "string",
-      "defaultValue": "WindowsServer",
-      "allowedValues": [
-        "WindowsServer"
-      ]
-    },
-    "vm_16_sku": {
-      "type": "string",
-      "allowedValues": [
-        "2016-Datacenter",
-        "2016-datacenter-gen2"
-      ]
-    },
-    "vm_os_type": {
-      "type": "string",
-      "defaultValue": "Windows"
-    },
+    // "vm_16_offer": {
+    //   "type": "string",
+    //   "defaultValue": "WindowsServer",
+    //   "allowedValues": [
+    //     "WindowsServer"
+    //   ]
+    // },
+    // "vm_16_sku": {
+    //   "type": "string",
+    //   "allowedValues": [
+    //     "2016-Datacenter",
+    //     "2016-datacenter-gen2"
+    //   ]
+    // },
+    // "vm_os_type": {
+    //   "type": "string",
+    //   "defaultValue": "Windows"
+    // },
     "vm_size": {
       "type": "string",
       "defaultValue": "Standard_B2ms",
