@@ -182,7 +182,27 @@
             "osType": "[parameters('vm_os_type')]",
             "version": "latest"
         },
-        "storageType": "StandardSSD"
+        "storageType": "StandardSSD",
+        "artifacts": [
+          {
+            "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-settimezone')]",
+            "parameters": [
+              {
+                "name": "TimeZoneId",
+                "value": "Taipei Standard Time"
+              }
+            ]
+          },
+          {
+            "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-firewall')]",
+            "parameters": [
+              {
+                "name": "firewallOperation",
+                "value": "[parameters('Windows_Firewall_operations_firewallOperation')]"
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -211,7 +231,27 @@
             "osType": "[parameters('vm_os_type')]",
             "version": "latest"
         },
-        "storageType": "StandardSSD"
+        "storageType": "StandardSSD",
+        "artifacts": [
+          {
+            "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-settimezone')]",
+            "parameters": [
+              {
+                "name": "TimeZoneId",
+                "value": "Taipei Standard Time"
+              }
+            ]
+          },
+          {
+            "artifactId": "[resourceId('Microsoft.DevTestLab/labs/artifactSources/artifacts', variables('existing_lab_name'), 'public repo', 'windows-firewall')]",
+            "parameters": [
+              {
+                "name": "firewallOperation",
+                "value": "[parameters('Windows_Firewall_operations_firewallOperation')]"
+              }
+            ]
+          }
+        ]
       }
     },
     {
