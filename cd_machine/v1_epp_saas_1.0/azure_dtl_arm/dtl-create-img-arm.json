@@ -161,7 +161,7 @@
       "type": "Microsoft.DevTestLab/labs/virtualMachines",
       "name": "[variables('vm_10_name')]",
       "tags": {
-        "status": "available"
+        "status": "customImage"
       },
       "location": "[resourceGroup().location]",
       "properties": {
@@ -210,7 +210,7 @@
       "type": "Microsoft.DevTestLab/labs/virtualMachines",
       "name": "[variables('vm_16_name')]",
       "tags": {
-        "status": "available"
+        "status": "customImage"
       },
       "location": "[resourceGroup().location]",
       "properties": {
