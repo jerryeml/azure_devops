@@ -19,14 +19,14 @@
     },
     "lab_subnet_name": {
         "type": "string",
-        "defaultValue": "subnet-l2-test-machine-dev",
+        "defaultValue": "default",
         "metadata": {
             "description": "lab subnet name"
         }
     },
     "lab_vnet_name": {
         "type": "string",
-        "defaultValue": "vnet-l2-service-dev",
+        "defaultValue": "wu2-trend-vnet",
         "metadata": {
             "description": "lab vnet name"
         }

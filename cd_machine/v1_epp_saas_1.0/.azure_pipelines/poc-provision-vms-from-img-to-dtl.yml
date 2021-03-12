@@ -1,0 +1,58 @@
+name: poc-provision-vms-to-dtl-jy
+
+pr: none
+
+trigger: none
+
+variables:
+  - group: vg-common-secret
+
+pool:
+  vmImage: vs2017-win2016
+stages:
+- stage: Provision
+  jobs:
+  - job: ProvisionVMToDTL
+    steps:
+    - task: PowerShell@2
+      displayName: 'generate_random_vm_prefix_name'
+      inputs:
+        targetType: filePath
+        filePath: 'utils/powershell/executable/generate_random_vm_prefix_name.ps1'
+        arguments: ''
+
+    - task: CmdLine@2
+      inputs:
+        script: |
+          echo Write your commands here
+          
+          echo Hello world
+          
+          echo $(env)
+
+          echo $(app_name)
+
+          echo $(vm_count)
+
+          echo $(az-devops-pat-user)
+
+          echo $(rg_dtl_name)
+
+          echo $(expiration_date)
+
+          echo $(win10_custom_image_id)
+
+          echo $(win16_custom_image_id)
+
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: 'epp-cloud-infra (df518fea-1410-40b9-8d30-51d2c9eab0d7)'
+        subscriptionId: 'df518fea-1410-40b9-8d30-51d2c9eab0d7'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: $(rg_dtl_name)
+        location: 'West US 2'
+        templateLocation: 'Linked artifact'
+        csmFile: 'cd_machine\v1_epp_saas_1.0\azure_dtl_arm\dtl-vm-from-img-arm.json'
+        deploymentMode: 'Incremental'
+        overrideParameters: '-win10_custom_image_id $(win10_custom_image_id) -win16_custom_image_id $(win16_custom_image_id) -vm_prefix $(vm_prefix) -env_name $(env) -app_name $(app_name) -vm_10_notes "Windows 10 Enterprise, Version 2004" -vm_16_notes "Windows Server 2016 Datacenter" -vm_size "Standard_B2ms" -vm_count $(vm_count) -user_name "trend" -password $(vm-pwd) -az_pat $(az-devops-pat-user) -expiration_date $(expiration_date)'
