@@ -13,6 +13,19 @@ stages:
 - stage: Provision
   jobs:
   - job: ProvisionVMToDTL
+    strategy:
+      maxParallel: 4
+      matrix:
+        INT:
+          ENV: int
+        PROD:
+          ENV: prod
+        STG:
+          ENV: stg
+        TEST:
+          ENV: test
+        
+
     steps:
 
     - task: CmdLine@2
