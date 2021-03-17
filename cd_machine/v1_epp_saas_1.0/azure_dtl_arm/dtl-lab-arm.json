@@ -17,14 +17,14 @@
       }
     },
     "virtualNetworkName": {
-      "defaultValue": "wu2-trend-vnet",
+      "defaultValue": "vnet-l2-service-dev",
       "type": "String",
       "metadata": {
         "description": "Name of the existing VNET"
       }
     },
     "vnetSubnetName": {
-      "defaultValue": "default",
+      "defaultValue": "subnet-l2-test-machine-dev",
       "type": "String",
       "metadata": {
         "description": "Name of the existing SUBNET"
