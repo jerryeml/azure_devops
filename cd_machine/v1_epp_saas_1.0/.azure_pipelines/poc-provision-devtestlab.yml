@@ -5,8 +5,8 @@ pr: none
 trigger: none
 
 variables:
-  app_name: aladdin
-  rg_name: rg-testing-env-lab
+  app_name: rickyapp
+  rg_name: ricky-dev-test-lab
 
 pool:
   vmImage: vs2017-win2016
