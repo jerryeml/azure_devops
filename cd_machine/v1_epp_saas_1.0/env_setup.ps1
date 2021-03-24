@@ -502,101 +502,93 @@ function disable_privacy_experience
 function install_open_ssh_on_windows
 {
     param (
-    [switch] $AutoStart = $true
+    [switch]$AutoStart = $true
     )
+
+    Set-ExecutionPolicy RemoteSigned -scope CurrentUser
+
+    # show notification to change execution policy:
+    if((Get-ExecutionPolicy) -gt 'RemoteSigned' -or (Get-ExecutionPolicy) -eq 'ByPass') {
+        Write-Output "PowerShell requires an execution policy of 'RemoteSigned' to Install Win32-OpenSSH."
+        Write-Output "To make this change please run:"
+        Write-Output "'Set-ExecutionPolicy RemoteSigned -scope CurrentUser'"
+        break
+    }
 
     Write-Output "AutoStart: $AutoStart"
     $is_64bit = [IntPtr]::size -eq 8
 
-    # setup openssh
-    $ssh_download_url = "http://www.mls-software.com/files/setupssh-7.1p1-1.exe"
+    #download win32 openssh
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $url = 'https://github.com/PowerShell/Win32-OpenSSH/releases/latest/'
+    $request = [System.Net.WebRequest]::Create($url)
+    $request.AllowAutoRedirect = $false
+    $response = $request.GetResponse()
 
-    if (!(Test-Path "C:\Program Files\OpenSSH\bin\ssh.exe")) {
-        Write-Output "Downloading $ssh_download_url"
-        (New-Object System.Net.WebClient).DownloadFile($ssh_download_url, "C:\Windows\Temp\openssh.exe")
+    $filename = "OpenSSH-Win32"
 
-        # initially set the port to 2222 so that there is not a race
-        # condition in which packer connects to SSH before we can disable the service
-        Start-Process "C:\Windows\Temp\openssh.exe" "/S /port=2222 /privsep=1 /password=P@ssw0rd" -NoNewWindow -Wait
+    if ($is_64bit) {
+        $filename = "OpenSSH-Win64"
     }
 
-    Stop-Service "OpenSSHd" -Force
+    $download_filename = $filename + ".zip"
+    Write-Output  $download_filename
 
-    # create the new account for SSH
-    $UserName = "SSHUser"
-    $Password = ConvertTo-SecureString "P@ssw0rd" -AsPlainText -Force
-    New-LocalUser -Name $UserName -Password $Password -Description "User account to access via SSH" -PasswordNeverExpires -UserMayNotChangePassword
+    # create download folder
+    $download_path = "C:\Downloads"
+    If(!(Test-Path $download_path))
+    {
+        Write-Output "Creating Download under $download_path"
+        New-Item -ItemType Directory -Force -Path $download_path
+    }
 
-    # add SSH User to Administrator Group
-    Add-LocalGroupMember -Group "Administrators" -Member $UserName
+    $ssh_download_url = $([String]$response.GetResponseHeader("Location")).Replace('tag','download') + "/" + $download_filename
+    
+    # download installer in downlod folder
+    if (!(Test-Path "C:\Downloads\$download_filename"))
+    {
+        Write-Output "Downloading $ssh_download_url"
+        (New-Object System.Net.WebClient).DownloadFile($ssh_download_url, "C:\Downloads\$download_filename")
+    }
+
+    Write-Output "Extracting..."
+
+    $zipfile = "C:\Downloads\$download_filename"
+    Add-Type -Assembly "System.IO.Compression.FileSystem"
+    [IO.Compression.ZipFile]::ExtractToDirectory($zipfile, "C:\Program Files\")
+
+    #Rename folder name to OpenSSH
+    Rename-Item "C:\Program Files\$filename" "C:\Program Files\OpenSSH"
+
+    Write-Output "Installing..."
+    $PSCommandPath = "C:\Program Files\OpenSSH\install-sshd.ps1"
+    & "$PSCommandPath"
 
     # ensure Administrator can log in
     Write-Output "Setting Administrator user file permissions"
     New-Item -ItemType Directory -Force -Path "C:\Users\$UserName\.ssh"
     C:\Windows\System32\icacls.exe "C:\Users\$UserName" /grant "Administrator:(OI)(CI)F"
-    C:\Windows\System32\icacls.exe "C:\Program Files\OpenSSH\bin" /grant "Administrator:(OI)RX"
-    C:\Windows\System32\icacls.exe "C:\Program Files\OpenSSH\usr\sbin" /grant "Administrator:(OI)RX"
+    C:\Windows\System32\icacls.exe "C:\Program Files\OpenSSH" /grant "Administrator:(OI)RX"
 
-    Write-Output "Setting SSH home directories"
-        (Get-Content "C:\Program Files\OpenSSH\etc\passwd") |
-        Foreach-Object { $_ -replace '/home/(\w+)', '/cygdrive/c/Users/$1' } |
-        Set-Content 'C:\Program Files\OpenSSH\etc\passwd'
+    # Disable firewall to allow inbound SSH connections
+    # New-NetFirewallRule -Name sshd -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
 
-    # Set shell to /bin/sh to return exit status
-    $passwd_file = Get-Content 'C:\Program Files\OpenSSH\etc\passwd'
-    $passwd_file = $passwd_file -replace '/bin/bash', '/bin/sh'
-    Set-Content 'C:\Program Files\OpenSSH\etc\passwd' $passwd_file
-
-    # fix opensshd to not be strict
-    Write-Output "Setting OpenSSH to be non-strict"
-    $sshd_config = Get-Content "C:\Program Files\OpenSSH\etc\sshd_config"
-    $sshd_config = $sshd_config -replace 'StrictModes yes', 'StrictModes no'
-    $sshd_config = $sshd_config -replace '#PubkeyAuthentication yes', 'PubkeyAuthentication yes'
-    $sshd_config = $sshd_config -replace '#PermitUserEnvironment no', 'PermitUserEnvironment yes'
-    # disable the use of DNS to speed up the time it takes to establish a connection
-    $sshd_config = $sshd_config -replace '#UseDNS yes', 'UseDNS no'
-    # disable the login banner
-    $sshd_config = $sshd_config -replace 'Banner /etc/banner.txt', '#Banner /etc/banner.txt'
-    # next time OpenSSH starts have it listen on th eproper port
-    $sshd_config = $sshd_config -replace 'Port 2222', "Port 22"
-    Set-Content "C:\Program Files\OpenSSH\etc\sshd_config" $sshd_config
-
-    Write-Output "Removing ed25519 key as Administrator net-ssh 2.9.1 does not support it"
-    Remove-Item -Force -ErrorAction SilentlyContinue "C:\Program Files\OpenSSH\etc\ssh_host_ed25519_key"
-    Remove-Item -Force -ErrorAction SilentlyContinue "C:\Program Files\OpenSSH\etc\ssh_host_ed25519_key.pub"
-
-    # use c:\Windows\Temp as /tmp location
-    Write-Output "Setting temp directory location"
-    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "C:\Program Files\OpenSSH\tmp"
-    C:\Program` Files\OpenSSH\bin\junction.exe /accepteula "C:\Program Files\OpenSSH\tmp" "C:\Windows\Temp"
-    C:\Windows\System32\icacls.exe "C:\Windows\Temp" /grant "Administrator:(OI)(CI)F"
-
-    # add 64 bit environment variables missing from SSH
-    Write-Output "Setting SSH environment"
-    $sshenv = "TEMP=C:\Windows\Temp"
-    if ($is_64bit) {
-        $env_vars = "ProgramFiles(x86)=C:\Program Files (x86)", `
-            "ProgramW6432=C:\Program Files", `
-            "CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files", `
-            "CommonProgramW6432=C:\Program Files\Common Files"
-        $sshenv = $sshenv + "`r`n" + ($env_vars -join "`r`n")
-    }
-    Set-Content C:\Users\$UserName\.ssh\environment $sshenv
-
-    # record the path for provisioners (without the newline)
-    Write-Output "Recording PATH for provisioners"
-    Set-Content C:\Windows\Temp\PATH ([byte[]][char[]] $env:PATH) -Encoding Byte
-
-    # configure firewall
-    # Write-Output "Configuring firewall"
-    # netsh advfirewall firewall add rule name="SSHD" dir=in action=allow service=OpenSSHd enable=yes
-    # netsh advfirewall firewall add rule name="SSHD" dir=in action=allow program="C:\Program Files\OpenSSH\usr\sbin\sshd.exe" enable=yes
-    # netsh advfirewall firewall add rule name="ssh" dir=in action=allow protocol=TCP localport=22
+    # setup sshd service to auto-start
+    Set-Service sshd -StartupType Automatic
 
     if ($AutoStart -eq $true) {
-        Start-Service "OpenSSHd"
+        Start-Service "sshd"
     }
 
+    # set home directory to c:
+    Write-Output "Setting OpenSSH to be non-strict"
+    $sshd_config = Get-Content "C:\ProgramData\ssh\sshd_config"
+    $sshd_config = $sshd_config -replace '#ChrootDirectory none', 'ChrootDirectory c:'
+    Set-Content "C:\ProgramData\ssh\sshd_config" $sshd_config
+    Write-Output "Set Default Home Directory to C:\"
+
+    # Restart-Service
+    Restart-Service "sshd" 
 }
 
 ###################################################################################################
@@ -637,7 +629,7 @@ try
     }
     else
     {
-        # install_chocolatey
+        install_chocolatey
         handel_firewarll_rules
     }
 
