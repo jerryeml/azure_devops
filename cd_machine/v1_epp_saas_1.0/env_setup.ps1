@@ -505,13 +505,14 @@ function install_open_ssh_on_windows
     [switch]$AutoStart = $true
     )
 
+    Write-Log "install_open_ssh_on_windows"
     Set-ExecutionPolicy RemoteSigned -scope CurrentUser
 
     # show notification to change execution policy:
     if((Get-ExecutionPolicy) -gt 'RemoteSigned' -or (Get-ExecutionPolicy) -eq 'ByPass') {
-        Write-Output "PowerShell requires an execution policy of 'RemoteSigned' to Install Win32-OpenSSH."
-        Write-Output "To make this change please run:"
-        Write-Output "'Set-ExecutionPolicy RemoteSigned -scope CurrentUser'"
+        Write-Log "PowerShell requires an execution policy of 'RemoteSigned' to Install Win32-OpenSSH."
+        Write-Log "To make this change please run:"
+        Write-Log "'Set-ExecutionPolicy RemoteSigned -scope CurrentUser'"
         break
     }
 
