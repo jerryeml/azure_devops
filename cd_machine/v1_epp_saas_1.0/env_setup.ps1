@@ -304,7 +304,7 @@ function set_winrm_listener
 
 function install_chocolatey
 {
-    # Set-ExecutionPolicy Unrestricted -Force
+    Set-ExecutionPolicy Unrestricted -Force
     Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     Write-Log "Prepare to install package by choco"
 
@@ -515,7 +515,7 @@ function install_open_ssh_on_windows
         break
     }
 
-    Write-Output "AutoStart: $AutoStart"
+    Write-Log "AutoStart: $AutoStart"
     $is_64bit = [IntPtr]::size -eq 8
 
     #download win32 openssh
@@ -532,13 +532,13 @@ function install_open_ssh_on_windows
     }
 
     $download_filename = $filename + ".zip"
-    Write-Output  $download_filename
+    Write-Log  $download_filename
 
     # create download folder
     $download_path = "C:\Downloads"
     If(!(Test-Path $download_path))
     {
-        Write-Output "Creating Download under $download_path"
+        Write-Log "Creating Download under $download_path"
         New-Item -ItemType Directory -Force -Path $download_path
     }
 
@@ -547,11 +547,11 @@ function install_open_ssh_on_windows
     # download installer in downlod folder
     if (!(Test-Path "C:\Downloads\$download_filename"))
     {
-        Write-Output "Downloading $ssh_download_url"
+        Write-Log "Downloading $ssh_download_url"
         (New-Object System.Net.WebClient).DownloadFile($ssh_download_url, "C:\Downloads\$download_filename")
     }
 
-    Write-Output "Extracting..."
+    Write-Log "Extracting..."
 
     $zipfile = "C:\Downloads\$download_filename"
     Add-Type -Assembly "System.IO.Compression.FileSystem"
@@ -560,12 +560,12 @@ function install_open_ssh_on_windows
     #Rename folder name to OpenSSH
     Rename-Item "C:\Program Files\$filename" "C:\Program Files\OpenSSH"
 
-    Write-Output "Installing..."
+    Write-Log "Installing..."
     $PSCommandPath = "C:\Program Files\OpenSSH\install-sshd.ps1"
     & "$PSCommandPath"
 
     # ensure Administrator can log in
-    Write-Output "Setting Administrator user file permissions"
+    Write-Log "Setting Administrator user file permissions"
     New-Item -ItemType Directory -Force -Path "C:\Users\$UserName\.ssh"
     C:\Windows\System32\icacls.exe "C:\Users\$UserName" /grant "Administrator:(OI)(CI)F"
     C:\Windows\System32\icacls.exe "C:\Program Files\OpenSSH" /grant "Administrator:(OI)RX"
@@ -581,11 +581,11 @@ function install_open_ssh_on_windows
     }
 
     # set home directory to c:
-    Write-Output "Setting OpenSSH to be non-strict"
+    Write-Log "Setting OpenSSH to be non-strict"
     $sshd_config = Get-Content "C:\ProgramData\ssh\sshd_config"
     $sshd_config = $sshd_config -replace '#ChrootDirectory none', 'ChrootDirectory c:'
     Set-Content "C:\ProgramData\ssh\sshd_config" $sshd_config
-    Write-Output "Set Default Home Directory to C:\"
+    Write-Log "Set Default Home Directory to C:\"
 
     # Restart-Service
     Restart-Service "sshd" 
