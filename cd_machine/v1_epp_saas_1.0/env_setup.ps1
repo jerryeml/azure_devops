@@ -304,7 +304,8 @@ function set_winrm_listener
 
 function install_chocolatey
 {
-    Set-ExecutionPolicy Unrestricted -Force
+#     Set-ExecutionPolicy Unrestricted -Force
+    Write-Log "install_chocolatey"
     Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
     Write-Log "Prepare to install package by choco"
 
@@ -506,15 +507,15 @@ function install_open_ssh_on_windows
     )
 
     Write-Log "install_open_ssh_on_windows"
-    Set-ExecutionPolicy RemoteSigned -scope CurrentUser
+#     Set-ExecutionPolicy RemoteSigned -scope CurrentUser
 
     # show notification to change execution policy:
-    if((Get-ExecutionPolicy) -gt 'RemoteSigned' -or (Get-ExecutionPolicy) -eq 'ByPass') {
-        Write-Log "PowerShell requires an execution policy of 'RemoteSigned' to Install Win32-OpenSSH."
-        Write-Log "To make this change please run:"
-        Write-Log "'Set-ExecutionPolicy RemoteSigned -scope CurrentUser'"
-        break
-    }
+#     if((Get-ExecutionPolicy) -gt 'RemoteSigned' -or (Get-ExecutionPolicy) -eq 'ByPass') {
+#         Write-Log "PowerShell requires an execution policy of 'RemoteSigned' to Install Win32-OpenSSH."
+#         Write-Log "To make this change please run:"
+#         Write-Log "'Set-ExecutionPolicy RemoteSigned -scope CurrentUser'"
+#         break
+#     }
 
     Write-Log "AutoStart: $AutoStart"
     $is_64bit = [IntPtr]::size -eq 8
