@@ -207,7 +207,7 @@ function New-AgentInstallPath
     catch
     {
         $agentInstallPath = $null
-        throw "Failed to create the agent directory at $installPathDir."
+        throw "Failed to create the agent directory at $agentInstallPath."
     }
     
     return $agentInstallPath
