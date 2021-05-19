@@ -147,7 +147,7 @@ function Get-AgentPackage
     $serverUrl = "https://$VstsAccount.visualstudio.com"
     $vstsAgentUrl = "$serverUrl/_apis/distributedtask/packages/agent/win7-x64?`$top=1&api-version=3.0"
     $vstsUser = "AzureDevTestLabs"
-
+    # https://vstsagentpackage.azureedge.net/agent/2.179.0/vsts-agent-win-x64-2.179.0.zip
     $maxRetries = 3
     $retries = 0
     do
@@ -165,8 +165,9 @@ function Get-AgentPackage
             {
                 $agent = $agentList.value[0]
             }
-            Invoke-WebRequest -Uri $agent.downloadUrl -Headers $headers -Method Get -OutFile "$agentPackagePath" | Out-Null
+            Invoke-WebRequest -Uri https://vstsagentpackage.azureedge.net/agent/2.179.0/vsts-agent-win-x86-2.179.0.zip -OutFile "$agentPackagePath" | Out-Null
             break
+
         }
         catch
         {
