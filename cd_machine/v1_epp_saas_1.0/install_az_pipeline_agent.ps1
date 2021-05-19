@@ -201,12 +201,12 @@ function New-AgentInstallPath
     try
     {
         # Create the directory for this agent.
-        Write-Host 'DriveLetter: $DriveLetter'
-        Write-Host 'AgentName: $AgentName'
-        Write-Host 'agentInstallDir: $agentInstallDir'
+        Write-Host 'DriveLetter:' $DriveLetter
+        Write-Host 'AgentName:' $AgentName
+        Write-Host 'agentInstallDir:' $agentInstallDir
         
         $agentInstallPath = Join-Path -Path $agentInstallDir -ChildPath $AgentName
-        Write-Host 'agentInstallPath: $agentInstallPath'
+        Write-Host 'agentInstallPath:' $agentInstallPath
         
         New-Item -ItemType Directory -Force -Path $agentInstallPath | Out-Null
     }
@@ -389,17 +389,17 @@ try
     # Ensure we set the working directory to that of the script.
     Push-Location $PSScriptRoot
     
-    Write-Host 'PSScriptRoot: $PSScriptRoot'
-    Write-Host 'vstsAccount: $vstsAccount'
-    Write-Host 'vstsUserPassword: $vstsUserPassword'
-    Write-Host 'agentName: $agentName'
-    Write-Host 'agentNameSuffix: $agentNameSuffix'
-    Write-Host 'poolName: $poolName'
-    Write-Host 'windowsLogonAccount: $windowsLogonAccount'
-    Write-Host 'windowsLogonPassword: $windowsLogonPassword'
-    Write-Host 'driveLetter: $driveLetter'
-    Write-Host 'runAsAutoLogon: $runAsAutoLogon'
-    Write-Host 'replaceAgent: $replaceAgent'
+    Write-Host 'PSScriptRoot:' $PSScriptRoot
+    Write-Host 'vstsAccount:' $vstsAccount
+    Write-Host 'vstsUserPassword:' $vstsUserPassword
+    Write-Host 'agentName:' $agentName
+    Write-Host 'agentNameSuffix:' $agentNameSuffix
+    Write-Host 'poolName:' $poolName
+    Write-Host 'windowsLogonAccount:' $windowsLogonAccount
+    Write-Host 'windowsLogonPassword:' $windowsLogonPassword
+    Write-Host 'driveLetter:' $driveLetter
+    Write-Host 'runAsAutoLogon:' $runAsAutoLogon
+    Write-Host 'replaceAgent:' $replaceAgent
   
     Write-Host '=============================================='
     Write-Host 'Validating parameters'
